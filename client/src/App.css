@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Kumbh+Sans&family=Pathway+Extreme&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Poppins:wght@200;400&family=Roboto+Mono&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: anton;
+  color: #fff;
+}
+
+
+.hero {
+  background: black;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+.texto {
+  width: 100%;
+  color: #fff;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 300px;
+  font-weight: bold;
+}
