@@ -1,7 +1,6 @@
 const config = require("./src/config");
 const express = require("express");
 const morgan = require("morgan");
-const cors = require("cors");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 
