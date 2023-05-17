@@ -1,12 +1,11 @@
-
-import './App.css'
+import {Route, Routes} from 'react-router-dom';
+import NotFound from './components/notFound';
 
 function App() {
-
   return (
-    <div className='hero'>
-      <h1 className='texto'>VERSA STOCK</h1>
-    </div>
+    <Routes>
+      <Route  path='*' element={<NotFound/>} />
+    </Routes>
   )
 }
 
