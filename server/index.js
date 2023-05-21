@@ -3,6 +3,7 @@ const express = require("express");
 const morgan = require("morgan");
 const path = require("path");
 const cookieParser = require("cookie-parser");
+const conn = require("./src/db/db");
 
 const app = express();
 
@@ -25,6 +26,14 @@ app.use((_req, res, next) => {
 app.use(morgan("dev"));
 
 app.use("/api", require("./src/routes"));
+
+conn.connect((err) => {
+  if (err) {
+    console.log(err);
+  } else {
+    console.log("Connected to MySQL");
+  }
+});
 
 app.get("/", (req, res) => {
   res.send("Welcome to VersaStock!");

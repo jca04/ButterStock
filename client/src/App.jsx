@@ -1,5 +1,5 @@
 import {Route, Routes} from 'react-router-dom';
-import NotFound from './components/notFound';
+import NotFound from './components/notFound/notFound';
 
 function App() {
   return (
