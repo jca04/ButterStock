@@ -4,9 +4,11 @@ import NotFound from './components/notFound';
 function App() {
   return (
     <Routes>
-      <Route  path='*' element={<NotFound/>} />
+        <Route  exact path='*' element={<NotFound/>} />
     </Routes>
   )
 }
 
 export default App
+
+
