@@ -1,7 +1,6 @@
 const conn = require("../db/db");
 const { v4: uuidv4 } = require("uuid");
 const { encrypt } = require("../utils/bcrypt.handle");
-uuidv4(); // sadasd
 
 const getUsers = (req, res) => {
   try {
@@ -34,7 +33,7 @@ const registerUser = async (req, res) => {
           } else {
             conn.query(
               "INSERT INTO tbl_users (id_users, nombre, contraseña, apellido, correo, id_restaurant) VALUES (?, ?, ?, ?, ?, ?)",
-              [id, nombre, passHash, apellido, correo, "monda"]
+              [id, nombre, passHash, apellido, correo, "123213"]
             );
             res.status(200).json({ nombre });
           }
