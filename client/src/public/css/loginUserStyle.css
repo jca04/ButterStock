@@ -1,21 +1,112 @@
-*{
-  margin:  0;
+* {
+  margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: sans-serif;
 }
 
-.parent{
+.parent {
   display: flex;
   width: 100%;
   height: 100vh;
   align-items: center;
 }
 
-.child{
-  display:flex ;
+.child {
+  display: flex;
   position: relative;
   background: silver;
   height: 70%;
+  width: 25%;
   margin: auto;
   flex-direction: column;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  height: auto;
+}
+
+.img-logo{
+  height: 12vh;
+  padding: 10px;
+  object-fit: cover;
+}
+
+h2{
+  font-size: 1.5em;
+  text-align: center;
+  padding-left: 45px;
+  padding-right: 45px;
+  padding-top: 45px;
+}
+
+.body{
+  display: block;
+  position: relative;
+  height: 100%;
+}
+
+.form{
+  padding: 45px;
+}
+
+.div-input{
+  margin-bottom: 25px;
+}
+
+.form-input{
+  display: block;
+  position: relative;
+  width: 100%;
+  padding: 20px;
+  border-radius: 5px;
+  outline: none;
+  border: 1px solid white;
+  background: transparent;
+}
+
+.form-input::placeholder{
+  color: white;
+}
+
+.error{
+  color: red
+}
+
+.btn-save-login{
+  display: block;
+  width: 100%;
+  padding: 20px;
+  border-radius: 5px;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  height: 7vh;
+}
+
+.img-load{
+  display: block;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  animation: loader 1.8s linear infinite;
+}
+
+
+@keyframes loader {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }

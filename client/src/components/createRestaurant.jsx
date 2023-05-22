@@ -1,5 +1,5 @@
 import React from "react";
-import '../public/css/createRestaurant.css';
+import "../public/css/createRestaurantStyle.css";
 
 function FormRestaurant(){
   return(
