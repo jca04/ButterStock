@@ -1,10 +1,9 @@
 import React from "react";
-import { Link, NavLink } from "react-router-dom";
 
 function NotFound(){
 
   return(
-    <div><h2>No se encontro</h2><Link to="/login">About</Link></div>
+    <div><h2>No se encontro</h2></div>
   )
 }
 
