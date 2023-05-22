@@ -1,6 +1,8 @@
 const conn = require("../db/db");
 const { v4: uuidv4 } = require("uuid");
-const { encrypt } = require("../utils/bcrypt.handle");
+const { encrypt, verified } = require("../utils/bcrypt.handle");
+const { generateToken } = require("../utils/jwt.handle");
+uuidv4(); // sadasd
 
 const getUsers = (req, res) => {
   try {
@@ -22,7 +24,7 @@ const registerUser = async (req, res) => {
     const id = uuidv4();
     const passHash = await encrypt(contraseña);
     conn.query(
-      "SELECT * FROM tbl_users WHERE correo = ?",
+      "SELECT nombre, apellido, correo FROM tbl_users WHERE correo = ?",
       [correo],
       (err, result) => {
         if (err) {
@@ -45,7 +47,46 @@ const registerUser = async (req, res) => {
   }
 };
 
+const loginUser = (req, res) => {
+  try {
+    const { contraseña, correo } = req.body;
+    conn.query(
+      "SELECT id_users, nombre, apellido, correo, contraseña FROM tbl_users WHERE correo = ?",
+      [correo],
+      async (err, result) => {
+        if (err) {
+          res.status(400).json({ error: err });
+        } else {
+          if (result.length > 0) {
+            const verifiedPass = await verified(
+              contraseña,
+              result[0].contraseña
+            );
+            if (verifiedPass) {
+              const token = generateToken(result[0].id_users);
+              const data = {
+                nombre: result[0].nombre,
+                apellido: result[0].apellido,
+                correo: result[0].correo,
+                token,
+              };
+              res.status(200).json(data);
+            } else {
+              res.status(400).json({ error: "Wrong password" });
+            }
+          } else {
+            res.status(400).json({ error: "User doesn't exists" });
+          }
+        }
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+};
+
 module.exports = {
   getUsers,
   registerUser,
+  loginUser,
 };
