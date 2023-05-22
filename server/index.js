@@ -35,10 +35,6 @@ conn.connect((err) => {
   }
 });
 
-app.get("/", (req, res) => {
-  res.send("Welcome to VersaStock!");
-});
-
 app.listen(config.PORT, () => {
   console.log(`Server is running on port ${config.PORT}`);
 });
