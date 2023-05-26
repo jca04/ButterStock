@@ -55,6 +55,7 @@ function LogginUser() {
               pass: "",
             }}
             // enableReinitialize={true}
+<<<<<<< HEAD
             onSubmit={(values, {setSubmitting}) => {
               setSubmitting(true);
               setTimeout( async () => {
@@ -64,6 +65,11 @@ function LogginUser() {
                   if (respos.status === 200) window.location.href = "/createRestaurant";
                   else alert("Usuario o contraseña incorrectos");
               },500);
+=======
+            onSubmit={async (values, {setSubmitting}) => {
+              const respos = await  validateUser(values);
+              console.log(respos)
+>>>>>>> f67abbf45797867776c920a69268d32b81accf19
 
             }}
           >
@@ -91,8 +97,13 @@ function LogginUser() {
                   />
                   <div>{errors.pass  && <p className="error">{errors.pass}</p>}</div>
                 </div>
+<<<<<<< HEAD
                 <button type="submit" className="btn-save-login" disabled={isSubmitting} >
                   {isSubmitting ?  <img className="img-load" src="/src/public/resources/icons/loading-svgrepo-com.svg"/>: "Iniciar sesion" }
+=======
+                <button type="submit" className="btn-save-login" disabled={isSubmitting}>
+                  {isSubmitting ? <img className="img-load" src="/src/public/resources/icons/loading-svgrepo-com.svg"/>: "Iniciar sesion" }
+>>>>>>> f67abbf45797867776c920a69268d32b81accf19
                 </button>
               </Form>
             )}

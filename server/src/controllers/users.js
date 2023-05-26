@@ -27,7 +27,7 @@ const registerUser = async (req, res) => {
     const { nombre, contraseña, apellido, correo } = req.body;
     const id = uuidv4();
     const passHash = await encrypt(contraseña);
-    conn.query(
+    await conn.query(
       "SELECT nombre, apellido, correo FROM tbl_users WHERE correo = ?",
       [correo],
       (err, result) => {
@@ -51,21 +51,22 @@ const registerUser = async (req, res) => {
   }
 };
 
-const loginUser = (req, res) => {
+const loginUser = async (req, res) => {
   try {
     const { contraseña, correo } = req.body;
-    conn.query(
+    await conn.query(
       "SELECT id_users, nombre, apellido, correo, contraseña FROM tbl_users WHERE correo = ?",
       [correo],
       async (err, result) => {
         if (err) {
-          res.status(400).json({ error: err });
+          res.status(200).json({ error: err });
         } else {
           if (result.length > 0) {
             const verifiedPass = await verified(
               contraseña,
               result[0].contraseña
             );
+
             if (verifiedPass) {
               const token = generateToken(result[0].id_users);
               const data = {
@@ -74,20 +75,12 @@ const loginUser = (req, res) => {
                 correo: result[0].correo,
                 token,
               };
-              // const expirationDate = new Date();
-              // expirationDate.setDate(expirationDate.getDate() + 1);
-              // res.cookie("token", token, {
-              //   httpOnly: true,
-              //   secure: true,
-              //   sameSite: "strict",
-              //   expires: expirationDate,
-              // });
               res.status(200).json(data);
             } else {
-              res.status(400).json({ error: "Wrong password" });
+              res.status(200).json({ error: "Contraseña incorrecta" });
             }
           } else {
-            res.status(400).json({ error: "User doesn't exists" });
+            res.status(200).json({ error: "El usuario no existe" });
           }
         }
       }
