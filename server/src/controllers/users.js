@@ -27,7 +27,7 @@ const registerUser = async (req, res) => {
     const { nombre, contraseña, apellido, correo } = req.body;
     const id = uuidv4();
     const passHash = await encrypt(contraseña);
-    await conn.query(
+    conn.query(
       "SELECT nombre, apellido, correo FROM tbl_users WHERE correo = ?",
       [correo],
       (err, result) => {
@@ -54,7 +54,7 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   try {
     const { contraseña, correo } = req.body;
-    await conn.query(
+    conn.query(
       "SELECT id_users, nombre, apellido, correo, contraseña FROM tbl_users WHERE correo = ?",
       [correo],
       async (err, result) => {
