@@ -3,16 +3,20 @@ const { v4: uuidv4 } = require("uuid");
 const { encrypt, verified } = require("../utils/bcrypt.handle");
 const { generateToken } = require("../utils/jwt.handle");
 uuidv4(); // sadasd
-
 const getUsers = (req, res) => {
   try {
-    conn.query("SELECT * FROM tbl_users", (err, result) => {
-      if (err) {
-        res.status(400).json({ error: err });
-      } else {
-        res.status(200).json({ result });
+    console.log(req.user);
+    conn.query(
+      "SELECT * FROM tbl_users WHERE id_users = ?",
+      [req.user.id],
+      (err, result) => {
+        if (err) {
+          res.status(400).json({ error: err });
+        } else {
+          res.status(200).json({ result });
+        }
       }
-    });
+    );
   } catch (error) {
     res.status(500).json({ error: error });
   }
@@ -70,6 +74,14 @@ const loginUser = (req, res) => {
                 correo: result[0].correo,
                 token,
               };
+              // const expirationDate = new Date();
+              // expirationDate.setDate(expirationDate.getDate() + 1);
+              // res.cookie("token", token, {
+              //   httpOnly: true,
+              //   secure: true,
+              //   sameSite: "strict",
+              //   expires: expirationDate,
+              // });
               res.status(200).json(data);
             } else {
               res.status(400).json({ error: "Wrong password" });

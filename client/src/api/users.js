@@ -2,15 +2,15 @@ import axios from "axios";
 
 export const validateUser = async (data) => {
   try {
-    axios
-      .post("http://localhost:3000/api/users/login", {
-        "contraseña": data.pass,
-        "correo":  data.user,
-      })
-      .then((response) => {
-        console.log(response.data);
-      });
+    const response = await axios.post("http://localhost:3000/api/users/login", {
+      contraseña: data.pass,
+      correo: data.user,
+    });
+    document.cookie = `token=${response.data.token}; path=/`;
+    return {
+      status: response.status,
+    };
   } catch (error) {
-    return {"error": error};
+    return { error: error };
   }
 };

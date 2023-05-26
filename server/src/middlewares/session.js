@@ -1,5 +1,4 @@
 const { verifyToken } = require("../utils/jwt.handle.js");
-const { JwtPayload } = require("jsonwebtoken");
 
 const checkJwt = (req, res, next) => {
   try {
@@ -9,7 +8,6 @@ const checkJwt = (req, res, next) => {
 
     if (verified) {
       req.user = verified;
-      console.log(req.user);
       next();
     }
   } catch (error) {

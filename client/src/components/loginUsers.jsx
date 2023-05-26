@@ -4,7 +4,12 @@ import { Field, Form, Formik } from "formik";
 import  "../public/css/loginUserStyle.css";
 import logo from "../public/resources/logo/logo_versaStock.png";
 
+
 function LogginUser() {
+
+  // const history = useHistory();
+
+
   //validar el campo del correo para el login del usuario
 
   const validateEmail = (value) => {
@@ -55,6 +60,9 @@ function LogginUser() {
               setTimeout( async () => {
                   setSubmitting(false);
                   const respos = await validateUser(values);
+                  console.log(respos);
+                  if (respos.status === 200) window.location.href = "/createRestaurant";
+                  else alert("Usuario o contraseña incorrectos");
               },500);
 
             }}
@@ -83,7 +91,7 @@ function LogginUser() {
                   />
                   <div>{errors.pass  && <p className="error">{errors.pass}</p>}</div>
                 </div>
-                <button type="submit" className="btn-save-login" disabled={isSubmitting}>
+                <button type="submit" className="btn-save-login" disabled={isSubmitting} >
                   {isSubmitting ?  <img className="img-load" src="/src/public/resources/icons/loading-svgrepo-com.svg"/>: "Iniciar sesion" }
                 </button>
               </Form>
