@@ -50,12 +50,9 @@ function LogginUser() {
               pass: "",
             }}
             // enableReinitialize={true}
-            onSubmit={(values, {setSubmitting}) => {
-              setSubmitting(true);
-              setTimeout( async () => {
-                  setSubmitting(false);
-                  const respos = await validateUser(values);
-              },500);
+            onSubmit={async (values, {setSubmitting}) => {
+              const respos = await  validateUser(values);
+              console.log(respos)
 
             }}
           >
@@ -84,7 +81,7 @@ function LogginUser() {
                   <div>{errors.pass  && <p className="error">{errors.pass}</p>}</div>
                 </div>
                 <button type="submit" className="btn-save-login" disabled={isSubmitting}>
-                  {isSubmitting ?  <img className="img-load" src="/src/public/resources/icons/loading-svgrepo-com.svg"/>: "Iniciar sesion" }
+                  {isSubmitting ? <img className="img-load" src="/src/public/resources/icons/loading-svgrepo-com.svg"/>: "Iniciar sesion" }
                 </button>
               </Form>
             )}
