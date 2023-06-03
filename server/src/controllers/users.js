@@ -2,7 +2,7 @@ const conn = require("../db/db");
 const { v4: uuidv4 } = require("uuid");
 const { encrypt, verified } = require("../utils/bcrypt.handle");
 const { generateToken } = require("../utils/jwt.handle");
-uuidv4(); // sadasd
+
 
 const getUsers = async (req, res) => {
   try {
@@ -20,7 +20,7 @@ const getUsers = async (req, res) => {
 
 const registerUser = async (req, res) => {
   try {
-    const { nombre, contraseña, apellido, correo } = req.body;
+    const { nombre, contraseña, apellido, correo, idRestaurant } = req.body;
     const id = uuidv4();
     const passHash = await encrypt(contraseña);
     await conn.query(
@@ -34,8 +34,8 @@ const registerUser = async (req, res) => {
             res.status(400).json({ error: "User already exists" });
           } else {
             conn.query(
-              "INSERT INTO tbl_users (id_users, nombre, contraseña, apellido, correo, id_restaurant) VALUES (?, ?, ?, ?, ?, ?)",
-              [id, nombre, passHash, apellido, correo, "123213"]
+              "INSERT INTO tbl_users (id_users, nombre, contraseña, apellido, correo, id_restaurant, admin) VALUES (?, ?, ?, ?, ?, ?, ?)",
+              [id, nombre, passHash, apellido, correo, idRestaurant, 1]
             );
             res.status(200).json({ nombre });
           }

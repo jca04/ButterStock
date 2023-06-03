@@ -3,9 +3,19 @@ import { validateUser } from "../api/users.js";
 import { Field, Form, Formik } from "formik";
 import  "../public/css/loginUserStyle.css";
 import logo from "../public/resources/logo/logo_versaStock.png";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 function LogginUser() {
+  const navigate = useNavigate();
   //validar el campo del correo para el login del usuario
+
+  const showToastMessageSucces = () => {
+    toast.success("El restaurante se ha creado con exito !", {
+      position: toast.POSITION.TOP_CENTER,
+      autoClose: 500,
+    });
+  };
 
   const validateEmail = (value) => {
     let error;
@@ -20,28 +30,20 @@ function LogginUser() {
   //validar el campo de la contraseña
   const validatePass = (values) => {
     let error = "";
-    if (!values) {
+    if (values.length <= 0) {
       error = "Este campo es requerido";
+      return error;
     }
-    return error;
     
   };
 
-  const getStyle = (val, filed) => {
-    if (val[filed]){
-      return {
-        border: "1px solid red",
-        color: "red"
-      }
-    }
-  }
 
   return (
     <section className="parent">
-      <section className="child">
+      <section className="child child3">
         <div className="header">
           <img className="img-logo" src={logo} />
-          <h2>Inicie sesion con la cuenta de versaStock</h2>
+          <h2>Inicie sesion con la cuenta de PymeStorage</h2>
         </div>
         <div className="body">
           <Formik
@@ -50,8 +52,10 @@ function LogginUser() {
               pass: "",
             }}
             // enableReinitialize={true}
-            onSubmit={async (values, {setSubmitting}) => {
+            onSubmit={async (values) => {
               const respos = await  validateUser(values);
+              navigate("/homepage")
+
               console.log(respos)
 
             }}
@@ -64,7 +68,7 @@ function LogginUser() {
                     placeholder="Dirección de correo electrónico"
                     name="user"
                     validate={validateEmail}
-                    style={getStyle(errors, "user")}
+                    style={errors.user && touched.user && { border: "1px solid red" }}
                   />
                   <div>{errors.user && touched.user && <p className="error">{errors.user}</p>}</div>
                 </div>
@@ -76,7 +80,7 @@ function LogginUser() {
                     name="pass"
                     validate={validatePass}
                     autoComplete="false"
-                    style={getStyle(errors, "pass")}
+                    style={errors.pass && touched.pass && { border: "1px solid red" }}
                   />
                   <div>{errors.pass  && <p className="error">{errors.pass}</p>}</div>
                 </div>

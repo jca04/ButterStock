@@ -11,6 +11,11 @@
   height: 100vh;
   align-items: center;
 }
+.child3{
+  border-top: 1px solid #19A7CE;
+  border-left: 1px solid #19A7CE;
+  box-shadow: 10px 10px 2px 1px rgba(25, 167, 206, 0.3);
+}
 
 .child {
   display: flex;
