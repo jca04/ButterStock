@@ -5,15 +5,24 @@ import  "../public/css/loginUserStyle.css";
 import logo from "../public/resources/logo/logo_versaStock.png";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import {coockie} from '../api/generateCoockie.js'
+import { useCookies } from 'react-cookie';
 
 function LogginUser() {
   const navigate = useNavigate();
+  const  [ cookies ,  setCookie ,  removeCookie ]  =  useCookies ( [ 'cookie-name' ] ) ;
   //validar el campo del correo para el login del usuario
 
   const showToastMessageSucces = () => {
     toast.success("El restaurante se ha creado con exito !", {
       position: toast.POSITION.TOP_CENTER,
       autoClose: 500,
+    });
+  };
+
+  const showToastMessageA = () => {
+    toast.error("Ha ocurrido un error, por favor vuelva a intentar !", {
+      position: toast.POSITION.TOP_CENTER,
     });
   };
 
@@ -38,6 +47,9 @@ function LogginUser() {
   };
 
 
+  
+
+
   return (
     <section className="parent">
       <section className="child child3">
@@ -53,10 +65,22 @@ function LogginUser() {
             }}
             // enableReinitialize={true}
             onSubmit={async (values) => {
-              const respos = await  validateUser(values);
-              navigate("/homepage")
+              try{
+                const respos = await  validateUser(values);
+                if (respos.data !== undefined){
+                  if (respos.data.token !== undefined){
+                    let tokenSend = respos.data.token;
+                    setCookie('session', tokenSend, { path: '/' });
+                  }
+                }
+             
+                navigate("/homepage")
 
-              console.log(respos)
+              }catch(err){
+                showToastMessageA();
+                console.log(err)
+              }
+           
 
             }}
           >

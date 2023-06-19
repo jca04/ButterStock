@@ -2,7 +2,8 @@ const conn = require("../db/db");
 const { v4: uuidv4 } = require("uuid");
 const { encrypt, verified } = require("../utils/bcrypt.handle");
 const { generateToken } = require("../utils/jwt.handle");
-
+const jwt = require('jsonwebtoken');
+const {serialize} = require('cookie');
 
 const getUsers = async (req, res) => {
   try {
@@ -23,7 +24,7 @@ const registerUser = async (req, res) => {
     const { nombre, contraseña, apellido, correo, idRestaurant } = req.body;
     const id = uuidv4();
     const passHash = await encrypt(contraseña);
-    await conn.query(
+    conn.query(
       "SELECT nombre, apellido, correo FROM tbl_users WHERE correo = ?",
       [correo],
       (err, result) => {
@@ -50,7 +51,7 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   try {
     const { contraseña, correo } = req.body;
-    await conn.query(
+    conn.query(
       "SELECT id_users, nombre, apellido, correo, contraseña FROM tbl_users WHERE correo = ?",[correo], 
        async (err, result) => {
         if (err) {
@@ -61,17 +62,14 @@ const loginUser = async (req, res) => {
               contraseña,
               result[0].contraseña
             );
-
             if (verifiedPass) {
               const token = generateToken(result[0].id_users);
-              const data = {
-                nombre: result[0].nombre,
-                apellido: result[0].apellido,
-                correo: result[0].correo,
-                token,
-              };
+              let data = {
+                  token
+              }
 
-              res.status(200).json(data);
+
+              res.status(200).send(data);
             } else {
               res.status(200).json({ error: "Contraseña incorrecta" });
             }
