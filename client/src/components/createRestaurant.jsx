@@ -182,7 +182,7 @@ function FormRestaurant() {
                   </div>
                 </div>
                 <div className="div-input">
-                  <label htmlFor="file">Icono restaurante</label>
+                  <label htmlFor="image">Icono restaurante</label>
                   <input
                     type="file"
                     name="image"
