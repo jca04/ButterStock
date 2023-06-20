@@ -2,8 +2,15 @@ const conn = require("../db/db");
 const { v4: uuidv4 } = require("uuid");
 const { encrypt, verified } = require("../utils/bcrypt.handle");
 const { generateToken } = require("../utils/jwt.handle");
+<<<<<<< HEAD
 uuidv4(); // sadasd
 const getUsers = (req, res) => {
+=======
+const jwt = require('jsonwebtoken');
+const {serialize} = require('cookie');
+
+const getUsers = async (req, res) => {
+>>>>>>> 1484c4fca4f37ef1342bd691027f2033a7b66584
   try {
     console.log(req.user);
     conn.query(
@@ -24,7 +31,7 @@ const getUsers = (req, res) => {
 
 const registerUser = async (req, res) => {
   try {
-    const { nombre, contraseña, apellido, correo } = req.body;
+    const { nombre, contraseña, apellido, correo, idRestaurant } = req.body;
     const id = uuidv4();
     const passHash = await encrypt(contraseña);
     conn.query(
@@ -38,8 +45,8 @@ const registerUser = async (req, res) => {
             res.status(400).json({ error: "User already exists" });
           } else {
             conn.query(
-              "INSERT INTO tbl_users (id_users, nombre, contraseña, apellido, correo, id_restaurant) VALUES (?, ?, ?, ?, ?, ?)",
-              [id, nombre, passHash, apellido, correo, "123213"]
+              "INSERT INTO tbl_users (id_users, nombre, contraseña, apellido, correo, id_restaurant, admin) VALUES (?, ?, ?, ?, ?, ?, ?)",
+              [id, nombre, passHash, apellido, correo, idRestaurant, 1]
             );
             res.status(200).json({ nombre });
           }
@@ -55,9 +62,14 @@ const loginUser = async (req, res) => {
   try {
     const { contraseña, correo } = req.body;
     conn.query(
+<<<<<<< HEAD
       "SELECT id_users, nombre, apellido, correo, contraseña FROM tbl_users WHERE correo = ?",
       [correo],
       async (err, result) => {
+=======
+      "SELECT id_users, nombre, apellido, correo, contraseña FROM tbl_users WHERE correo = ?",[correo], 
+       async (err, result) => {
+>>>>>>> 1484c4fca4f37ef1342bd691027f2033a7b66584
         if (err) {
           res.status(200).json({ error: err });
         } else {
@@ -68,6 +80,7 @@ const loginUser = async (req, res) => {
             );
             if (verifiedPass) {
               const token = generateToken(result[0].id_users);
+<<<<<<< HEAD
               const data = {
                 nombre: result[0].nombre,
                 apellido: result[0].apellido,
@@ -75,6 +88,14 @@ const loginUser = async (req, res) => {
                 token,
               };
               res.status(200).json(data);
+=======
+              let data = {
+                  token
+              }
+
+
+              res.status(200).send(data);
+>>>>>>> 1484c4fca4f37ef1342bd691027f2033a7b66584
             } else {
               res.status(200).json({ error: "Contraseña incorrecta" });
             }

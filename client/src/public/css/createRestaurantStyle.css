@@ -1,0 +1,251 @@
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;500&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: sans-serif;
+  font-family: 'Work Sans', sans-serif;
+}
+
+.parent {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  align-items: center;
+  background-image: url('../resources/logo/as.webp');
+
+}
+
+.child {
+  display: flex;
+  position: relative;
+  height: auto;
+  min-height: 45vh;
+  width: 27%;
+  margin: auto;
+  flex-direction: column;
+  border-radius: 5px;
+  padding: 10px;
+  background: white
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  height: auto;
+}
+
+.child1{
+  width: 100%;
+}
+
+.child2{
+  border-top: 1px solid #19A7CE;
+  border-left: 1px solid #19A7CE;
+  box-shadow: 10px 10px 2px 1px rgba(25, 167, 206, 0.3);
+}
+.img-logo{
+  height: 12vh;
+  padding: 10px;
+  object-fit: cover;
+}
+
+h2{
+  font-size: 1em;
+  text-align: center;
+  padding-left: 45px;
+  padding-right: 45px;
+  padding-top: 45px;
+}
+
+.div-loading{
+  display: flex;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 90;
+    flex-direction: column;
+    background: aliceblue;
+    transition-delay: 500ms;
+}
+
+.div-loading > div {
+  width: 30%;
+  margin: auto;
+  text-align: center;
+}
+
+.body{
+  display: block;
+  position: relative;
+  height: 100%;
+}
+
+.form{
+  padding: 25px;
+}
+
+.div-input{
+  margin-bottom: 12px;
+  font-size: 0.8em;
+}
+
+.form-input{
+  display: block;
+  position: relative;
+  width: 100%;
+  padding: 15px;
+  border-radius: 5px;
+  outline: none;
+  border: 1px solid #146C94;
+  background: transparent;
+  color: #146C94;
+  font-size: 1em;
+}
+
+.form-input::placeholder{
+  color: #146C94;
+}
+
+.error{
+  color: red;
+  font-size: 0.8em;
+}
+
+.btn-save-login{
+  display: block;
+  width: 100%;
+  padding: 20px;
+  border-radius: 5px;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  height: 7vh;
+  background: #19A7CE;
+}
+
+.img-load{
+  display: block;
+  position: relative;
+  height: 30%;
+  width: 100%;
+  animation: loader 1.8s linear infinite;
+}
+.div-radio{
+  font-size: 0.8em;
+
+}
+
+.div-radio > div{
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 25px;
+}
+
+.div-radio > div > div{
+  margin-right: 15px;
+}
+
+.radio{
+  cursor: pointer;
+}
+.child1{
+  /* transition: all 500ms; */
+  animation-duration: 0.4s;
+  /* animation-name: slidein; */
+}
+
+.alert{
+  display: flex;
+    position: absolute;
+    width: 90%;
+    padding: 11px;
+    background: #24ca8b;
+    z-index: 1;
+}
+
+.dismmiss{
+  display: flex;
+    position: absolute;
+    width: 90%;
+    padding: 11px;
+    background: #24ca8b;
+    z-index: 1;
+    transition:  all 500ms ease-in-out;
+    animation-name: dissmisA;
+    
+}
+
+@keyframes dissmisA {
+  0%{
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100%{
+    opacity: 0;
+  }
+}
+
+
+@keyframes loader {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes slidein {
+
+  0% {
+    opacity: 0;
+    margin-left: -100%;
+  }
+
+
+  100%{
+    opacity: 1;
+    margin-left: 0%;
+  }
+}
+
+@media screen and (max-width:1130px) {
+  .child2{
+    width: 40%;
+  }
+} 
+
+@media screen and (max-width:818px) {
+  .child2{
+    width: 50%;
+  }
+
+  .div-loading > div{
+    width: 20%;
+  }
+} 
+
+@media screen and (max-width:644px) {
+  .child2{
+    width: 70%;
+  }
+} 
+
+@media screen and (max-width:515px) {
+  .child2{
+    width: 90%;
+  }
+  .parent{
+    height: 100vh;
+  }
+} 
