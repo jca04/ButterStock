@@ -1,15 +1,9 @@
-import React, { useEffect } from "react";
-import { validateToken } from "../out/validateToke";
+import React from "react";
+import { AxioInterceptor } from "../auth/auth";
 
-function HomePage(){
-
-  validateToken()
-
-
-  return(
-    <h1>holas</h1>
-  );
-
+AxioInterceptor();
+function HomePage() {
+    return <h1>holas</h1>;
 }
 
 export default HomePage;
