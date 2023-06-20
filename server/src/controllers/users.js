@@ -66,7 +66,6 @@ const loginUser = async (req, res) => {
               contraseña,
               result[0].contraseña
             );
-
             if (verifiedPass) {
               const token = generateToken(result[0].id_users);
               const data = {
