@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { coockie } from "../api/generateCoockie.js";
 import { useCookies } from "react-cookie";
+import { setToken } from "../auth/auth.js";
 
 function LogginUser() {
     const navigate = useNavigate();
@@ -50,7 +51,7 @@ function LogginUser() {
             <section className="child child3">
                 <div className="header">
                     <img className="img-logo" src={logo} />
-                    <h2>Inicie sesion con la cuenta de PymeStorage</h2>
+                    <h2>Inicie sesion con la cuenta de ButterStock</h2>
                 </div>
                 <div className="body">
                     <Formik
@@ -62,16 +63,11 @@ function LogginUser() {
                         onSubmit={async (values) => {
                             try {
                                 const respos = await validateUser(values);
-                                if (respos.data !== undefined) {
-                                    if (respos.data.token !== undefined) {
-                                        let tokenSend = respos.data.token;
-                                        setCookie("session", tokenSend, {
-                                            path: "/",
-                                        });
-                                    }
+                                console.log(respos);
+                                if (respos.status === 200) {
+                                    window.location.href = "/homepage";
                                 }
-
-                                navigate("/homepage");
+                                // navigate("/homepage");
                             } catch (err) {
                                 showToastMessageA();
                                 console.log(err);
