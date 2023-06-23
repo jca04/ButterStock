@@ -1,117 +1,203 @@
-* {
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;500&display=swap');
+
+
+*{
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-  font-family: sans-serif;
+  font-family:'Work Sans', sans-serif;
 }
 
-.parent {
-  display: flex;
-  width: 100%;
-  height: 100vh;
-  align-items: center;
-}
-.child3{
-  border-top: 1px solid #19A7CE;
-  border-left: 1px solid #19A7CE;
-  box-shadow: 10px 10px 2px 1px rgba(25, 167, 206, 0.3);
-}
-
-.child {
+.parent{
   display: flex;
   position: relative;
-  background: silver;
-  height: 70%;
-  width: 25%;
-  margin: auto;
-  flex-direction: column;
-  border-radius: 5px;
-  padding: 10px;
+  width: 100%;
+  height: 100vh;
 }
 
-.header {
+.div-container{
+  display: flex;
+    position: relative;
+    margin: auto;
+    width: 80%;
+    height: 80%;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.separate-m {
+  display: flex;
+  position: relative;
+  width: 50%;
+  height: 100%;
+}
+
+.img-room{
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+.separate-1{
+  width: 65%;
+}
+
+.separate-2{
+  flex-direction: column;
+  border: 1px solid #C7BE7E;
+  box-shadow: 11px 1px 22px -3px #C7BE7E;
+}
+
+.header{
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
   position: relative;
   width: 100%;
-  height: auto;
+  align-items: center;
 }
 
-.img-logo{
-  height: 12vh;
-  padding: 10px;
+.header > img{
+  width: 40%;
   object-fit: cover;
 }
 
-h2{
-  font-size: 1.5em;
+.header > h2{
+  width: 50%;
   text-align: center;
-  padding-left: 45px;
-  padding-right: 45px;
-  padding-top: 45px;
+  font-size: 1.2em;
 }
 
 .body{
-  display: block;
-  position: relative;
-  height: 100%;
+  display: flex;
+    flex-direction: column;
+    margin: 30px;
+    height: 90%;
+    align-items: center;
 }
 
 .form{
-  padding: 45px;
+  width: 100%;
+  padding: 30px;
 }
 
 .div-input{
-  margin-bottom: 25px;
-}
-
-.form-input{
-  display: block;
-  position: relative;
   width: 100%;
-  padding: 20px;
-  border-radius: 5px;
-  outline: none;
-  border: 1px solid white;
-  background: transparent;
+  margin-bottom: 15px
+
 }
 
-.form-input::placeholder{
-  color: white;
+.div-input > input{
+  width: 100%;
+  padding: 15px;
+  outline: none;
+  border-radius: 5px;
+  border: 2px solid #C7BE7E;
+}
+
+.div-input-btn{
+  display: flex;
+  margin: auto;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 40px;
+}
+
+.div-input-btn > button{
+  padding: 10px;
+  width: 70%;
+  border-radius: 5px;
+    outline: none;
+    border: none;
+    background: #EFF9C6;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.div-input-btn > button:hover{
+  padding: 15px;
+  box-shadow: 11px 1px 22px -3px #C7BE7E;
+  transition: all 500ms;
 }
 
 .error{
-  color: red
+  font-size: 0.8em;
+  color: red;
 }
 
-.btn-save-login{
-  display: block;
-  width: 100%;
-  padding: 20px;
-  border-radius: 5px;
-  outline: none;
-  border: none;
-  cursor: pointer;
-  height: 7vh;
+.div-text-img{
+  display: flex;
+  margin: auto;
+  flex-direction: column;
+  z-index: 1;
+}
+
+.div-text-img > p{
+  font-size: 0.8em;
+  text-align: end !important;
+  text-decoration: underline;
+  font-style: italic;
+}
+
+.text-img{
+  font-size: 3em;
+  font-style: italic;
 }
 
 .img-load{
-  display: block;
-  position: relative;
-  height: 100%;
+  height: 18px;
   width: 100%;
-  animation: loader 1.8s linear infinite;
 }
 
-
-@keyframes loader {
-  0% {
-    transform: rotate(0deg);
+@media screen and (max-width:1000px) {
+  .div-container{
+    flex-direction: column-reverse;
   }
 
-  100% {
-    transform: rotate(360deg);
+  .separate-2{
+    margin: auto;
+  }
+  .separate-1{
+    display: none;
+  }
+  
+}
+
+@media screen and (max-width:900px) {
+  .separate-2{
+    margin: auto;
+    width: 70%;
+  }
+
+  .btn-save-login{
+    width: 100% !important;
+  }
+  
+  .img-logo{
+    width: 60% !important;
+  }
+}
+
+@media screen and (max-width:600px) {
+  .separate-2{
+    margin: auto;
+    width: 100%;
+  }
+
+  .img-logo{
+    width: 70% !important;
+  }
+
+
+  .header > h2{
+    font-size: 1em;
+  }
+
+  .form{
+    padding: 0px !important;
+  }
+
+  .div-container{
+    height: 100%;
+    width: 100%;
   }
 }
