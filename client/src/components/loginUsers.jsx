@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
 import { validateUser } from "../api/users.js";
 import { Field, Form, Formik } from "formik";
 import "../public/css/loginUserStyle.css";
@@ -9,6 +10,11 @@ import { Fade } from "react-awesome-reveal";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 function LogginUser() {
+
+  useEffect(() => {
+    document.title = "ButterStock | login"
+  }, [])
+
   //validar el campo del correo para el login del usuario
   const showToastMessageA = () => {
     toast.error("Ha ocurrido un error, por favor vuelva a intentar !", {
@@ -134,6 +140,7 @@ function LogginUser() {
                 </Form>
               )}
             </Formik>
+              <p className="p-new-user">¿Eres un nuevo usuario?</p><Link className="a-new-user" to="/createRestaurant">crear cuenta</Link>
           </div>
         </section>
       </section>

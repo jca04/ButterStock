@@ -30,6 +30,7 @@
   position: relative;
   width: 50%;
   height: 100%;
+  border-radius: 5px;
 }
 
 .img-room{
@@ -44,7 +45,7 @@
 .separate-2{
   flex-direction: column;
   border: 1px solid #C7BE7E;
-  box-shadow: 11px 1px 22px -3px #C7BE7E;
+  /* box-shadow: 11px 1px 22px -3px #C7BE7E; */
 }
 
 .header{
@@ -91,7 +92,12 @@
   padding: 15px;
   outline: none;
   border-radius: 5px;
-  border: 2px solid #C7BE7E;
+  border: none;
+  border-bottom: 1px solid #C7BE7E;
+}
+
+.div-input > input:focus{
+  border-bottom: 3px solid #C7BE7E;
 }
 
 .div-input-btn{
@@ -99,7 +105,7 @@
   margin: auto;
   align-items: center;
   flex-direction: column;
-  margin-top: 40px;
+  margin-top: 55px;
 }
 
 .div-input-btn > button{
@@ -148,6 +154,14 @@
   width: 100%;
 }
 
+.p-new-user{
+  font-size: 0.8em;
+}
+
+.a-new-user{
+  font-size: 0.8em;
+}
+
 @media screen and (max-width:1000px) {
   .div-container{
     flex-direction: column-reverse;
@@ -194,6 +208,7 @@
 
   .form{
     padding: 0px !important;
+    margin-bottom: 25px;
   }
 
   .div-container{
