@@ -8,7 +8,7 @@ const checkJwt = (req, res, next) => {
 
         if (verified) {
             req.user = verified;
-            console.log(req.user);
+            // console.log(req.user);
             next();
         }
     } catch (error) {

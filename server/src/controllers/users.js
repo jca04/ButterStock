@@ -13,7 +13,20 @@ const getUsers = async (req, res) => {
                 if (err) {
                     res.status(400).json({ error: err });
                 } else {
-                    res.status(200).json({ result });
+                    if (result[0].superAdmin == 1) {
+                        conn.query("SELECT * FROM tbl_users", (err, result) => {
+                            if (err) {
+                                res.status(400).json({ error: err });
+                            } else {
+                                res.status(200).json({ result });
+                            }
+                        });
+                    } else {
+                        res.status(200).json({
+                            error: "No tienes permisos para ver los usuarios",
+                        });
+                    }
+                    // res.status(200).json({ result });
                 }
             }
         );
@@ -38,7 +51,7 @@ const registerUser = async (req, res) => {
                         res.status(400).json({ error: "User already exists" });
                     } else {
                         conn.query(
-                            "INSERT INTO tbl_users (id_users, nombre, contraseña, apellido, correo, id_restaurant, admin) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                            "INSERT INTO tbl_users (id_users, nombre, contraseña, apellido, correo, id_restaurant, admin, activo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                             [
                                 id,
                                 nombre,
@@ -46,6 +59,7 @@ const registerUser = async (req, res) => {
                                 apellido,
                                 correo,
                                 idRestaurant,
+                                1,
                                 1,
                             ]
                         );
@@ -99,18 +113,13 @@ const loginUser = async (req, res) => {
 //obtener solo un usuario
 const getUser = async (req, res) => {
     try {
-        //decodificar el token utilizando la autorizacion del header
-        //para no enviar el token desde la peticion y solo verifica el midleware que si el token es el que es
-        let token = req.headers.authorization.split(" ").pop();
-        let decode = decodeToken(token);
-        let id_user = decode.id;
-
+        const { id } = req.user;
         conn.query(
             "SELECT nombre, apellido, correo, admin, superAdmin, activo,  id_restaurant  FROM tbl_users WHERE id_users = ? && activo = 1",
-            [id_user],
+            [id],
             async (err, result) => {
                 if (err) {
-                    res.status(400).json({ message: error });
+                    res.status(400).json({ message: err });
                 } else {
                     if (result.length > 0) {
                         let dataRes = result[0];
