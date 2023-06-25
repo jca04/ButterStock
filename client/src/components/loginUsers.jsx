@@ -1,151 +1,163 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { Link, Navigate } from "react-router-dom";
 import { validateUser } from "../api/users.js";
 import { Field, Form, Formik } from "formik";
 import "../public/css/loginUserStyle.css";
-import logo from "../public/resources/logo/logo_versaStock.png";
+import logo from "../public/resources/logo/logo_blanco.jpeg";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import { coockie } from "../api/generateCoockie.js";
-import { useCookies } from "react-cookie";
-import { setToken } from "../auth/auth.js";
+import imgRoom from "../public/resources/img/room.png";
+import { Fade } from "react-awesome-reveal";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 function LogginUser() {
-    const navigate = useNavigate();
-    const [cookies, setCookie, removeCookie] = useCookies(["cookie-name"]);
-    //validar el campo del correo para el login del usuario
 
-    const showToastMessageSucces = () => {
-        toast.success("El restaurante se ha creado con exito !", {
-            position: toast.POSITION.TOP_CENTER,
-            autoClose: 500,
-        });
-    };
+  useEffect(() => {
+    document.title = "ButterStock | login"
+  }, [])
 
-    const showToastMessageA = () => {
-        toast.error("Ha ocurrido un error, por favor vuelva a intentar !", {
-            position: toast.POSITION.TOP_CENTER,
-        });
-    };
+  //validar el campo del correo para el login del usuario
+  //si no coinciden
+  const showToastMessageNo = () => {
+    toast.error("Correo y/o contraseña incorrectos", {
+      position: toast.POSITION.TOP_CENTER,
+    });
+  };
 
-    const validateEmail = (value) => {
-        let error;
-        if (!value) {
-            error = "*Este campo es requerido";
-        } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
-            error = "*Direccion de email invalida";
-        }
-        return error;
-    };
+  //cuando sucede un error inesperado
+  const showToastMessageA = () => {
+    toast.error("Ha ocurrido un error, por favor vuelva a intentar !", {
+      position: toast.POSITION.TOP_CENTER,
+    });
+  };
 
-    //validar el campo de la contraseña
-    const validatePass = (values) => {
-        let error = "";
-        if (values.length <= 0) {
-            error = "Este campo es requerido";
-            return error;
-        }
-    };
+  const validateEmail = (value) => {
+    let error;
+    if (!value) {
+      error = "*Este campo es requerido";
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
+      error = "*Direccion de email invalida";
+    }
+    return error;
+  };
 
-    return (
-        <section className="parent">
-            <section className="child child3">
-                <div className="header">
-                    <img className="img-logo" src={logo} />
-                    <h2>Inicie sesion con la cuenta de ButterStock</h2>
-                </div>
-                <div className="body">
-                    <Formik
-                        initialValues={{
-                            user: "",
-                            pass: "",
-                        }}
-                        // enableReinitialize={true}
-                        onSubmit={async (values) => {
-                            try {
-                                const respos = await validateUser(values);
-                                console.log(respos);
-                                if (respos.status === 200) {
-                                    window.location.href = "/homepage";
-                                }
-                                // navigate("/homepage");
-                            } catch (err) {
-                                showToastMessageA();
-                                console.log(err);
-                            }
-                        }}
-                    >
-                        {({
-                            handleSubmit,
-                            values,
-                            touched,
-                            isSubmitting,
-                            errors,
-                        }) => (
-                            <Form onSubmit={handleSubmit} className="form">
-                                <div className="div-input">
-                                    <Field
-                                        className="form-input "
-                                        placeholder="Dirección de correo electrónico"
-                                        name="user"
-                                        validate={validateEmail}
-                                        style={
-                                            errors.user &&
-                                            touched.user && {
-                                                border: "1px solid red",
-                                            }
-                                        }
-                                    />
-                                    <div>
-                                        {errors.user && touched.user && (
-                                            <p className="error">
-                                                {errors.user}
-                                            </p>
-                                        )}
-                                    </div>
-                                </div>
-                                <div className="div-input">
-                                    <Field
-                                        className="form-input"
-                                        type="password"
-                                        placeholder="Contraseña"
-                                        name="pass"
-                                        validate={validatePass}
-                                        autoComplete="false"
-                                        style={
-                                            errors.pass &&
-                                            touched.pass && {
-                                                border: "1px solid red",
-                                            }
-                                        }
-                                    />
-                                    <div>
-                                        {errors.pass && (
-                                            <p className="error">
-                                                {errors.pass}
-                                            </p>
-                                        )}
-                                    </div>
-                                </div>
-                                <button
-                                    type="submit"
-                                    className="btn-save-login"
-                                    disabled={isSubmitting}
-                                >
-                                    {isSubmitting ? (
-                                        <img
-                                            className="img-load"
-                                            src="/src/public/resources/icons/loading-svgrepo-com.svg"
-                                        />
-                                    ) : (
-                                        "Iniciar sesion"
-                                    )}
-                                </button>
-                            </Form>
-                        )}
-                    </Formik>
-                </div>
-            </section>
+  //validar el campo de la contraseña
+  const validatePass = (values) => {
+    let error = "";
+    if (values.length <= 0) {
+      error = "*Este campo es requerido";
+      return error;
+    }
+  };
+
+  return (
+    <section className="parent">
+      <section className="child child3 div-container">
+        <section className="separate-m separate-1">
+          <div className="div-text-img">
+            <Fade delay={1e2} cascade damping={1e-1}>
+              <p>BY PROJECTERS</p>
+            </Fade>
+            <Fade delay={1e2} cascade damping={1e-1}>
+              <h1 className="text-img">ButterStock</h1>
+            </Fade>
+          </div>
+          <img className="img-room" src={imgRoom} />
         </section>
-    );
+        <section className="separate-m separate-2">
+          <div className="header">
+            <img className="img-logo" src={logo} />
+            <h2>Inicie sesion con la cuenta de ButterStock</h2>
+          </div>
+          <div className="body">
+            <Formik
+              initialValues={{
+                user: "",
+                pass: "",
+              }}
+              // enableReinitialize={true}
+              onSubmit={async (values) => {
+                try {
+                  const respos = await validateUser(values);
+                  if (respos.message === "continue") {
+                    window.location.href = "/homepage";
+                  }
+                  else if (respos.message === "failed"){
+                    showToastMessageNo();
+                  }
+                  else{
+                    showToastMessageA();
+                    console.log(respos.message);
+                  }
+                } catch (err) {
+                  showToastMessageA();
+                  console.log(err);
+                }
+              }}
+            >
+              {({ handleSubmit, values, touched, isSubmitting, errors }) => (
+                <Form onSubmit={handleSubmit} className="form">
+                  <div className="div-input">
+                    <Field
+                      className="form-input "
+                      placeholder="Dirección de correo electrónico"
+                      name="user"
+                      validate={validateEmail}
+                      style={
+                        errors.user &&
+                        touched.user && {
+                          border: "1px solid red",
+                        }
+                      }
+                    />
+                    <div>
+                      {errors.user && touched.user && (
+                        <p className="error">{errors.user}</p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="div-input">
+                    <Field
+                      className="form-input"
+                      type="password"
+                      placeholder="Contraseña"
+                      name="pass"
+                      validate={validatePass}
+                      autoComplete="false"
+                      style={
+                        errors.pass &&
+                        touched.pass && {
+                          border: "1px solid red",
+                        }
+                      }
+                    />
+                    <div>
+                      {errors.pass && touched.pass && (
+                        <p className="error">{errors.pass}</p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="div-input div-input-btn">
+                    <button
+                      type="submit"
+                      className="btn-save-login"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        <AiOutlineLoading3Quarters/>
+                      ) : (
+                        
+                        "Iniciar sesion"
+                      )}
+                    </button>
+                  </div>
+                </Form>
+              )}
+            </Formik>
+              <p className="p-new-user">¿Eres un nuevo usuario?</p><Link className="a-new-user" to="/createRestaurant">crear cuenta</Link>
+          </div>
+        </section>
+      </section>
+    </section>
+  );
 }
 export default LogginUser;

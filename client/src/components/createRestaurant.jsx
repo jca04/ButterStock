@@ -3,7 +3,7 @@ import { Form, Formik, Field } from "formik";
 import { createRestaurant, verifiedRestaurant } from "../api/restaurant.js";
 import { createUser } from "../api/users.js";
 import "../public/css/createRestaurantStyle.css";
-import logo from "../public/resources/logo/logo_versaStock.png";
+import logo from "../public/resources/logo/logo_blanco.jpeg";
 import { toast } from "react-toastify";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";

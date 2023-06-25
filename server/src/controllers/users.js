@@ -1,7 +1,7 @@
 const conn = require("../db/db");
 const { v4: uuidv4 } = require("uuid");
 const { encrypt, verified } = require("../utils/bcrypt.handle");
-const { generateToken } = require("../utils/jwt.handle");
+const { generateToken, decodeToken } = require("../utils/jwt.handle");
 
 const getUsers = async (req, res) => {
     try {
@@ -79,7 +79,6 @@ const loginUser = async (req, res) => {
                             let data = {
                                 token,
                             };
-                            res.cookie("token", token);
                             res.status(200).send(data);
                         } else {
                             res.status(200).json({
@@ -97,8 +96,41 @@ const loginUser = async (req, res) => {
     }
 };
 
+//obtener solo un usuario
+const getUser = async (req, res) => {
+    try {
+        //decodificar el token utilizando la autorizacion del header
+        //para no enviar el token desde la peticion y solo verifica el midleware que si el token es el que es
+        let token = req.headers.authorization.split(" ").pop();
+        let decode = decodeToken(token);
+        let id_user = decode.id;
+
+        conn.query(
+            "SELECT nombre, apellido, correo, admin, superAdmin, activo,  id_restaurant  FROM tbl_users WHERE id_users = ? && activo = 1",
+            [id_user],
+            async (err, result) => {
+                if (err) {
+                    res.status(400).json({ message: error });
+                } else {
+                    if (result.length > 0) {
+                        let dataRes = result[0];
+                        res.status(200).json(dataRes);
+                    } else {
+                        res.status(400).json({
+                            message: "El usuario no existe y/o no esta activo",
+                        });
+                    }
+                }
+            }
+        );
+    } catch (error) {
+        res.status(400).json({ message: error });
+    }
+};
+
 module.exports = {
     getUsers,
     registerUser,
     loginUser,
+    getUser,
 };
