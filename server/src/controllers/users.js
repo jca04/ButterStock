@@ -1,14 +1,12 @@
 const conn = require("../db/db");
 const { v4: uuidv4 } = require("uuid");
 const { encrypt, verified } = require("../utils/bcrypt.handle");
-const { generateToken, decodeToken } = require("../utils/jwt.handle");
+const { generateToken} = require("../utils/jwt.handle");
 
 const getUsers = async (req, res) => {
   try {
-    console.log(req.user);
     conn.query(
-      "SELECT * FROM tbl_users WHERE id_users = ?",
-      [req.user.id],
+      "SELECT * FROM tbl_users",
       (err, result) => {
         if (err) {
           res.status(400).json({ error: err });
@@ -91,15 +89,11 @@ const loginUser = async (req, res) => {
 //obtener solo un usuario
 const getUser = async (req, res) => {
   try {
-    //decodificar el token utilizando la autorizacion del header
-    //para no enviar el token desde la peticion y solo verifica el midleware que si el token es el que es
-    let token = req.headers.authorization.split(" ").pop();
-    let decode = decodeToken(token);
-    let id_user = decode.id;
+    let {id} = req.user;
 
     conn.query(
       "SELECT nombre, apellido, correo, admin, superAdmin, activo,  id_restaurant  FROM tbl_users WHERE id_users = ? && activo = 1",
-      [id_user],
+      [id],
       async (err, result) => {
         if (err){
             res.status(400).json({message: error});

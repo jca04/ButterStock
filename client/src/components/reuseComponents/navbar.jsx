@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
+import { AxioInterceptor } from "../../auth/auth";
 import { Link } from "react-router-dom";
 import "../../public/css/navbarStyle.css";
 import { getUser } from "../../api/navbar.js";
 import { Fade } from "react-awesome-reveal";
-import { toast } from "react-toastify";
-import logo from "../../public/resources/logo/logo_blanco.jpeg";
+import {useDispatch, useSelector} from 'react-redux'
+import {addHome} from "../../features/homepage/homepageSlice";
+
+AxioInterceptor();
 
 function Navbar() {
+  const dispac = useDispatch();
   const [dataUser, setDataUser] = useState({});
 
   useEffect(() => {
@@ -21,6 +25,7 @@ function Navbar() {
         } else {
           let dataUser = res;
           setDataUser(dataUser);
+          dispac(addHome(dataUser));
         }
       } catch (err) {
         console.error(err);
@@ -30,12 +35,59 @@ function Navbar() {
     fecthData();
   }, []);
 
-  console.log(dataUser);
+  const renderSuperAdmin = () => {
+    if (dataUser.superAdmin !== undefined){
+      if (dataUser.superAdmin == 0){
+        return(
+          <li>
+            <Link className="link-navbar" to="../configurations">
+              Mi restaurante
+            </Link>
+          </li>
+        )
+      }else{
+        return (
+          <li>
+            <Link className="link-navbar" to="../allRestaurant">
+              Restaurantes
+            </Link>
+          </li>
+        )
+      }
+    }
+  }
+
+  const renderUser = () => {
+    if (dataUser.admin !== undefined){
+      if (dataUser.admin == 1 && dataUser.superAdmin == 0){
+        return (
+          <li>
+            <Link className="link-navbar" to="../users">
+              Usuarios
+            </Link>
+          </li>
+        )
+      }else{
+        if (dataUser.admin == 1 && dataUser.superAdmin == 1 || dataUser.admin == 0 && dataUser.superAdmin == 1){
+          return (
+            <li>
+              <Link className="link-navbar" to="../SuperAdminUser">
+                Usuarios
+              </Link>
+            </li>
+          )
+        }else{
+          return (null);
+        }
+      }
+    }
+  }
+
   return (
     <nav className="nav-homepage">
       <Fade>
         <section>
-          Bienvenido,{" "}
+          Bienvenido,
           {dataUser.nombre && dataUser.apellido
             ? dataUser.nombre + " " + dataUser.apellido
             : null}
@@ -50,27 +102,8 @@ function Navbar() {
                   Inicio
                 </Link>
               </li>
-              {dataUser.admin && dataUser.admin == 1 ? (
-                <li>
-                  <Link className="link-navbar" to="../users">
-                    Usuarios
-                  </Link>
-                </li>
-              ) : null}
-
-              {dataUser.superAdmin && dataUser.superAdmin == 0 ? (
-                <li>
-                  <Link className="link-navbar" to="../configurations">
-                    Mi restaurante
-                  </Link>
-                </li>
-              ) : (
-                <li>
-                  <Link className="link-navbar" to="../allRestaurant">
-                    Restaurantes
-                  </Link>
-                </li>
-              )}
+              {renderUser()}      
+              {renderSuperAdmin()}     
             </ul>
           </Fade>
         </div>
