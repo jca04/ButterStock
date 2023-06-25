@@ -17,7 +17,9 @@ function App() {
         <Route
           exact
           path="/login"
-          element={!isAuthenticated() ? <LogginUser /> : <Navigate to="/homepage" />}
+          element={
+            !isAuthenticated() ? <LogginUser /> : <Navigate to="/homepage" />
+          }
         />
         <Route
           exact
@@ -25,7 +27,7 @@ function App() {
           element={isAuthenticated() ? <HomePage /> : <Navigate to="/login" />}
         />
         <Route exact path="/createRestaurant" element={<FormRestaurant />} />
-        <Route exact path="/" element={<LandingPage/>}/>
+        <Route exact path="/" element={<LandingPage />} />
       </Routes>
     </>
   );

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { validateUser } from "../api/users.js";
 import { Field, Form, Formik } from "formik";
 import "../public/css/loginUserStyle.css";
@@ -16,6 +16,14 @@ function LogginUser() {
   }, [])
 
   //validar el campo del correo para el login del usuario
+  //si no coinciden
+  const showToastMessageNo = () => {
+    toast.error("Correo y/o contraseña incorrectos", {
+      position: toast.POSITION.TOP_CENTER,
+    });
+  };
+
+  //cuando sucede un error inesperado
   const showToastMessageA = () => {
     toast.error("Ha ocurrido un error, por favor vuelva a intentar !", {
       position: toast.POSITION.TOP_CENTER,
@@ -70,11 +78,16 @@ function LogginUser() {
               onSubmit={async (values) => {
                 try {
                   const respos = await validateUser(values);
-                  console.log(respos);
-                  if (respos.status === 200) {
+                  if (respos.message === "continue") {
                     window.location.href = "/homepage";
                   }
-                  // navigate("/homepage");
+                  else if (respos.message === "failed"){
+                    showToastMessageNo();
+                  }
+                  else{
+                    showToastMessageA();
+                    console.log(respos.message);
+                  }
                 } catch (err) {
                   showToastMessageA();
                   console.log(err);

@@ -11,7 +11,16 @@ const verifyToken = (token) => {
   return verified;
 };
 
+const decodeToken = (token) => {
+  try {
+    return JSON.parse(Buffer.from(token.split(".")[1], "base64").toString());
+  } catch (err) {
+    return { message: err };
+  }
+};
+
 module.exports = {
   generateToken,
   verifyToken,
+  decodeToken,
 };
