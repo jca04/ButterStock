@@ -79,6 +79,7 @@ const loginUser = async (req, res) => {
                             let data = {
                                 token,
                             };
+                            res.cookie("token", token);
                             res.status(200).send(data);
                         } else {
                             res.status(200).json({
