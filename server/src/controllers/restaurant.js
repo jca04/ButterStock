@@ -55,7 +55,15 @@ const create = async (req, res) => {
   }
 };
 
+const getRestaurant = async (req, res) => {
+  console.log(req.user)
+
+  
+  res.status(200).json({"sad":"sad"})
+}
+
 module.exports = {
   create,
-  verifiedRestaurant
+  verifiedRestaurant,
+  getRestaurant
 };

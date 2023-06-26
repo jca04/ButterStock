@@ -1,1 +1,23 @@
 
+.section-homepage-father{
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  margin: auto;
+  width: 90%;
+  margin-top: 10px;
+}
+
+.img-homepage-father{
+  display: block;
+  position: relative;
+  height: 45vh;
+  width: 40%;
+}
+
+.img-homepage-father > img{
+  display: block;
+  position: relative;
+  height: 100%;
+  object-fit: cover;
+}

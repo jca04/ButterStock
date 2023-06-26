@@ -1,23 +1,32 @@
 import React, { useEffect } from "react";
 import "../public/css/homepageStyle.css";
+import logo from '../public/resources/logo/logo_blanco.jpeg';
 import Navbar from "./reuseComponents/navbar";
-import {useDispatch, useSelector} from 'react-redux'
+import { getRestaurant } from "../api/restaurant";
+// import {useDispatch, useSelector} from 'react-redux'
 
 function HomePage() {
-   
-
     document.title = "HomePage";
-    let homeSlice = useSelector(state => state.home);
 
+    useEffect(() => {
+        const fecthData = async() => {
+            const response = await getRestaurant();
 
-   
-    
+        }
+
+        fecthData();
+    }, []);
+
     return (
         <>
             <Navbar/>
-            {console.log(homeSlice)}
             <section className="section-homepage-father">
-                
+                <section className="img-homepage-father">
+                    <img src={logo}/>
+                </section>
+                <section className="">
+
+                </section>
             </section>
         </>
     )
