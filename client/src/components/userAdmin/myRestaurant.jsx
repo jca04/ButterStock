@@ -5,7 +5,6 @@ import {useDispatch, useSelector} from 'react-redux'
 function MyRestaurante(){
 
   let homeSlice = useSelector(state => state.home);
-  console.log(homeSlice)
   return(
     <Navbar/>
   )
