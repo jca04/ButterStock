@@ -2,13 +2,15 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export const homeSlice = createSlice({
   name: 'dataUser',
-  initialState: {},
+  initialState: [],
   reducers: {
     addHome: (state, action) => {
-      state = action.payload;
-      console.log(state)
+      state[0] = action.payload;
+    },
+    deleteHome: (state, action) => {
+      state = [];
     }
   }
 })
-export const {addHome} = homeSlice.actions;
+export const {addHome, deleteHome} = homeSlice.actions;
 export default homeSlice.reducer;

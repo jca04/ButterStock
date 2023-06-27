@@ -5,12 +5,16 @@ import "../../public/css/navbarStyle.css";
 import { getUser } from "../../api/navbar.js";
 import { Fade } from "react-awesome-reveal";
 import {useDispatch, useSelector} from 'react-redux'
-import {addHome} from "../../features/homepage/homepageSlice";
+import {addHome, deleteHome} from "../../features/homepage/homepageSlice";
 
 AxioInterceptor();
 
 function Navbar() {
-  const dispac = useDispatch();
+  //se utiliza para editar el estdao glboal del usuario
+  const dispatch = useDispatch();
+  //estado global trayendo los datos
+  let homeSlice = useSelector(state => state.home);
+  
   const [dataUser, setDataUser] = useState({});
 
   useEffect(() => {
@@ -25,14 +29,23 @@ function Navbar() {
         } else {
           let dataUser = res;
           setDataUser(dataUser);
-          dispac(addHome(dataUser));
+          dispatch(addHome(dataUser));
         }
       } catch (err) {
         console.error(err);
       }
     };
 
-    fecthData();
+
+    //si el estado global tiene datos entonces
+    //se le agrega al estado del navbar para que renderize los datos y no tenga que hacer la misma consulta siempre
+    if (homeSlice.length == 1){
+      setDataUser(homeSlice[0]);
+    }else{
+      //solo pasa cuando se loguea que consulta los datos del usuairo por primera vez
+      fecthData();
+    }
+    
   }, []);
 
   const renderSuperAdmin = () => {
@@ -87,9 +100,9 @@ function Navbar() {
     <nav className="nav-homepage">
       <Fade>
         <section>
-          Bienvenido,
-          {dataUser.nombre && dataUser.apellido
-            ? dataUser.nombre + " " + dataUser.apellido
+          Bienvenido, 
+           {dataUser.nombre && dataUser.apellido
+            ? " " +dataUser.nombre + " " + dataUser.apellido
             : null}
         </section>
       </Fade>
@@ -113,6 +126,7 @@ function Navbar() {
             type="button"
             onClick={() => {
               localStorage.clear();
+              dispatch(deleteHome([]));
               window.location.href = "../login";
             }}
           >

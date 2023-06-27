@@ -4,6 +4,7 @@ const {
     verifiedRestaurant,
     getRestaurants,
 } = require("../controllers/restaurant");
+
 const { v4: uuidv4 } = require("uuid");
 const router = express.Router();
 const multer = require("multer");
