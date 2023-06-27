@@ -10,8 +10,7 @@ function HomePage() {
 
     useEffect(() => {
         const fecthData = async() => {
-            const response = await getRestaurant();
-
+            // const response = await getRestaurant();
         }
 
         fecthData();
