@@ -5,7 +5,7 @@ import { Field, Form, Formik } from "formik";
 import "../public/css/loginUserStyle.css";
 import logo from "../public/resources/logo/logo_blanco.jpeg";
 import { toast } from "react-toastify";
-import imgRoom from "../public/resources/img/room.png";
+import imgRoom from "../public/resources/img/room.jpeg";
 import { Fade } from "react-awesome-reveal";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 

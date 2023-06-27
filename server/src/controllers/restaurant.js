@@ -56,9 +56,9 @@ const create = async (req, res) => {
     }
 };
 
-const getRestaurants = (req, res) => {
+const getRestaurants = async (req, res) => {
     try {
-        conn.query("SELECT * FROM all_restaurants", (err, result) => {
+        await conn.query("SELECT * FROM all_restaurants", (err, result) => {
             if (err) {
                 res.status(400).json({ error: err });
             } else {

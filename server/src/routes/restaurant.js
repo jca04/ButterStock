@@ -40,6 +40,6 @@ const upload = multer({
 
 router.post("/create", upload, create);
 router.post("/verifiedRestaurant", verifiedRestaurant);
-router.get("/", checkJwt, getRestaurants);
+router.get("/getAllRestaurant", checkJwt, getRestaurants);
 
 module.exports = router;
