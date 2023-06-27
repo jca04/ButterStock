@@ -8,6 +8,7 @@ const { v4: uuidv4 } = require("uuid");
 const router = express.Router();
 const multer = require("multer");
 const path = require("path");
+const checkJwt = require("../middlewares/session");
 
 //configurar multer para este restaurant
 const storage = multer.diskStorage({
@@ -38,6 +39,6 @@ const upload = multer({
 
 router.post("/create", upload, create);
 router.post("/verifiedRestaurant", verifiedRestaurant);
-router.get("/", getRestaurants);
+router.get("/", checkJwt, getRestaurants);
 
 module.exports = router;

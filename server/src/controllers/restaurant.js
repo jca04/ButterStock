@@ -58,46 +58,16 @@ const create = async (req, res) => {
 
 const getRestaurants = (req, res) => {
     try {
-        conn.query(
-            "SELECT * FROM tbl_users WHERE id_users = ?",
-            [req.user.id],
-            (err, result) => {
-                if (err) {
-                    res.status(200).json({ error: err });
-                } else {
-                    if (!result[0].length) {
-                        res.status(200).json({ error: "El usuario no existe" });
-                    } else {
-                        if (result[0].activo == 0) {
-                            res.status(200).json({
-                                error: "El usuario no esta activo",
-                            });
-                        } else {
-                            if (result[0].superAdmin == 1) {
-                                conn.query(
-                                    "SELECT * FROM tbl_restaurant",
-                                    (err, result) => {
-                                        if (err) {
-                                            res.status(200).json({
-                                                error: err,
-                                            });
-                                        } else {
-                                            res.status(200).json({ result });
-                                        }
-                                    }
-                                );
-                            } else {
-                                res.status(200).json({
-                                    error: "No tienes permisos para ver los restaurantes",
-                                });
-                            }
-                        }
-                    }
-                }
+        const { id } = req.user;
+        conn.query("SELECT * FROM all_restaurants", (err, result) => {
+            if (err) {
+                res.status(400).json({ error: err });
+            } else {
+                res.status(200).json({ result });
             }
-        );
+        });
     } catch (error) {
-        res.status(400).json({ error });
+        res.status(500).json({ error });
     }
 };
 
