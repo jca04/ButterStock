@@ -5,7 +5,7 @@ const { generateToken } = require("../utils/jwt.handle");
 
 const getUsers = async (req, res) => {
     try {
-        conn.query("SELECT * FROM tbl_users", (err, result) => {
+        conn.query("SELECT * FROM all_users", (err, result) => {
             if (err) {
                 res.status(400).json({ error: err });
             } else {
@@ -96,13 +96,12 @@ const loginUser = async (req, res) => {
 const getUser = async (req, res) => {
     try {
         let { id } = req.user;
-
         conn.query(
             "SELECT nombre, apellido, correo, admin, superAdmin, activo,  id_restaurant  FROM tbl_users WHERE id_users = ? && activo = 1",
             [id],
             async (err, result) => {
                 if (err) {
-                    res.status(400).json({ message: error });
+                    res.status(400).json({ message: err });
                 } else {
                     if (result.length > 0) {
                         let dataRes = result[0];
