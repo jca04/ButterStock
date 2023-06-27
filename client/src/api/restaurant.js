@@ -23,7 +23,6 @@ export const getRestaurant = async () => {
       headers: { Authorization: `Bearer ${tokenStr}` },
     });
 
-    
     return res;
   }catch(error){
 

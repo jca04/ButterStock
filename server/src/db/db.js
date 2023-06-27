@@ -3,7 +3,7 @@ const {promisify} = require('util');
 
 const pool = mysql.createPool({
   host: "localhost",
-  database: "versastock",
+  database: "butterStock",
   user: "root",
   password: "",
 });

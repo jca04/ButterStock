@@ -31,7 +31,7 @@ const upload = multer({
 }).single("image");
 
 
-router.post("/create",  upload, create);
+router.post("/create", upload, create);
 router.post("/verifiedRestaurant", verifiedRestaurant);
 router.get("/getRestaurant", checkJwt , getRestaurant);
 
