@@ -1,23 +1,23 @@
 const mysql = require("mysql");
-const {promisify} = require('util');
+const { promisify } = require("util");
 
 const pool = mysql.createPool({
-  host: "localhost",
-  database: "versastock",
-  user: "root",
-  password: "",
+    host: "localhost",
+    database: "butterstock",
+    user: "root",
+    password: "",
 });
 
 pool.getConnection((err, connection) => {
-  if (err){
-    console.log(err.code)
-  }
+    if (err) {
+        console.log(err.code);
+    }
 
-  if (connection){
-    connection.release();
-    console.log("db is connected")
-  } 
-  return;
+    if (connection) {
+        connection.release();
+        console.log("db is connected");
+    }
+    return;
 });
 
 pool.query = promisify(pool.query);
