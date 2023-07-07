@@ -70,8 +70,35 @@ const getRestaurants = async (req, res) => {
     }
 };
 
+const toggleRestaurant = async (req, res) => {
+    try {
+        let {data} = req.body;
+        if (data.resId){
+            let idRestaurant = data.resId;
+            let value = data.value;
+
+            await conn.query("UPDATE tbl_restaurant SET activo = ? WHERE id_restaurant = ?", [value, idRestaurant], 
+                (err, result) => {
+                    if (err){
+                        res.status(400).json({error: err})
+                    }else{
+                        let response = result.changedRows;
+                        if (response == 1){
+                            res.status(200).json({message: true})
+                        }
+                    }
+                }
+            );
+        }
+    } catch (error) {
+        res.status(500).json({error})
+    }
+} 
+
+
 module.exports = {
     create,
     verifiedRestaurant,
     getRestaurants,
+    toggleRestaurant
 };
