@@ -36,7 +36,7 @@ export const getRestaurant = async () => {
 export const getAllRestaurants = async () => {
   try {
     let tokenStr = getToken();
-    const res = await axios.get("http://localhost:3000/api/restaurant/getAllRestaurant",  {
+      const res = await axios.get("http://localhost:3000/api/restaurant/getAllRestaurant",  {
       headers: { Authorization: `Bearer ${tokenStr}` },
     });
 
@@ -46,6 +46,31 @@ export const getAllRestaurants = async () => {
     }
     
   } catch (error) {
+    return {message: error}
+  }
+}
+
+//desactivar un restaurante
+export const toggleRestaurante = async (id, value) => {
+  try{
+    let tokenStr = getToken();
+      const res = await axios.put("http://localhost:3000/api/restaurant/deactivateRestaurant",  {
+        headers: { Authorization: `Bearer ${tokenStr}` },
+        data: {
+          "resId": id,
+          "value": value
+        }
+      });
+
+      if (res.status == 200){
+        if (res.data.message){
+          return true;
+        }
+      }else{
+        return false;
+      }
+    
+  }catch(error){
     return {message: error}
   }
 }

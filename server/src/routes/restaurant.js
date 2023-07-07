@@ -3,6 +3,7 @@ const {
     create,
     verifiedRestaurant,
     getRestaurants,
+    toggleRestaurant
 } = require("../controllers/restaurant");
 
 const { v4: uuidv4 } = require("uuid");
@@ -41,5 +42,5 @@ const upload = multer({
 router.post("/create", upload, create);
 router.post("/verifiedRestaurant", verifiedRestaurant);
 router.get("/getAllRestaurant", checkJwt, getRestaurants);
-
+router.put("/deactivateRestaurant", checkJwt, toggleRestaurant);
 module.exports = router;

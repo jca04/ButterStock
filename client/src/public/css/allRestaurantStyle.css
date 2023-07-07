@@ -7,3 +7,30 @@
   width: 90%;
   margin-top: 20px;
 }
+
+.btn-allrestaurant-active{
+  height: 60%;
+  width: 100%;
+  background: #0ae30a;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-allrestaurant-desactive{
+  height: 60%;
+  width: 100%;
+  background: red;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-allrestaurant-active:hover, .btn-allrestaurant-desactive:hover{
+  height: 80%;
+  transition: all 200ms ease-in-out;
+}
+
+.disable-btn{
+  background: white;
+}

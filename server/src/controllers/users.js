@@ -82,7 +82,7 @@ const loginUser = async (req, res) => {
                             });
                         }
                     } else {
-                        res.status(200).json({ error: "El usuario no existe" });
+                        res.status(200).json({ error: "El usuario no existe y/o esta desactivado" });
                     }
                 }
             }
