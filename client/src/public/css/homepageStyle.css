@@ -12,7 +12,7 @@
   display: block;
   position: relative;
   height: 45vh;
-  width: 40%;
+  width: 40%; 
 }
 
 .img-homepage-father > img{
@@ -20,4 +20,49 @@
   position: relative;
   height: 100%;
   object-fit: cover;
+}
+
+.zone-work{
+  display: flex;
+  position: relative;
+  width: 90%;
+  background: #FEF7BD;
+  min-height: 40vh;
+  height: 10vh;
+  margin: auto;
+  padding: 5px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.create-respie{
+  display: flex;
+  position: relative;
+  height: 90%;
+  background:white;
+  flex-basis: 20%;
+  border-radius: 5px;
+  box-shadow: 11px 18px 27px -16px rgba(0 ,0 ,0 ,0.7);
+}
+
+.modal-show-respie{
+  display: flex;
+  position: absolute;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background: rgba(0 ,0 ,0 ,0.7);
+  top: 0;
+}
+
+.section-show-respie{
+  display: flex;
+  position: relative;
+  background-color: #fff;
+  height: 90%;
+  width: 90%;
+  margin: auto;
+  overflow-y: auto;
 }
