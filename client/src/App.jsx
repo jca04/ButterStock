@@ -8,6 +8,7 @@ import MyRestaurante from "./components/userAdmin/myRestaurant";
 import AllRestaurant from "./components/superAdmin/allRestaurants";
 import Users from "./components/userAdmin/usersPerRest";
 import SuperAdminUser from "./components/superAdmin/superAdminUsers";
+import ShowRespie from "./components/showRespie";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { isAuthenticated } from "./auth/auth";
@@ -26,6 +27,7 @@ function App() {
         <Route exact path="/AllRestaurant" element={isAuthenticated() ? <AllRestaurant/> : <Navigate to="/login" />}/>
         <Route exact path="/users" element={isAuthenticated() ? <Users/> : <Navigate to="/login" />}/>
         <Route exact path="/SuperAdminUser" element={isAuthenticated() ? <SuperAdminUser/> : <Navigate to="/login" />}/>
+        <Route exact path="respies/all" element={isAuthenticated() ? <ShowRespie/> : <Navigate to="/login" />}/>
       </Routes>
     </>
   );

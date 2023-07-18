@@ -1,11 +1,12 @@
 const mysql = require("mysql");
+const config = require("../config");
 const { promisify } = require("util");
 
 const pool = mysql.createPool({
-  host: "localhost",
-  database: "butterstock",
-  user: "root",
-  password: "",
+  host:  config.DB_HOST,
+  database: config.DB_DATABASE,
+  user: config.DB_USE,
+  password: config.DB_PASS,
 });
 
 pool.getConnection((err, connection) => {
