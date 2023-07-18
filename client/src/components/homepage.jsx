@@ -2,14 +2,13 @@ import React, { useEffect, useState } from "react";
 import "../public/css/homepageStyle.css";
 import logo from "../public/resources/logo/logo_blanco.jpeg";
 import Navbar from "./reuseComponents/navbar";
-import ShowRespie from "./homePageComponents/showRespie";
+import { useDispatch } from "react-redux";
 import { getRestaurant } from "../api/restaurant";
+import { Link } from "react-router-dom";
 // import {useDispatch, useSelector} from 'react-redux'
 
 function HomePage() {
   document.title = "HomePage";
-
-  const [showRespie, setShowRespie] = useState(false);
 
   useEffect(() => {
     const fecthData = async () => {
@@ -18,6 +17,8 @@ function HomePage() {
 
     fecthData();
   }, []);
+
+
 
   return (
     <>
@@ -44,11 +45,11 @@ function HomePage() {
       <section className="zone-work">
         <div
           className="create-respie"
-          onClick={(e) => {
-            e.preventDefault();
-            setShowRespie(true);
-          }}
-        >
+        
+        > <Link to="../respies/all">
+            ir
+        </Link>
+
             <div className="header-work-btn">
                 <h3>Crear, editar, elimianr recetas</h3>
             </div>
@@ -57,26 +58,21 @@ function HomePage() {
           className="create-respie"
           onClick={(e) => {
             e.preventDefault();
-            setShowRespie(true);
           }}
         >sadsad</div>
          <div
           className="create-respie"
           onClick={(e) => {
             e.preventDefault();
-            setShowRespie(true);
           }}
         >asdasd</div>
          <div
           className="create-respie"
           onClick={(e) => {
             e.preventDefault();
-            setShowRespie(true);
           }}
         >asdsad</div>
       </section>
-
-      {showRespie ? <ShowRespie /> : null}
     </>
   );
 }
