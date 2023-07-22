@@ -1,18 +1,42 @@
 import React, { useEffect, useState } from "react";
 import "../public/css/homepageStyle.css";
-import logo from "../public/resources/logo/logo_blanco.jpeg";
 import Navbar from "./reuseComponents/navbar";
-import { useDispatch } from "react-redux";
 import { getRestaurant } from "../api/restaurant";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import { removeToken } from "../auth/auth";
 // import {useDispatch, useSelector} from 'react-redux'
 
 function HomePage() {
+  const showToastMessageNo = () => {
+    toast.error("Ha ocurrido un error", {
+      position: toast.POSITION.TOP_CENTER,
+    });
+  };
+
   document.title = "HomePage";
+
+  const [id_restaurant, setIdRestaurant] = useState(null);
 
   useEffect(() => {
     const fecthData = async () => {
-      // const response = await getRestaurant();
+      const response = await getRestaurant();
+      try {
+        if (Array.isArray(response)){
+          if (response.length > 0){
+            setIdRestaurant(response[0].id_restaurant)
+            return;
+          }
+        }
+
+        removeToken();
+        window.location.href = "/login";
+        showToastMessageNo();          
+        
+        
+      } catch (error) {
+        showToastMessageNo(); 
+      }
     };
 
     fecthData();
@@ -24,9 +48,6 @@ function HomePage() {
     <>
       <Navbar />
       <section className="section-homepage-father">
-        <section className="img-homepage-father">
-          <img src={logo} />
-        </section>
         <section className="">
           <table>
             <thead>
@@ -46,7 +67,7 @@ function HomePage() {
         <div
           className="create-respie"
         
-        > <Link to="../respies/all">
+        > <Link to={`../respies/all/${id_restaurant}`}>
             ir
         </Link>
 

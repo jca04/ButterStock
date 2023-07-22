@@ -18,7 +18,7 @@
   justify-content: end;
 }
 
-.img-nav-homepage{
+.img-nav-homepage{ 
   display: block;
   position: relative;
   height: 100%;
@@ -73,4 +73,102 @@
   transition: all 500ms ease-out;
   box-shadow: 9px 6px 12px -14px;
   border: 1px solid #FEF7BD;
+}
+
+
+.div-hamburguer-responsive{
+  display: none;
+}
+
+.check-responsive{
+  display: none;
+}
+
+@media screen and (max-width:1000px) {
+  .section-link{
+    width: 56%;
+  }
+}
+
+@media screen and (max-width:740px) {
+  .section-link{
+    display: none;
+  }
+
+  .div-hamburguer-responsive{
+    display: flex;
+    font-size: 1.5em;
+    align-items: center;
+    height: 100%;
+  }
+
+  .fade-hamburger-responsive{
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .icon-hamburger-responsive{
+    display: flex;
+  }
+
+  .fade-hamburger-responsive:hover{
+    background: #FEF7BD;
+    border-radius: 50%;
+    padding: 4px;
+    cursor: pointer;
+  }
+
+  .fade-hamburger-responsive:active{
+    /* transition: all 500ms; */
+    animation: giro 0.1s;
+  }
+
+
+  #check:checked + .section-link{
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    left: 0;
+    top: 64px;
+    height: 90vh;
+    padding: 20px;
+    z-index: 1;
+    background: white;
+    width: 56%;
+    align-items: center;
+    justify-content: flex-start;
+    box-shadow: 9px 6px 12px -14px;
+  }
+  #check:checked + .section-link > div{
+    width: 100%;
+    height: auto;
+  }
+  #check:checked + .section-link > div > ul{
+    flex-direction: column;
+  }
+
+  #check:checked + .section-link > div > ul > li{
+    padding: 12px;
+  }
+
+  #check:checked + .section-link > .log-out-nav-homepage {
+    padding: 15px;
+  }
+}
+
+@media screen and (max-width:440px) {
+  .section-link{
+    width: 70% !important;
+  }
+}
+
+@keyframes giro {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(90deg);
+  }
 }

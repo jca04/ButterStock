@@ -95,10 +95,30 @@ const toggleRestaurant = async (req, res) => {
     }
 } 
 
+const getRestaurant = async (req, res) => {
+    try {
+        let id_user = req.user.id;
+        conn.query("SELECT id_restaurant FROM tbl_users WHERE id_users = ?", [id_user], (err, result) => {
+            if (err){
+                res.status(400).json({error})
+            }
+
+            if (result.length > 0){
+                res.status(200).json({result})
+            }else{
+                res.status(200).json({result});
+            }
+        })
+    } catch (error) {
+        res.status(400).json({error})
+    }
+
+}
 
 module.exports = {
     create,
     verifiedRestaurant,
     getRestaurants,
-    toggleRestaurant
+    toggleRestaurant,
+    getRestaurant
 };

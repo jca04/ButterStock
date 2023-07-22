@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import "../public/css/showRespieStyle.css";
 import { Slide } from "react-awesome-reveal";
 import { getResipes, getIngredient } from "../api/resipe";
-import { useDispatch, useSelector } from "react-redux";
 import Navbar from "./reuseComponents/navbar";
+import { useParams } from "react-router-dom";
 import {
   AiOutlineDelete,
   AiOutlineEdit,
@@ -11,6 +11,7 @@ import {
   AiOutlineArrowRight,
   AiOutlineLoading3Quarters,
 } from "react-icons/ai";
+import {MdFoodBank} from "react-icons/md";
 import DataTable from "react-data-table-component";
 import { Form, Formik, Field } from "formik";
 
@@ -21,6 +22,7 @@ function ShowRespie() {
   const [stateEditCreate, setCreateEdir] = useState(false);
   const [stateDataEdit, setEdit] = useState({});
   const [isContinue, setContinue] = useState(false);
+  const {id} = useParams();
   //Loacl variables-
   let columns = [
     {
@@ -46,12 +48,11 @@ function ShowRespie() {
 
   ];
 
-
   useEffect(() => {
     document.title = "Recetas";
     //consulta de todas las recetas
     let getResipesPerRestaurant = async () => {
-      const response = await getResipes();
+      const response = await getResipes(id);
       try {
         if (Array.isArray(response)) {
           if (response.length > 0) {
@@ -71,7 +72,7 @@ function ShowRespie() {
   }, []);
 
   let getIngredients = async (data) => {
-    const response = await getIngredient();
+    const response = await getIngredient(id);
     try {
       if (Array.isArray(response)) {
         let dataIngredient = response;
@@ -97,6 +98,19 @@ function ShowRespie() {
       return data.map((item) => {
         if (stateActive) {
           if (item.activo == 1) {
+            let imagen = "";
+
+            if (item.imagen == null ){
+              if (item.tipo_receta != null){
+                if (item.tipo_receta == "plato"){
+                  imagen = <MdFoodBank/>;
+                }
+              }
+            }else{
+              imagen = <img className="img-show-respie" src={"http://localhost:5173/src/public/uploads/" +item.imagen +""}/>
+            }
+            
+
             return (
               <div className="body-show-respie" key={item.id_receta}>
                 <div className="data-show-respie">
@@ -114,14 +128,7 @@ function ShowRespie() {
                     </div>
                   </div>
                   <div>
-                    <img
-                      className="img-show-respie"
-                      src={
-                        "http://localhost:5173/src/public/uploads/" +
-                        item.imagen +
-                        ""
-                      }
-                    />
+                    {imagen}
                   </div>
                   <div>
                     Mas info <AiOutlineArrowRight />
@@ -163,8 +170,9 @@ function ShowRespie() {
 
   return (
     <>
-      <Navbar />
+      <Navbar/>
       {/* parte para editar y crear una receta */}
+      
       {stateEditCreate ? (
         <Slide className="edit-show-respie" direction="up" duration="500">
           <section className="edit-show-respie-s">
@@ -283,7 +291,6 @@ function ShowRespie() {
 
       {/* Seccion para el tratamiento y vista de todas las recetas */}
 
-      
       <section className="section-show-respie">
       {!isContinue ? (
         <div className="loding-resipe">

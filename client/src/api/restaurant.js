@@ -26,9 +26,17 @@ export const getRestaurant = async () => {
       headers: { Authorization: `Bearer ${tokenStr}` },
     });
 
+    if (res.status == 200){
+      return res.data.result;
+    }
+
+    if (res.status == 400){
+      return {message: "error"}
+    }
+
     return res;
   }catch(error){
-
+    return {message: error};
   }
 }
 

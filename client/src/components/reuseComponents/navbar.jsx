@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { AxioInterceptor } from "../../auth/auth";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "../../public/css/navbarStyle.css";
 import { getUser } from "../../api/navbar.js";
 import { Fade } from "react-awesome-reveal";
 import {useDispatch, useSelector} from 'react-redux'
+import {RxHamburgerMenu} from "react-icons/rx"; 
 import {addHome, deleteHome} from "../../features/homepage/homepageSlice";
 import logo from "../../public/resources/logo/logo_blanco.jpeg";
 
@@ -14,11 +15,10 @@ AxioInterceptor();
 function Navbar() {
   //se utiliza para editar el estdao glboal del usuario
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   //estado global trayendo los datos
   let homeSlice = useSelector(state => state.home);
-  
   const [dataUser, setDataUser] = useState({});
+  
 
   useEffect(() => {
     const fecthData = async () => {
@@ -112,12 +112,13 @@ function Navbar() {
             : null}
         </section>
       </Fade>
-      <section className="section-link">
+      <input type="checkbox" id="check" className="check-responsive"/>
+      <section className="section-link" >
         <div className="link-nav-homepgae">
           <Fade>
             <ul>
               <li>
-                <Link className="link-navbar" to="../homepage">
+                <Link className="link-navbar" to="../homepage"> 
                   Inicio
                 </Link>
               </li>
@@ -140,6 +141,13 @@ function Navbar() {
           </button>
         </div>
       </section>
+      <div className="div-hamburguer-responsive">
+        <Fade className="fade-hamburger-responsive">
+            <label htmlFor="check">
+              <RxHamburgerMenu className="icon-hamburger-responsive"/>
+          </label>
+        </Fade>
+      </div>
     </nav>
   );
 }

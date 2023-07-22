@@ -21,8 +21,9 @@ const createResipe = async (req, res) => {
 
 const getAllResipePerUser =  (req, res) => {
   try {
-    let id_user = req.user.id;
-    conn.query("SELECT r.* FROM tbl_users AS u  INNER JOIN tbl_recetas AS r ON r.id_restaurant = u.id_restaurant WHERE u.id_users = ?", [id_user], (err, result) => {
+    let {data} = req.body;
+    let id = data.id;
+    conn.query("SELECT * FROM tbl_recetas  WHERE id_restaurant = ?", [id], (err, result) => {
       if (err) {
         res.status(400).json({ message: err });
       }

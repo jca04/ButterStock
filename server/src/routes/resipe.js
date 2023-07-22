@@ -5,6 +5,6 @@ const router = express.Router();
 
 
 router.post('/create', checkJwt, createResipe);
-router.get('/resipes', checkJwt,  getAllResipePerUser);
+router.post('/resipes', checkJwt,  getAllResipePerUser);
 
 module.exports = router;
