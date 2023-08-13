@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../public/css/showRespieStyle.css";
-import { Slide } from "react-awesome-reveal";
+import { Fade, Slide } from "react-awesome-reveal";
 import { getResipes, getIngredient } from "../api/resipe";
 import Navbar from "./reuseComponents/navbar";
 import { useParams } from "react-router-dom";
@@ -11,7 +11,8 @@ import {
   AiOutlineArrowRight,
   AiOutlineLoading3Quarters,
 } from "react-icons/ai";
-import {MdFoodBank} from "react-icons/md";
+import { MdOutlineNoFood} from "react-icons/md";
+import {CiEdit} from "react-icons/ci";
 import DataTable from "react-data-table-component";
 import { Form, Formik, Field } from "formik";
 
@@ -22,6 +23,7 @@ function ShowRespie() {
   const [stateEditCreate, setCreateEdir] = useState(false);
   const [stateDataEdit, setEdit] = useState({});
   const [isContinue, setContinue] = useState(false);
+  const [editCreate, setEditCreate] = useState("");
   const {id} = useParams();
   //Loacl variables-
   let columns = [
@@ -103,7 +105,7 @@ function ShowRespie() {
             if (item.imagen == null ){
               if (item.tipo_receta != null){
                 if (item.tipo_receta == "plato"){
-                  imagen = <MdFoodBank/>;
+                  imagen = <MdOutlineNoFood className="img-not-food"/>;
                 }
               }
             }else{
@@ -122,12 +124,13 @@ function ShowRespie() {
                         onClick={() => {
                           setCreateEdir(true);
                           setEdit(item);
+                          setEditCreate("Editar Receta");
                         }}
                       />
                       <AiOutlineDelete className="btn-actions-show-respie" />
                     </div>
                   </div>
-                  <div>
+                  <div className="div-img-icon">
                     {imagen}
                   </div>
                   <div>
@@ -172,22 +175,28 @@ function ShowRespie() {
     <>
       <Navbar/>
       {/* parte para editar y crear una receta */}
-      
       {stateEditCreate ? (
-        <Slide className="edit-show-respie" direction="up" duration="500">
+        <Fade className="edit-show-respie" >
           <section className="edit-show-respie-s">
+            <span className="exit-edit-show-respie" onClick={() => {
+              setCreateEdir(false);
+              setEdit({});
+            }}>
+              x
+            </span>
             <div className="header-edit-respie">
-              <h4>Editar/Crear Receta</h4>
+              <h4>{editCreate}</h4>
             </div>
             <div className="header2-edit-respie">
               <div className="img-edit-respie">
-                <img
+              <CiEdit className="img-create-Respie"/>
+                {/* <img
                   src={
                     "http://localhost:5173/src/public/uploads/" +
                     stateDataEdit.imagen +
                     ""
                   }
-                />
+                /> */}
               </div>
             </div>
             <div className="body-form-edit-respie">
@@ -257,7 +266,7 @@ function ShowRespie() {
                         htmlFor="cantidad_plato"
                         className="label-show-respie"
                       >
-                        Cantidad plato
+                        Cantidad
                       </label>
                       <Field
                         className="input-respie"
@@ -278,6 +287,38 @@ function ShowRespie() {
                         )}
                       </div>
                     </div>
+                    <div className="div-input-respie">
+                      <label
+                        htmlFor="tipo_receta"
+                        className="label-show-respie"
+                      >
+                        Tipo Receta
+                      </label>
+                      <select
+                        className="input-respie"
+                        placeholder="cantidad por plato"
+                        name="tipo_receta"
+                      >
+                        <option value="Plato">Plato</option>
+                        <option value="Bebida">Bebida</option>
+                        <option value="Postre">Postre</option>
+                      </select>
+                    </div>
+                    <div className="div-input-respie">
+                      <label
+                        htmlFor="ingredient"
+                        className="label-show-respie"
+                      >
+                        Ingredientes
+                      </label>
+                      <select
+                        className="input-respie"
+                        placeholder="cantidad por plato"
+                        name=""
+                      >
+                    
+                      </select>
+                    </div>
                     <div className="footer-send-respie">
                       <button type="submit">Enviar</button>
                     </div>
@@ -286,7 +327,7 @@ function ShowRespie() {
               </Formik>
             </div>
           </section>
-        </Slide>
+        </Fade>
       ) : null}
 
       {/* Seccion para el tratamiento y vista de todas las recetas */}
@@ -304,6 +345,12 @@ function ShowRespie() {
             <header className="header-show-respie">
               <h2 className="txt-respies">Lista de recetas</h2>
             </header>
+            <div className="create-new-respie">
+              <button className="btn-create-new-respie" onClick={(e) => {
+                setCreateEdir(true);
+                setEditCreate("Crear nueva receta");
+              }}>Crear nueva receta</button>
+            </div>
             <div className="txt-search-respie">
               <div className="elem-searh-respie">
                 <span className="span-search-respie">

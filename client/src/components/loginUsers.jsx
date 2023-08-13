@@ -3,7 +3,7 @@ import { Link, Navigate } from "react-router-dom";
 import { validateUser } from "../api/users.js";
 import { Field, Form, Formik } from "formik";
 import "../public/css/loginUserStyle.css";
-import logo from "../public/resources/logo/logo_blanco.jpeg";
+import logo from "../public/resources/logo/logo_blanco.png";
 import { toast } from "react-toastify";
 import imgRoom from "../public/resources/img/room.jpeg";
 import { Fade } from "react-awesome-reveal";
