@@ -112,7 +112,7 @@ function Navbar() {
         document.querySelector("."+localtion).classList.add('btn-location');
         clearInterval(interval)
       }
-    },100);
+    },800);
   }
 
   return (
