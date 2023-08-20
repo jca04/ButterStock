@@ -3,7 +3,8 @@ const {
     create,
     verifiedRestaurant,
     getRestaurants,
-    toggleRestaurant
+    toggleRestaurant, 
+    getRestaurant
 } = require("../controllers/restaurant");
 
 const { v4: uuidv4 } = require("uuid");
@@ -43,4 +44,5 @@ router.post("/create", upload, create);
 router.post("/verifiedRestaurant", verifiedRestaurant);
 router.get("/getAllRestaurant", checkJwt, getRestaurants);
 router.put("/deactivateRestaurant", checkJwt, toggleRestaurant);
+router.get("/getRestaurant", checkJwt, getRestaurant)
 module.exports = router;

@@ -5,8 +5,10 @@ import "../../public/css/navbarStyle.css";
 import { getUser } from "../../api/navbar.js";
 import { Fade } from "react-awesome-reveal";
 import {useDispatch, useSelector} from 'react-redux'
+import {RxHamburgerMenu} from "react-icons/rx"; 
 import {addHome, deleteHome} from "../../features/homepage/homepageSlice";
-import logo from "../../public/resources/logo/logo_blanco.jpeg";
+import logo from "../../public/resources/logo/logo_blanco.png";
+
 
 
 AxioInterceptor();
@@ -17,8 +19,8 @@ function Navbar() {
   const navigate = useNavigate();
   //estado global trayendo los datos
   let homeSlice = useSelector(state => state.home);
-  
   const [dataUser, setDataUser] = useState({});
+  
 
   useEffect(() => {
     const fecthData = async () => {
@@ -41,7 +43,6 @@ function Navbar() {
       }
     };
 
-
     //si el estado global tiene datos entonces
     //se le agrega al estado del navbar para que renderize los datos y no tenga que hacer la misma consulta siempre
     if (homeSlice.length == 1){
@@ -50,6 +51,10 @@ function Navbar() {
       //solo pasa cuando se loguea que consulta los datos del usuairo por primera vez
       fecthData();
     }
+
+
+    
+
     
   }, []);
 
@@ -58,7 +63,7 @@ function Navbar() {
       if (dataUser.superAdmin == 0){
         return(
           <li>
-            <Link className="link-navbar" to="../configurations">
+            <Link className="link-navbar configurations" to="../configurations">
               Mi restaurante
             </Link>
           </li>
@@ -66,7 +71,7 @@ function Navbar() {
       }else{
         return (
           <li>
-            <Link className="link-navbar" to="../allRestaurant">
+            <Link className="link-navbar allRestaurant" to="../allRestaurant">
               Restaurantes
             </Link>
           </li>
@@ -77,19 +82,19 @@ function Navbar() {
 
   const renderUser = () => {
     if (dataUser.admin !== undefined){
-      if (dataUser.admin == 1 && dataUser.superAdmin == 0){
-        return (
-          <li>
-            <Link className="link-navbar" to="../users">
-              Usuarios
-            </Link>
-          </li>
-        )
-      }else{
-        if (dataUser.admin == 1 && dataUser.superAdmin == 1 || dataUser.admin == 0 && dataUser.superAdmin == 1){
+      // if (dataUser.admin == 1 && dataUser.superAdmin == 0){
+      //   return (
+      //     <li>
+      //       <Link className="link-navbar" to="../users">
+      //         Usuarios
+      //       </Link>
+      //     </li>
+      //   )
+      // }else{
+        if (dataUser.admin == 1 && dataUser.superAdmin == 1 ){
           return (
             <li>
-              <Link className="link-navbar" to="../SuperAdminUser">
+              <Link className="link-navbar SuperAdminUser" to="../SuperAdminUser">
                 Usuarios
               </Link>
             </li>
@@ -97,32 +102,48 @@ function Navbar() {
         }else{
           return (null);
         }
-      }
+      // }
     }
+  }
+
+  const selectStyle = () => {
+    let localtion = window.location.href.split("/").pop();
+    let classConsult = "."+localtion;
+    if (localtion != "homepage" || localtion != "allRestaurant"){
+    }
+
+    // let interval = setInterval(() => {
+    //   if (document.querySelector(classConsult)){
+    //     document.querySelector(classConsult).classList.add('btn-location');
+    //     clearInterval(interval)
+    //   }
+    // },800);
   }
 
   return (
     <nav className="nav-homepage">
-      {/* <img src={logo}/> */}
-      <Fade>
-        <section>
+      <Fade className="fade-navbar">
+        <section className="section-img-user-navbar">
+          <img className="logo-navbar" src={logo}/>
           Bienvenido, 
            {dataUser.nombre && dataUser.apellido
             ? " " +dataUser.nombre + " " + dataUser.apellido
             : null}
         </section>
       </Fade>
-      <section className="section-link">
+      <input type="checkbox" id="check" className="check-responsive"/>
+      <section className="section-link" >
         <div className="link-nav-homepgae">
           <Fade>
             <ul>
               <li>
-                <Link className="link-navbar" to="../homepage">
+                <Link className="link-navbar homepage" to="../homepage"> 
                   Inicio
                 </Link>
               </li>
               {renderUser()}      
               {renderSuperAdmin()}     
+              {selectStyle()}
             </ul>
           </Fade>
         </div>
@@ -140,6 +161,13 @@ function Navbar() {
           </button>
         </div>
       </section>
+      <div className="div-hamburguer-responsive">
+        <Fade className="fade-hamburger-responsive">
+            <label htmlFor="check">
+              <RxHamburgerMenu className="icon-hamburger-responsive"/>
+          </label>
+        </Fade>
+      </div>
     </nav>
   );
 }
