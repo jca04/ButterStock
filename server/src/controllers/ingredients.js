@@ -21,7 +21,6 @@ const getIngredient = async (req, res) => {
               "unidad_medida" : result[i]["unidad_medida"]
             };
           }
-
           res.status(200).json({ result });
         }
       }

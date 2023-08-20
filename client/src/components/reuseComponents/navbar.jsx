@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { AxioInterceptor } from "../../auth/auth";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import "../../public/css/navbarStyle.css";
 import { getUser } from "../../api/navbar.js";
 import { Fade } from "react-awesome-reveal";
@@ -10,11 +10,13 @@ import {addHome, deleteHome} from "../../features/homepage/homepageSlice";
 import logo from "../../public/resources/logo/logo_blanco.png";
 
 
+
 AxioInterceptor();
 
 function Navbar() {
   //se utiliza para editar el estdao glboal del usuario
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   //estado global trayendo los datos
   let homeSlice = useSelector(state => state.home);
   const [dataUser, setDataUser] = useState({});
