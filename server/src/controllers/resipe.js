@@ -1,17 +1,35 @@
 const conn = require("../db/db");
 const { v4: uuidv4 } = require("uuid");
 
-const createResipe = async (req, res) => {
+const createEditResipe = async (req, res) => {
   try {
-    const {nombre, descripcion, cantidad_per_plato, activo} = req.body;
+    let {id_receta , nombre_receta, descripcion, tipoPlato, cantidad_plato, ingredient, recetaPadre, id_restaurant, imagen} = req.body.data.data;
+    let id_receta_new = uuidv4();
+    //Insertar una nueva receta
+    if (id_receta == ''){
+      let hasRecetaPadre = 0;
+      if (recetaPadre.length > 0){
+        hasRecetaPadre = 1;
+      }
 
-    conn.query("INSERT INTO tbl_recetas (id_receta, nombre_receta, descripcion, cantidad_plato, activo,id_restaurant) VALUES(?,?,?,?,?,?)",["sadsas", nombre, descripcion, cantidad_per_plato, activo, "0403a02e-d594-42e1-b621-efe4dd103526"],
-    (err, result) => {
-      console.log(result)
+      conn.query("INSERT INTO tbl_recetas (id_receta, nombre_receta, imagen, descripcion,cantidad_plato, activo, sub_receta, tipo_receta, id_restaurant ) VALUES(?,?,?,?,?,?,?,?,?)", [id_receta_new, nombre_receta,imagen,descripcion,cantidad_plato,1, hasRecetaPadre, tipoPlato, id_restaurant], 
+      (err, result) => {
+        if (err){
+          res.status(400).json({message: err})
+        }
+
+        if (result.affectedRows == 1){
+          //insertar los datos de los ingredientes en tbl_ingredientes receta para relacionar esta receta con los ingredientes
+          let arr = [];
+          for (var i in ingredient){
+            arr.push([uuidv4(), ingredient[i].unidad_medida, 1, ingredient[i].value, id_receta_new, id_restaurant]);
+          }
+          console.log(arr)
+
+
+        }
+      })
     }
-    );
-    console.log(req.body)
-    res.status(200).json({"message":"mamolan"})
     
   } catch (error) {
     console.log(error)
@@ -23,7 +41,7 @@ const getAllResipePerUser =  (req, res) => {
   try {
     let {data} = req.body;
     let id = data.id;
-    conn.query("SELECT * FROM tbl_recetas  WHERE id_restaurant = ?", [id], (err, result) => {
+    conn.query("SELECT * FROM tbl_recetas  WHERE id_restaurant = ? && activo = 1 ORDER BY tbl_recetas.time_stamp DESC", [id], (err, result) => {
       if (err) {
         res.status(400).json({ message: err });
       }
@@ -39,6 +57,6 @@ const getAllResipePerUser =  (req, res) => {
 }; 
 
 module.exports = {
-  createResipe,
+  createEditResipe,
   getAllResipePerUser
 };

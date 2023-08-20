@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import "../public/css/homepageStyle.css";
 import Navbar from "./reuseComponents/navbar";
+import IconAside from "./reuseComponents/iconsAside";
+import "../public/css/homepageStyle.css";
 import { getRestaurant } from "../api/restaurant";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -127,11 +128,11 @@ function HomePage() {
             </div>
             <div className="links-link-3">
               <div className="txt-links">
-                <h4>Peps</h4>
+                <h4>Inventario</h4>
               </div>
               <div className="see-link-3">
                 <div className="txt-link3">
-                  <h4>Ver Peps</h4>
+                  <h4>Ver inventario</h4>
                   <p>Mira, crea tus reportes pebs</p>
                 </div>
                 <div className="icon-link-3">
@@ -143,6 +144,7 @@ function HomePage() {
           </section>
         </section>
       )}
+      <IconAside/>
     </>
   );
 }

@@ -106,13 +106,16 @@ function Navbar() {
 
   const selectStyle = () => {
     let localtion = window.location.href.split("/").pop();
+    let classConsult = "."+localtion;
+    if (localtion != "homepage" || localtion != "allRestaurant"){
+    }
 
-    let interval = setInterval(() => {
-      if (document.querySelector("."+localtion)){
-        document.querySelector("."+localtion).classList.add('btn-location');
-        clearInterval(interval)
-      }
-    },800);
+    // let interval = setInterval(() => {
+    //   if (document.querySelector(classConsult)){
+    //     document.querySelector(classConsult).classList.add('btn-location');
+    //     clearInterval(interval)
+    //   }
+    // },800);
   }
 
   return (
