@@ -6,5 +6,4 @@ const router = express.Router();
 
 router.post('/create-edit', checkJwt, createEditResipe);
 router.post('/resipes', checkJwt,  getAllResipePerUser);
-
 module.exports = router;

@@ -33,6 +33,7 @@ export const getIngredient = async (id) => {
         data: {
           "id" : id
         }
+
       });
 
       if (response.status == 200){
@@ -45,6 +46,7 @@ export const getIngredient = async (id) => {
     return {message: error};
   }
 }
+
 
 
 export const saveEditRespie = async (data) => {
@@ -66,4 +68,5 @@ export const saveEditRespie = async (data) => {
   } catch (error) {
     return {message: error};
   }
+
 }

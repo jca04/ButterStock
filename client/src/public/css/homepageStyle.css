@@ -1,3 +1,4 @@
+
 .father-homepage{
   display: flex;
   flex-direction: column;
@@ -210,5 +211,6 @@
   .links-link-1, .links-link-2, .links-link-3{
     width: 90%;
   }
-
 } 
+
+

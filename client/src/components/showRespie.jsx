@@ -8,7 +8,7 @@ import {BiImageAdd} from 'react-icons/bi';
 import { BiAddToQueue } from "react-icons/bi";
 import { Field, Form, Formik } from "formik";
 import Select from 'react-select';
-import { toast } from "react-toastify";
+import makeAnimated from 'react-select/animated';
 
 function ShowRespie() {
   //localState
@@ -108,8 +108,6 @@ function ShowRespie() {
     return error;
   }
 
-
-
   const mapResipe = () => {
     return stateResipe.map((row) => {
       let imagen;
@@ -126,7 +124,7 @@ function ShowRespie() {
       contador++;
 
       return (
-        <div className={`box-respie ${contador > 3 ? "box-resise-up" : "" }`} key={row.id_receta} onClick={(e) => {setModal(row);}}>
+        <div className={`box-respie ${contador > 3 ? "box-resise-up" : "" }`} key={row.id_receta} onClick={(e) => {setModal(row)}}>
           <div className="title-box">
             {row.nombre_receta ? row.nombre_receta : "N/A"}
           </div>
@@ -357,6 +355,7 @@ function ShowRespie() {
                             }
                          
                            
+
                         </div>
                         {/* select normal para tipo de plato */}
                         <div className="section-form-colum">  

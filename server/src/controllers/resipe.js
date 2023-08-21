@@ -54,6 +54,7 @@ const getAllResipePerUser =  (req, res) => {
     let {data} = req.body;
     let id = data.id;
     conn.query("SELECT * FROM tbl_recetas  WHERE id_restaurant = ? && activo = 1 ORDER BY tbl_recetas.time_stamp DESC", [id], (err, result) => {
+
       if (err) {
         res.status(400).json({ message: err });
       }
