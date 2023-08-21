@@ -46,7 +46,6 @@ function ShowRespie() {
     //consulta de todas las recetas
     let getResipesPerRestaurant = async () => {
       const response = await getResipes(id);
-      console.log(response)
       try {
         if (Array.isArray(response)) {
           if (response.length > 0) {
@@ -254,13 +253,16 @@ function ShowRespie() {
                           let selectData = document.getElementById("select-"+index).value;
                           let cantidad_ingrediente_a_restar = parseFloat(e.getAttribute('count'));
 
+
                           if (value == ''){
                             value = 0;
                           }else{
                             value = parseFloat(value);
                           }
+
                           dataTable.push([id_ingredientSend, value, selectData, cantidad_ingrediente_a_restar])
                         });
+
 
                         values.ingredient = dataTable;
                         values.recetaPadre = dataRespiSel;
