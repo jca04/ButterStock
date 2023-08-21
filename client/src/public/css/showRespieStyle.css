@@ -304,8 +304,47 @@
   height: 12px;
 }
 
-
 .error{
 font-size: 0.8em;
 color: red;
+}
+
+.table-ingredient-respie{
+  width: 100%;
+  text-align: center;
+  overflow: auto;
+  border-bottom: 1px solid silver;
+  border-top: 1px solid silver;
+}
+
+.table-ingredient-respie > thead {
+  background-color: #FFEA96;
+}
+
+.table-ingredient-respie > thead > tr{
+  font-size: 0.8em;
+  border-bottom: 1px solid silver;
+}
+
+.table-ingredient-respie > thead > tr > th{
+  padding: 10px;
+}
+
+.table-ingredient-respie > tbody > tr > td{
+  font-size: 0.8em;
+  padding: 10px;
+}
+
+.span-table-respie{
+  margin-right: 15px;
+}
+
+.select-respie-gra{
+  padding: 6px;
+  cursor: pointer;
+}
+
+.input-cantidad-resipe{
+  padding: 6px;
+  
 }

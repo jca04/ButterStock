@@ -8,7 +8,7 @@ import {BiImageAdd} from 'react-icons/bi';
 import { BiAddToQueue } from "react-icons/bi";
 import { Field, Form, Formik } from "formik";
 import Select from 'react-select';
-import makeAnimated from 'react-select/animated';
+import { toast } from "react-toastify";
 
 function ShowRespie() {
   //localState
@@ -21,17 +21,24 @@ function ShowRespie() {
   const [dataRespiSel, setRespiSelet] = useState([]);
   const [respiseFormated, setRFormta] = useState([]);
   const [errorselet, setErro] = useState(null);
+  const { id } = useParams();
   const dataTipoPlato = [{"label": "Plato", "value": "Plato"},{"label": "Bebida", "value": "Bebida"},{"label": "Postre", "value": "Postre"},{"label": "Otro", "value": "Otro"}];
   let contador = 0;
-  const { id } = useParams();
+
   //Loacl variables-
+
+  const showToastMessage = () => {
+    toast.success("Guardado con exito", {
+      position: toast.POSITION.TOP_CENTER,
+    });
+  };
+
 
   useEffect(() => {
     document.title = "Recetas";
     //consulta de todas las recetas
     let getResipesPerRestaurant = async () => {
       const response = await getResipes(id);
-      console.log(response)
       try {
         if (Array.isArray(response)) {
           if (response.length > 0) {
@@ -101,6 +108,8 @@ function ShowRespie() {
     return error;
   }
 
+
+
   const mapResipe = () => {
     return stateResipe.map((row) => {
       let imagen;
@@ -117,7 +126,7 @@ function ShowRespie() {
       contador++;
 
       return (
-        <div className={`box-respie ${contador > 3 ? "box-resise-up" : "" }`} key={row.id_receta} onClick={(e) => {setModal(row)}}>
+        <div className={`box-respie ${contador > 3 ? "box-resise-up" : "" }`} key={row.id_receta} onClick={(e) => {setModal(row);}}>
           <div className="title-box">
             {row.nombre_receta ? row.nombre_receta : "N/A"}
           </div>
@@ -135,7 +144,7 @@ function ShowRespie() {
         <h2>Recetas</h2>
       </section>
       <section className="create-respie">
-        <button onClick={() => {setModal({})}}>
+        <button onClick={() => {setModal({}); setInSelect([])}}>
           Agregar nueva receta <BiAddToQueue />
         </button>
       </section>
@@ -206,7 +215,7 @@ function ShowRespie() {
               <div className="aside-respie-rigth">
                 <div className="header-body">
                   <div className="close-modal-respie">
-                      <button type="button" onClick={() => {setModal(null)}}>Cerrar modal <AiOutlineCloseCircle/></button>
+                      <button type="button" onClick={() => {setModal(null); setInSelect([])}}>Cerrar modal <AiOutlineCloseCircle/></button>
                   </div>
                   <div className="title-modal-respie">
                     {activeModal.id_receta !== undefined ? (<h2>Editar receta</h2>) : (<h2>Crear receta o Sub-receta</h2>)}
@@ -234,18 +243,39 @@ function ShowRespie() {
                           return;
                         }
 
-                        values.ingredient = ingredientSelect;
+                        let dataTable = [];
+                        
+                        document.querySelectorAll(".input-cantidad-resipe").forEach((e) => {
+                          let value = e.value;
+                          let index = e.getAttribute('id');
+                          let id_ingredientSend = e.getAttribute('cod'); 
+                          let selectData = document.getElementById("select-"+index).value;
+
+                          if (value == ''){
+                            value = 0;
+                          }else{
+                            value = parseFloat(value);
+                          }
+
+                          dataTable.push([id_ingredientSend, value, selectData])
+                        })
+
+                        values.ingredient = dataTable;
                         values.recetaPadre = dataRespiSel;
                         values.tipoPlato = tipoPlato.value;
                         values.id_restaurant = id;
-                        console.log(values)
-                        const response = await saveEditRespie(values); 
 
+                        const response = await saveEditRespie(values); 
+                        if (response){
+                          //todo funciono bien
+                          showToastMessage();
+                        }else{
+                          //algo fallo y no se deberia fallar
+
+                        }
                         setErro(null)
 
-                        console.log(values)
                       }catch(err){
-
                       }
                     }}
 
@@ -261,7 +291,7 @@ function ShowRespie() {
                           </div>
                           <div className="input-rows-respie">
                             <label htmlFor="cantidad_plato">Cantidad del plato</label>
-                            <Field type="number" name="cantidad_plato" id="cantidad_plato" placeholder="Digite la cantidad del plato"/>
+                            <Field type="number" name="cantidad_plato" id="cantidad_plato" step="1"  placeholder="Digite la cantidad del plato"/>
                             <div className="error-respi"></div>    
                          </div>
                         </div>
@@ -281,12 +311,58 @@ function ShowRespie() {
                               placeholder="Seleccione los ingredientes para crear la receta"
                           />
                            <div className="error-respi"></div>   
+                            {
+                              ingredientSelect.length > 0 ?
+                              (
+                                <table className="table-ingredient-respie">
+                                  <thead>
+                                    <tr>
+                                      <th>Nombre</th>
+                                      <th>Unidad de medida</th>
+                                      <th>Cantidad por ingrediente</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                      {ingredientSelect.map((row, index) => {
+                                        return (
+                                          <tr key={row.label}>
+                                            <td> {row.label} </td>
+                                            <td> 
+                                              <input className="input-cantidad-resipe" step="any" id={`${index}`} cod={`${row.value}`}  type="number" placeholder="cantidad ingrediente"  />  
+                                            </td>
+                                            <td> 
+                                              <span className="span-table-respie">
+                                                Inicial : {row.unidad_medida} 
+                                              </span>
+                                              <select className="select-respie-gra" id={`select-${index}`}>
+                                                {/* <option selected={true} disabled={true} defaultValue={""} value="unidad">Unidad de medida</option> */}
+                                                <option value="und">und</option>
+                                                <option value="gr">gr</option>
+                                                <option value="mg">mg</option>
+                                                <option value="lb">lb</option>
+                                                <option value="kr">kr</option>
+                                                <option value="oz">oz</option>
+                                                <option value="lt">lt</option>
+                                                <option value="cm3">cm3</option>
+                                                <option value="ml">ml</option>
+                                              </select>
+                                             </td>
+                                          </tr>
+                                        )
+                                      })}
+                                  </tbody>
+                                </table>
+                              ) 
+                              : (null)                            
+                            }
+                         
+                           
                         </div>
                         {/* select normal para tipo de plato */}
                         <div className="section-form-colum">  
                           <label htmlFor="tipo_plato">Tipo de Receta</label>
                           {/* Select normal para tipo de plato */}
-                          <Select id="tipo_plato" onChange={(e) => {setTipoPlato(e) }}
+                          <Select id="tipo_plato" onChange={(e) => {setTipoPlato(e);}}
                               closeMenuOnSelect={true}                
                               options={dataTipoPlato}
                               placeholder="Seleccione el tipo de plato"
