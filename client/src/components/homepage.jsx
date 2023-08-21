@@ -10,6 +10,7 @@ import { MdFastfood } from "react-icons/md";
 import Plot from "react-plotly.js";
 import { AiOutlineSearch, AiOutlineLoading3Quarters } from "react-icons/ai";
 
+
 // import {useDispatch, useSelector} from 'react-redux'
 
 function HomePage() {

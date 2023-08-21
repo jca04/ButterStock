@@ -3,11 +3,11 @@ const config = require("../config");
 const { promisify } = require("util");
 
 const pool = mysql.createPool({
-  host: config.DB_HOST,
+  host:  config.DB_HOST,
   database: config.DB_DATABASE,
-  user: config.DB_USER,
-  port: config.DB_PORT,
+  user: config.DB_USE,
   password: config.DB_PASS,
+  
 });
 
 pool.getConnection((err, connection) => {

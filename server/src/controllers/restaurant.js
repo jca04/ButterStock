@@ -98,7 +98,7 @@ const toggleRestaurant = async (req, res) => {
 const getRestaurant = async (req, res) => {
     try {
         let id_user = req.user.id;
-        conn.query("SELECT id_restaurant FROM tbl_users WHERE id_users = ?", [id_user], (err, result) => {
+        conn.query("SELECT tbl_restaurant.id_restaurant FROM tbl_users INNER JOIN tbl_restaurant ON tbl_users.id_restaurant = tbl_restaurant.id_restaurant  WHERE id_users = ? && tbl_restaurant.activo = 1", [id_user], (err, result) => {
             if (err){
                 res.status(400).json({error})
             }

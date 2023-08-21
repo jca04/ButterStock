@@ -305,271 +305,48 @@
   height: 12px;
 }
 
-
 .error{
 font-size: 0.8em;
 color: red;
-=======
-
-.edit-show-respie {
-  display: flex;
-  position: relative;
-  height: 90%;
-  background: white;
-  border-radius: 5px;
-  width: 27%;
-  margin: auto;
 }
 
-.edit-show-respie-s{
-  display: flex;
-  position: relative;
+.table-ingredient-respie{
   width: 100%;
-  height: 100%;
-  overflow-y: auto;
-  flex-direction: column;
-  background: rgb(244,183,0);
-  background: linear-gradient(90deg, rgba(244,183,0,1) 53%, rgba(246,194,38,1) 83%, rgba(255,255,255,1) 100%);
-  border-radius: 5px;
+  text-align: center;
+  overflow: auto;
+  border-bottom: 1px solid silver;
+  border-top: 1px solid silver;
 }
 
-/* zona de recetas */
-.section-show-respie {
-  display: flex;
-  position: relative;
-  flex-direction: column;
-  background-color: #fff;
-  border-radius: 5px;
-  height: 90%;
-  width: 90%;
-  margin: auto;
-  overflow-y: auto;
-  margin-top: 10px;
+.table-ingredient-respie > thead {
+  background-color: #FFEA96;
 }
 
-.header-show-respie {
-  display: flex;
-  width: 100%;
-  height: 11vh;
-  align-items: center;
-}
-.txt-respies {
-  font-weight: 500;
+.table-ingredient-respie > thead > tr{
+  font-size: 0.8em;
+  border-bottom: 1px solid silver;
 }
 
-.img-logo-show-respie {
-  height: 100%;
-  object-fit: cover;
-  background-position: center;
+.table-ingredient-respie > thead > tr > th{
+  padding: 10px;
 }
 
-.btn-hide-respie {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  right: 50px;
+.table-ingredient-respie > tbody > tr > td{
+  font-size: 0.8em;
+  padding: 10px;
+}
+
+.span-table-respie{
+  margin-right: 15px;
+}
+
+.select-respie-gra{
   padding: 6px;
-  border-radius: 5px;
-  border: 1px solid;
-  outline: none;
   cursor: pointer;
-  background-color: #F4B700;
 }
 
-.btn-hide-respie:hover{
-  border: 1px solid #F4B700;
-  box-shadow: 5px 2px 9px 0px rgba(0, 0, 0, 0.2);
-  transition: all 100ms ease-in;
-}
-
-.body-show-respie {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  padding: 20px;
-  width: 90%;
-  margin: auto;
-  justify-content: space-around;
-}
-
-.data-show-respie {
-  background: white;
-  min-height: 50%;
-  display: flex;
-  flex-direction: column;
-  width: 15%;
-  border: 5px solid #fef7bd;
-  border-radius: 14px 14px 0px 0px;
-}
-
-.img-show-respie {
-  display: block;
-  position: relative;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  padding: 10px;
-}
-
-.actions-show-respie {
-  display: flex;
-  flex-direction: row;
-  background-color: #fef7bd;
-  padding: 5px;
-  border-radius: 14px 14px 0px 0px;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.btn-actions-show-respie {
-  cursor: pointer;
-  font-size: 17px;
-}
-
-.btn-actions-show-respie:hover {
-  background: black;
-  /* border-radius: 50%; */
-  color: white;
-  transition: all 500ms;
-}
-
-.txtResipe {
-  width: 60%;
-  text-wrap: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-.first {
-  margin-right: 10px;
-}
-
-.txt-search-respie{
-  display: flex;
-  position: relative;
-  width: 100%;
-}
-
-.elem-searh-respie{
-  display: flex;
-  margin: auto;
-  height: 100%;
-  width: 35%;
-  position: relative;
-}
-
-.txt-search-respie-s{
+.input-cantidad-resipe{
   padding: 6px;
-  width: 100%;
-  font-size: 16px;
-  outline: none;
-  /* border-left: none; */
-  border: none;
-  background-color: #FEF7BD;
+  
 }
 
-.txt-search-respie-s::placeholder{
-background-color: #FEF7BD
-}
-
-.txt-search-respie-s:focus{
-  box-shadow: 9px 6px 9px -1px rgba(0,0,0,0.7);
-  transition: all 100ms ease-in-out;
-}
-
-.span-search-respie{
-  border-radius: 20px 0px 0px 20px;
-  padding: 10px;
-  background-color: #FEF7BD
-}
-
-
-.header-edit-respie{
-  display: flex;
-  padding: 10px;
-  align-items: center;
-  justify-content: center;
-  height: 11vh;
-}
-
-.header-edit-respie > h4{
-  font-weight: 500;
-  font-size: 1.4em;
-}
-
-.header2-edit-respie{
-  display: block;
-  width: 100%;
-  height: 17vh;
-}
-
-.img-edit-respie{
-  display: flex;
-    position: relative;
-    width: 100%;
-    height: 100%;
-    flex-direction: row;
-    justify-content: center;
-}
-
-.img-edit-respie > img{
-  height: 100%;
-    object-fit: cover;
-}
-
-.body-form-edit-respie{
-  display: block;
-  position: relative;
-  height: 100%;
-}
-
-.form-respie{
-  display: flex;
-    flex-direction: column;
-    height: 100%;
-    padding: 20px;
-}
-
-.div-input-respie{
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-}
-
-.input-respie{
-  padding: 9px;
-  border: none;
-  background-color: #FEF7BD;
-
-}
-
-.textarea-respie{
-  padding: 9px;
-}
-
-.ingredients-per-respie{
-  width: 72%;
-}
-
-.loding-resipe{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  height: 100vh;
-}
-
-.loding-resipe > svg{
-  font-size: 3em;
-  /* top: 21px; */
-  margin-top: 233px;
-  animation: giro 1s linear infinite;
-}
-
-@keyframes giro {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }

@@ -20,21 +20,33 @@ const createEditResipe = async (req, res) => {
 
         if (result.affectedRows == 1){
           //insertar los datos de los ingredientes en tbl_ingredientes receta para relacionar esta receta con los ingredientes
-          let arr = [];
+          console.log(ingredient)
+          //ingredient [[id_ingrediente, cantidad_ingrediente en el plato, gramage]]
+
           for (var i in ingredient){
-            arr.push([uuidv4(), ingredient[i].unidad_medida, 1, ingredient[i].value, id_receta_new, id_restaurant]);
+            let id_ingrediente = ingredient[i][0];
+            let cantidad_ingrediente_plato = ingredient[i][1];
+            let unidad_medida_r = ingredient[i][2];
+
+            conn.query("INSERT INTO tbl_ingredientes_receta (id_ingrediente_receta, unidad_medida_r,  cantidad_por_receta, activo, id_ingrediente, id_receta) VALUES (?,?,?,?,?,?)",
+            [uuidv4(), unidad_medida_r, cantidad_ingrediente_plato, 1, id_ingrediente, id_receta_new], 
+            (err, result) => {
+              if (err){
+                return res.json({result: false})
+              }
+            });
           }
-          console.log(arr)
 
-
+          
+          if (result.affectedRows == 1){
+            res.status(200).json({result: true})
+          }
         }
       })
-    }
-    
+    } 
   } catch (error) {
     console.log(error)
   }
- 
 };
 
 const getAllResipePerUser =  (req, res) => {

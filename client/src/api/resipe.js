@@ -2,7 +2,6 @@ import axios from "axios";
 import { getToken } from "../auth/auth";
 
 
-
 export const getResipes = async (id) => {
     try {
         let tokenStr= getToken();
@@ -46,8 +45,9 @@ export const getIngredient = async (id) => {
   } catch (error) {
     return {message: error};
   }
-
 }
+
+
 
 export const saveEditRespie = async (data) => {
   try {
@@ -60,8 +60,11 @@ export const saveEditRespie = async (data) => {
         }
       });
 
-      console.log(response)
-
+      if (response.data){ 
+        if (response.data.result){
+          return response.data.result;
+        }else response.data.result;
+      } 
   } catch (error) {
     return {message: error};
   }
