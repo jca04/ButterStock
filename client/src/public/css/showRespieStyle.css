@@ -347,6 +347,15 @@ color: red;
 
 .input-cantidad-resipe{
   padding: 6px;
-  
 }
 
+.img-box{
+  display: flex;
+  align-items: center;
+}
+
+.img-box > svg{
+  height: 8vh;
+  width: 100%;
+  color: #86761E;
+}

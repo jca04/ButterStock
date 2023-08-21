@@ -47,8 +47,6 @@ export const getIngredient = async (id) => {
   }
 }
 
-
-
 export const saveEditRespie = async (data) => {
   try {
       let tokenStr= getToken();
@@ -61,12 +59,36 @@ export const saveEditRespie = async (data) => {
       });
 
       if (response.data){ 
-        if (response.data.result){
-          return response.data.result;
-        }else response.data.result;
+        if (response.data.message){
+          return response.data.message;
+        }else response.data.message;
       } 
   } catch (error) {
     return {message: error};
   }
+}
 
+export const getResipeLimit = async (id) => {
+  try {
+      let tokenStr= getToken();
+ 
+      const response = await axios.post('http://localhost:3000/api/resipe/getResipeLimit',  {
+        headers: { Authorization: `Bearer ${tokenStr}` },
+        data: {
+          "data": id
+        }
+      });
+
+      if (response.data){
+        if (Array.isArray(response.data.response)){
+          return response.data.response;
+        }else{
+          return false;
+        }
+      }else{
+        false;
+      }
+  } catch (error) {
+    return {message: error};
+  }
 }
