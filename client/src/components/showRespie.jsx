@@ -22,6 +22,7 @@ function ShowRespie() {
   const [dataRespiSel, setRespiSelet] = useState([]);
   const [respiseFormated, setRFormta] = useState([]);
   const [errorselet, setErro] = useState(null);
+  const [ingredientInEdit, setEditIngre] = useState([]);
   const { id } = useParams();
   const dataTipoPlato = [{"label": "Plato", "value": "Plato"},{"label": "Bebida", "value": "Bebida"},{"label": "Postre", "value": "Postre"},{"label": "Otro", "value": "Otro"}];
   let contador = 0;
@@ -46,7 +47,6 @@ function ShowRespie() {
     //consulta de todas las recetas
     let getResipesPerRestaurant = async () => {
       const response = await getResipes(id);
-      console.log(response)
       try {
         if (Array.isArray(response)) {
           if (response.length > 0) {
@@ -106,6 +106,28 @@ function ShowRespie() {
     return error;
   }
 
+
+  const editIngredients = (row) => {
+    if (row.ingredientes != undefined){
+      let ingredientesEdit = row.ingredientes;
+     let arrNew = [];
+     ingredient.filter((fill, index) => {
+        let value = fill.value;
+        ingredientesEdit.filter((fill1, index) => {
+          if (fill1.id_ingrediente == value){
+            arrNew.push({label: fill1.nombre_ingrediente, value: fill1.id_ingrediente, unidad_medida: fill1.unidad_medida_r, cantidad_total_ingrediente1: fill1.cantidad_por_receta, id_ingrediente_receta: fill1.id_ingrediente_receta})
+          }
+        })
+     });
+
+     setEditIngre(arrNew);
+     setInSelect(arrNew);
+     return;
+    }
+
+    setEditIngre([]);
+  }
+
   //Renderizado de la recetas
   const mapResipe = () => {
     return stateResipe.map((row) => {
@@ -125,7 +147,7 @@ function ShowRespie() {
       contador++;
 
       return (
-        <div className={`box-respie ${contador > 3 ? "box-resise-up" : "" }`} key={row.id_receta} onClick={(e) => {setModal(row)}}>
+        <div className={`box-respie ${contador > 3 ? "box-resise-up" : "" }`} key={row.id_receta} onClick={(e) => {setModal(row); editIngredients(row)}}>
           <div className="title-box">
             {row.nombre_receta ? row.nombre_receta : "N/A"}
           </div>
@@ -145,7 +167,7 @@ function ShowRespie() {
         <h2>Recetas</h2>
       </section>
       <section className="create-respie">
-        <button onClick={() => {setModal({}); setInSelect([])}}>
+        <button onClick={() => {setModal({}); setInSelect([]); setEditIngre([])}}>
           Agregar nueva receta <BiAddToQueue />
         </button>
       </section>
@@ -207,7 +229,6 @@ function ShowRespie() {
       {
         activeModal ? (
           <section className="modal-respie-create">
-          {console.log(activeModal)}
             <section className="modal-data-respie">
               <div className="aside-respie-left">
                 <div className="img-aside-respie">
@@ -322,8 +343,10 @@ function ShowRespie() {
                         <div className="section-form-colum">  
                           <label htmlFor="ingredient">Ingredientes</label>
                           {/* Select multiple libreria react select */}
+                          {console.log(ingredientSelect)}
                             <Select onChange={(e) => {setInSelect(e);}}
                               closeMenuOnSelect={false}
+                              defaultValue={ingredientInEdit.length > 0 ? ingredientInEdit : null}
                               isMulti
                               options={ingredient}
                               placeholder="Seleccione los ingredientes para crear la receta"
@@ -336,8 +359,8 @@ function ShowRespie() {
                                   <thead>
                                     <tr>
                                       <th>Nombre</th>
-                                      <th>Unidad de medida</th>
                                       <th>Cantidad por ingrediente</th>
+                                      <th>Unidad de medida</th>
                                     </tr>
                                   </thead>
                                   <tbody>
@@ -346,13 +369,13 @@ function ShowRespie() {
                                           <tr key={row.label}>
                                             <td> {row.label} </td>
                                             <td> 
-                                              <input className="input-cantidad-resipe" step="any" id={`${index}`} cod={`${row.value}`} count={`${row.cantidad_total_ingrediente}`} type="number" placeholder="cantidad ingrediente" />  
+                                              <input className="input-cantidad-resipe" step="any" id={`${index}`} cod={`${row.value}`} count={`${row.cantidad_total_ingrediente}`} type="number" placeholder="cantidad ingrediente" defaultValue={row.cantidad_total_ingrediente1 ? row.cantidad_total_ingrediente1 : 0} />  
                                             </td>
                                             <td> 
                                               <span className="span-table-respie">
                                                 Inicial : {row.unidad_medida} 
                                               </span>
-                                              <select className="select-respie-gra" id={`select-${index}`}>
+                                              <select className="select-respie-gra" id={`select-${index}`} defaultValue={row.unidad_medida != undefined ? row.unidad_medida : ""}>
                                                 {/* <option selected={true} disabled={true} defaultValue={""} value="unidad">Unidad de medida</option> */}
                                                 <option value="und">und</option>
                                                 <option value="gr">gr</option>
@@ -373,16 +396,15 @@ function ShowRespie() {
                               ) 
                               : (null)                            
                             }
-                         
-                           
-
                         </div>
+                        {console.log(activeModal)}
                         {/* select normal para tipo de plato */}
                         <div className="section-form-colum">  
                           <label htmlFor="tipo_plato">Tipo de Receta</label>
                           {/* Select normal para tipo de plato */}
                           <Select id="tipo_plato" onChange={(e) => {setTipoPlato(e);}}
-                              closeMenuOnSelect={true}                
+                              closeMenuOnSelect={true}  
+                              defaultValue={activeModal.tipo_receta ? [{"label": activeModal.tipo_receta, "value": activeModal.tipo_receta}] : ""}              
                               options={dataTipoPlato}
                               placeholder="Seleccione el tipo de plato"
                           />

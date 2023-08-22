@@ -12,15 +12,12 @@ const createEditResipe = async (req, res) => {
         hasRecetaPadre = 1;
       }
 
-     let response =  conn.query("INSERT INTO tbl_recetas (id_receta, nombre_receta, imagen, descripcion,cantidad_plato, activo, sub_receta, tipo_receta, id_restaurant ) VALUES(?,?,?,?,?,?,?,?,?)", [id_receta_new, nombre_receta,imagen,descripcion,cantidad_plato,1, hasRecetaPadre, tipoPlato, id_restaurant], 
+     conn.query("INSERT INTO tbl_recetas (id_receta, nombre_receta, imagen, descripcion,cantidad_plato, activo, sub_receta, tipo_receta, id_restaurant ) VALUES(?,?,?,?,?,?,?,?,?)", [id_receta_new, nombre_receta,imagen,descripcion,cantidad_plato,1, hasRecetaPadre, tipoPlato, id_restaurant], 
       (err, result) => {
         if (err){
-          return err;
+           console.log(err)
         }
-        return true;
-      });
 
-      if (response){
         let arrnew = []
 
         for (var i in ingredient){
@@ -35,7 +32,7 @@ const createEditResipe = async (req, res) => {
           [arrnew], 
           (err, resultdata) => {
             if (err){
-              res.status(500).json({message: err});
+             return res.status(500).json({message: err});
             }
   
             if (resultdata.affectedRows !== undefined){
@@ -45,25 +42,24 @@ const createEditResipe = async (req, res) => {
         }else{
           res.status(200).json({message: true});
         }
-      }else{
-        res.status(500).json({message: response});
-      }
+      });
     } 
   } catch (error) {
     res.status(500).json({message: error})
   }
 };
 
+
+
+
 const getAllResipePerUser =  (req, res) => {
   try {
     let {data} = req.body;
     let id = data.id;
     conn.query("SELECT * FROM tbl_recetas  WHERE id_restaurant = ? && activo = 1 ORDER BY tbl_recetas.time_stamp DESC", [id], (err, result) => {
-
       if (err) {
         res.status(400).json({ message: err });
       }
-
 
       if (result.length > 0 || result.length == 0) {
         let arrConcat = [];
@@ -73,8 +69,8 @@ const getAllResipePerUser =  (req, res) => {
         
         if (arrConcat.length > 0){
           let parseData = "" + arrConcat.join("\",\"") + "";
-          
-          conn.query('SELECT * FROM tbl_ingredientes_receta WHERE id_receta IN ("'+parseData+'") && activo = 1;',
+
+          conn.query('SELECT Ir.*, i.nombre_ingrediente  FROM tbl_ingredientes_receta AS Ir INNER JOIN tbl_ingredientes AS i ON Ir.id_ingrediente = i.id_ingrediente WHERE Ir.id_receta  IN ("'+parseData+'") && Ir.activo = 1;',
            (err, resultIn) => {
             if (err){
               res.status(400).json({ message: err });
@@ -92,19 +88,15 @@ const getAllResipePerUser =  (req, res) => {
                 }
                 // console.log(arrLocal)
                 result[i].ingredientes = arrLocal;
-
               }
             }
             res.status(200).json({ result });
-
-              // console.log(result)
-           })
+           });
         }else{
           res.status(200).json({ result });
         }
       }
     });
-    
   } catch (error) {
       res.status(500).json({message: error});
   }
