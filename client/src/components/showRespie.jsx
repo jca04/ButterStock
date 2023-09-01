@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../public/css/showRespieStyle.css";
 import { getResipes, getIngredient,saveEditRespie, getResipeLimit } from "../api/resipe";
+import {fileUpload} from "../app/cloudinary";
 import Navbar from "./reuseComponents/navbar";
 import { useParams } from "react-router-dom";
 import {AiOutlineSearch, AiOutlineCloseCircle, AiOutlineLoading3Quarters} from "react-icons/ai";
@@ -23,6 +24,7 @@ function ShowRespie() {
   const [respiseFormated, setRFormta] = useState([]);
   const [errorselet, setErro] = useState(null);
   const [ingredientInEdit, setEditIngre] = useState([]);
+  const [subRecetas, setSubRecetas] = useState([]);
   const { id } = useParams();
   const dataTipoPlato = [{"label": "Plato", "value": "Plato"},{"label": "Bebida", "value": "Bebida"},{"label": "Postre", "value": "Postre"},{"label": "Otro", "value": "Otro"}];
   let contador = 0;
@@ -110,12 +112,13 @@ function ShowRespie() {
   const editIngredients = (row) => {
     if (row.ingredientes != undefined){
       let ingredientesEdit = row.ingredientes;
-     let arrNew = [];
-     ingredient.filter((fill, index) => {
+      let arrNew = [];
+      ingredient.filter((fill) => {
         let value = fill.value;
-        ingredientesEdit.filter((fill1, index) => {
+        ingredientesEdit.filter((fill1) => {
           if (fill1.id_ingrediente == value){
-            arrNew.push({label: fill1.nombre_ingrediente, value: fill1.id_ingrediente, unidad_medida: fill1.unidad_medida_r, cantidad_total_ingrediente1: fill1.cantidad_por_receta, id_ingrediente_receta: fill1.id_ingrediente_receta})
+            arrNew.push({label: fill1.nombre_ingrediente, value: fill1.id_ingrediente, unidad_medida: fill1.unidad_medida_r, cantidad_total_ingrediente1: fill1.cantidad_por_receta, id_ingrediente_receta: fill1.id_ingrediente_receta, cantidad_total_ingredeinte_general: fill.cantidad_total_ingrediente
+            })
           }
         })
      });
@@ -128,34 +131,67 @@ function ShowRespie() {
     setEditIngre([]);
   }
 
-  //Renderizado de la recetas
-  const mapResipe = () => {
-    return stateResipe.map((row) => {
-      let imagen;
-      if (row.imagen){
-        imagen = <img className="img-respie" src={`http://localhost:5173/src/public/uploads/${row.imagen}`}/>;
-      }else if (row.tipo_receta === 'Plato'){
-        imagen = <MdOutlineNoFood/>;
-      }else if (row.tipo_receta === 'Bebida'){
-        imagen = <MdNoDrinks/>;
-      }else if (row.tipo_receta === 'Postre'){
-        imagen = "postre";
-      }else{
-        imagen = "otro";
+  const editSubRecetas = (row) => {
+    if (row.sub_recetas != undefined){
+      for (var i in row.sub_recetas){
+        row.sub_recetas[i].label = row.sub_recetas[i].nombre_receta;
+        row.sub_recetas[i].value = row.sub_recetas[i].id_receta;
       }
+    }
 
-      contador++;
+  }
 
-      return (
-        <div className={`box-respie ${contador > 3 ? "box-resise-up" : "" }`} key={row.id_receta} onClick={(e) => {setModal(row); editIngredients(row)}}>
-          <div className="title-box">
-            {row.nombre_receta ? row.nombre_receta : "N/A"}
-          </div>
-          <div className="img-box">{imagen}</div>
-          <div className="btn-box"></div>
-        </div>
-      );
-    });
+
+  //Renderizado de la recetas
+  const mapResipe = (type) => {
+
+    if (stateResipe.length > 0){
+      return stateResipe.map((row) => {
+        let imagen;
+        if (row.imagen){
+          imagen = <img className="img-respie" src={`${row.imagen}`}/>;
+        }else if (row.tipo_receta === 'Plato'){
+          imagen = <MdOutlineNoFood/>;
+        }else if (row.tipo_receta === 'Bebida'){
+          imagen = <MdNoDrinks/>;
+        }else if (row.tipo_receta === 'Postre'){
+          imagen = "postre";
+        }else{
+          imagen = "otro";
+        }
+  
+        contador++;
+  
+        if (type == 0){
+          //recetas
+          if (row.sub_receta == 0){
+            return (
+             <div className={`box-respie ${contador > 3 ? "box-resise-up" : "" }`} key={row.id_receta} onClick={(e) => {setModal(row); editIngredients(row); editSubRecetas(row)}}>
+               <div className="title-box">
+                 {row.nombre_receta ? row.nombre_receta : "N/A"}
+               </div>
+               <div className="img-box">{imagen}</div>
+              <div className="btn-box"></div>
+             </div>
+          );
+         }
+        }else{
+          //sub-recetas
+          if (row.sub_receta == 1){
+            return (
+             <div className={`box-respie ${contador > 3 ? "" : "" }`} key={row.id_receta} onClick={(e) => {setModal(row); editIngredients(row); editSubRecetas(row)}}>
+               <div className="title-box">
+                 {row.nombre_receta ? row.nombre_receta : "N/A"}
+               </div>
+               <div className="img-box">{imagen}</div>
+              <div className="btn-box"></div>
+             </div>
+          );
+         }
+        }
+        
+      });
+    }
   };
 
 
@@ -191,7 +227,7 @@ function ShowRespie() {
           </div>
           {/* Data recetas */}
           <div className="data-respie">
-            {mapResipe()}
+            {mapResipe(0)}
           </div>
         </section>
         {/* Sub-recetas */}
@@ -214,11 +250,7 @@ function ShowRespie() {
             </div>
             {/* Data recetas */}
             <div className="sub-data-respie">
-              <div className="sub-box-respie">
-                <div className="sub-title-box"></div>
-                <div className="sub-img-box"></div>
-                <div className="sub-btn-box"></div>
-              </div>
+            { mapResipe(1)}
             </div>
           </section>
         </section>
@@ -232,7 +264,8 @@ function ShowRespie() {
             <section className="modal-data-respie">
               <div className="aside-respie-left">
                 <div className="img-aside-respie">
-                  {activeModal.imagen == undefined ? (<BiImageAdd/>) : (<img src={`http://localhost:5173/src/public/uploads/${activeModal.imagen}`}/>)}
+                  {activeModal.imagen == undefined ? (<BiImageAdd/>) : (<img src={`${activeModal.imagen}`}/>)}
+                  <input type="file"  id="fileUpload" accept=".jpg, .jpeg, .png" />
                 </div>
               </div>
               <div className="aside-respie-rigth">
@@ -259,37 +292,53 @@ function ShowRespie() {
 
                 
                     onSubmit={async (values) => {
-                     
+                      let imagen = "";
+                      if (document.getElementById('fileUpload').files){
+                        imagen = await fileUpload(document.getElementById('fileUpload').files[0]);
+                      } 
+
                       try{
-                        if (tipoPlato.value == undefined){
-                          setErro("*Este campo es requerido");
-                          return;
+                        if (JSON.stringify(tipoPlato) ==  '{}'){
+                          tipoPlato.value = activeModal.tipo_receta;
                         }
 
                         let dataTable = [];
-                        
                         document.querySelectorAll(".input-cantidad-resipe").forEach((e) => {
                           let value = e.value;
                           let index = e.getAttribute('id');
                           let id_ingredientSend = e.getAttribute('cod'); 
                           let selectData = document.getElementById("select-"+index).value;
                           let cantidad_ingrediente_a_restar = parseFloat(e.getAttribute('count'));
+                          let cantidad_ingrediente_a_restar_general = parseFloat(e.getAttribute('countgeneral'));
+                          if (isNaN(cantidad_ingrediente_a_restar)){
+                            cantidad_ingrediente_a_restar = cantidad_ingrediente_a_restar_general;
+                          }
 
                           if (value == ''){
                             value = 0;
                           }else{
                             value = parseFloat(value);
                           }
-                          dataTable.push([id_ingredientSend, value, selectData, cantidad_ingrediente_a_restar])
+                          dataTable.push([id_ingredientSend, value, selectData, cantidad_ingrediente_a_restar]);
                         });
 
+
                         values.ingredient = dataTable;
-                        values.recetaPadre = dataRespiSel;
+                        values.sub_receta = dataRespiSel;
                         values.tipoPlato = tipoPlato.value;
                         values.id_restaurant = id;
+                        values.imagen = imagen;
+
+console.log(values)
+                        //Editar
+                        if (values.id_receta !== ''){
+                          // if (dataRespiSel.length == 0){
+                          //   values.sub_receta  = activeModal.sub_recetas;
+                          // }
+                        }
 
                         //Guardar o editar la receta
-                        const response = await saveEditRespie(values); 
+                        const response = await saveEditRespie(values);                      
                         if (response){
                           //todo funciono bien
                           if (values.id_receta.length == 0){
@@ -317,7 +366,6 @@ function ShowRespie() {
                         console.log(err)
                       }
                     }}
-
                   >
                     {({ handleSubmit, touched, isSubmitting, errors }) => (
                       <Form onSubmit={handleSubmit} className="form-respie">
@@ -343,7 +391,6 @@ function ShowRespie() {
                         <div className="section-form-colum">  
                           <label htmlFor="ingredient">Ingredientes</label>
                           {/* Select multiple libreria react select */}
-                          {console.log(ingredientSelect)}
                             <Select onChange={(e) => {setInSelect(e);}}
                               closeMenuOnSelect={false}
                               defaultValue={ingredientInEdit.length > 0 ? ingredientInEdit : null}
@@ -369,7 +416,8 @@ function ShowRespie() {
                                           <tr key={row.label}>
                                             <td> {row.label} </td>
                                             <td> 
-                                              <input className="input-cantidad-resipe" step="any" id={`${index}`} cod={`${row.value}`} count={`${row.cantidad_total_ingrediente}`} type="number" placeholder="cantidad ingrediente" defaultValue={row.cantidad_total_ingrediente1 ? row.cantidad_total_ingrediente1 : 0} />  
+                                              <input className="input-cantidad-resipe" step="any" id={`${index}`} cod={`${row.value}`} count={`${row.cantidad_total_ingrediente}`} 
+                                              countgeneral={`${row.cantidad_total_ingredeinte_general}`} type="number" placeholder="cantidad ingrediente" defaultValue={row.cantidad_total_ingrediente1 ? row.cantidad_total_ingrediente1 : 0} />  
                                             </td>
                                             <td> 
                                               <span className="span-table-respie">
@@ -397,9 +445,21 @@ function ShowRespie() {
                               : (null)                            
                             }
                         </div>
-                        {console.log(activeModal)}
-                        {/* select normal para tipo de plato */}
                         <div className="section-form-colum">  
+                          <label htmlFor="Sub-receta">Sub-recetas</label>
+                          {/* Select para las sub-recetas */}
+                          <Select id="Sub-receta" onChange={(e) => {setRespiSelet(e);}}
+                              closeMenuOnSelect={false}
+                              defaultValue={activeModal.sub_recetas}
+                              isMulti                
+                              options={respiseFormated}
+                              placeholder="Seleccione las recetas que necesitan de esta receta para hacerse"
+                          />
+                           <div className="error-respi"></div>   
+                           {console.log(respiseFormated)}
+                        </div>
+                         {/* select normal para tipo de plato */}
+                         <div className="section-form-colum">  
                           <label htmlFor="tipo_plato">Tipo de Receta</label>
                           {/* Select normal para tipo de plato */}
                           <Select id="tipo_plato" onChange={(e) => {setTipoPlato(e);}}
@@ -410,22 +470,10 @@ function ShowRespie() {
                           />
                            <div className="error-respi">{errorselet ? (<p className="error">{errorselet}</p>)  : null}</div>   
                         </div>
-                        <div className="section-form-colum">  
-                          <label htmlFor="Sub-receta">La receta es sub</label>
-                          {/* Select normal para tipo de plato */}
-                          <Select id="tipo_plato" onChange={(e) => {setRespiSelet(e)}}
-                              closeMenuOnSelect={false}
-                              isMulti                
-                              options={respiseFormated}
-                              placeholder="Seleccione las recetas que necesitan de esta receta para hacerse"
-                          />
-                           <div className="error-respi"></div>   
-                        </div>
                         <div className="section-form-colum-btn">  
                             <button type="submit" disabled={isSubmitting}>{isSubmitting ? (
-                              <AiOutlineLoading3Quarters/>
+                              <AiOutlineLoading3Quarters className="load-respie-send"/>
                            ) : (
-                        
                         "Enviar"
                       )}</button>                    
                         </div>
