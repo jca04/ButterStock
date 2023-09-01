@@ -34,6 +34,7 @@ function ShowRespie() {
     });
   };
 
+
   const showToastMessageErr = () => {
     toast.error("Ha ocurrido un error", {
       position: toast.POSITION.TOP_CENTER,
@@ -251,7 +252,6 @@ function ShowRespie() {
                           let index = e.getAttribute('id');
                           let id_ingredientSend = e.getAttribute('cod'); 
                           let selectData = document.getElementById("select-"+index).value;
-                          let cantidad_ingrediente_a_restar = parseFloat(e.getAttribute('count'));
 
 
                           if (value == ''){
@@ -260,9 +260,8 @@ function ShowRespie() {
                             value = parseFloat(value);
                           }
 
-                          dataTable.push([id_ingredientSend, value, selectData, cantidad_ingrediente_a_restar])
-                        });
-
+                          dataTable.push([id_ingredientSend, value, selectData])
+                        })
 
                         values.ingredient = dataTable;
                         values.recetaPadre = dataRespiSel;

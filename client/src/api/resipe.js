@@ -61,10 +61,9 @@ export const saveEditRespie = async (data) => {
       });
 
       if (response.data){ 
-        if (response.data.message){
-          return response.data.message;
-        }else response.data.message;
-
+        if (response.data.result){
+          return response.data.result;
+        }else response.data.result;
       } 
   } catch (error) {
     return {message: error};

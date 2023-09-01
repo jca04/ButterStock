@@ -20,6 +20,7 @@ const createEditResipe = async (req, res) => {
         return true;
       });
 
+
       if (response){
         let arrnew = []
 
@@ -48,6 +49,7 @@ const createEditResipe = async (req, res) => {
       }else{
         res.status(500).json({message: response});
       }
+
     } 
   } catch (error) {
     res.status(500).json({message: error})
