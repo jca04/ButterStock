@@ -360,3 +360,20 @@ color: red;
   color: #86761E;
 }
 
+
+
+.load-respie-send{
+  animation: giro 0.5s infinite
+}
+
+
+@keyframes giro {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(90deg);
+  }
+}
+

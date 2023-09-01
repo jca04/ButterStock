@@ -61,9 +61,9 @@ export const saveEditRespie = async (data) => {
       });
 
       if (response.data){ 
-        if (response.data.result){
-          return response.data.result;
-        }else response.data.result;
+        if (response.data.message){
+          return response.data.message;
+        }else response.data.message;
       } 
   } catch (error) {
     return {message: error};
@@ -80,6 +80,7 @@ export const getResipeLimit = async (id) => {
           "data": id
         }
       });
+
 
       if (response.data){
         if (Array.isArray(response.data.response)){
