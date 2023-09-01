@@ -12,40 +12,47 @@ const createEditResipe = async (req, res) => {
         hasRecetaPadre = 1;
       }
 
-      conn.query("INSERT INTO tbl_recetas (id_receta, nombre_receta, imagen, descripcion,cantidad_plato, activo, sub_receta, tipo_receta, id_restaurant ) VALUES(?,?,?,?,?,?,?,?,?)", [id_receta_new, nombre_receta,imagen,descripcion,cantidad_plato,1, hasRecetaPadre, tipoPlato, id_restaurant], 
+     let response =  conn.query("INSERT INTO tbl_recetas (id_receta, nombre_receta, imagen, descripcion,cantidad_plato, activo, sub_receta, tipo_receta, id_restaurant ) VALUES(?,?,?,?,?,?,?,?,?)", [id_receta_new, nombre_receta,imagen,descripcion,cantidad_plato,1, hasRecetaPadre, tipoPlato, id_restaurant], 
       (err, result) => {
         if (err){
-          res.status(400).json({message: err})
+          return err;
+        }
+        return true;
+      });
+
+
+      if (response){
+        let arrnew = []
+
+        for (var i in ingredient){
+          let id_ingrediente = ingredient[i][0];
+          let cantidad_ingrediente_plato = ingredient[i][1];
+          let unidad_medida_r = ingredient[i][2];
+          arrnew.push([uuidv4(), unidad_medida_r, cantidad_ingrediente_plato, 1, id_ingrediente, id_receta_new])
         }
 
-        if (result.affectedRows == 1){
-          //insertar los datos de los ingredientes en tbl_ingredientes receta para relacionar esta receta con los ingredientes
-          console.log(ingredient)
-          //ingredient [[id_ingrediente, cantidad_ingrediente en el plato, gramage]]
-
-          for (var i in ingredient){
-            let id_ingrediente = ingredient[i][0];
-            let cantidad_ingrediente_plato = ingredient[i][1];
-            let unidad_medida_r = ingredient[i][2];
-
-            conn.query("INSERT INTO tbl_ingredientes_receta (id_ingrediente_receta, unidad_medida_r,  cantidad_por_receta, activo, id_ingrediente, id_receta) VALUES (?,?,?,?,?,?)",
-            [uuidv4(), unidad_medida_r, cantidad_ingrediente_plato, 1, id_ingrediente, id_receta_new], 
-            (err, result) => {
-              if (err){
-                return res.json({result: false})
-              }
-            });
-          }
-
-          
-          if (result.affectedRows == 1){
-            res.status(200).json({result: true})
-          }
+        if (arrnew.length > 0){
+          conn.query("INSERT INTO tbl_ingredientes_receta (id_ingrediente_receta, unidad_medida_r,  cantidad_por_receta, activo,   id_ingrediente, id_receta) VALUES ?",
+          [arrnew], 
+          (err, resultdata) => {
+            if (err){
+              res.status(500).json({message: err});
+            }
+  
+            if (resultdata.affectedRows !== undefined){
+              res.status(200).json({message: true});
+            }
+          });
+        }else{
+          res.status(200).json({message: true});
         }
-      })
+      }else{
+        res.status(500).json({message: response});
+      }
+
     } 
   } catch (error) {
-    console.log(error)
+    res.status(500).json({message: error})
   }
 };
 
@@ -59,8 +66,44 @@ const getAllResipePerUser =  (req, res) => {
         res.status(400).json({ message: err });
       }
 
+
       if (result.length > 0 || result.length == 0) {
-        res.status(200).json({ result });
+        let arrConcat = [];
+        for (var i in result){
+          arrConcat.push(result[i].id_receta);
+        }
+        
+        if (arrConcat.length > 0){
+          let parseData = "" + arrConcat.join("\",\"") + "";
+          
+          conn.query('SELECT * FROM tbl_ingredientes_receta WHERE id_receta IN ("'+parseData+'") && activo = 1;',
+           (err, resultIn) => {
+            if (err){
+              res.status(400).json({ message: err });
+            }
+
+            if (Array.isArray(resultIn)){
+              //comparar datos para entregar con sus respectivos ingredientes
+              for (var i in result){
+                let id_receta = result[i].id_receta;
+                let arrLocal = [];
+                for (var f in resultIn){
+                  if (resultIn[f].id_receta == id_receta){
+                    arrLocal.push(resultIn[f]);
+                  }
+                }
+                // console.log(arrLocal)
+                result[i].ingredientes = arrLocal;
+
+              }
+            }
+            res.status(200).json({ result });
+
+              // console.log(result)
+           })
+        }else{
+          res.status(200).json({ result });
+        }
       }
     });
     
@@ -69,7 +112,32 @@ const getAllResipePerUser =  (req, res) => {
   }
 }; 
 
+
+const getResipeLimit = (req, res) => {
+  try {
+    let {data} = req.body;
+    let id_restaurant = data.data;
+
+    conn.query("SELECT * FROM tbl_recetas  WHERE id_restaurant = ? && activo = 1 ORDER BY tbl_recetas.time_stamp DESC LIMIT 1", [id_restaurant],
+      (err, result) => {
+        if (err){
+          res.status(500).json({message:err})
+        }
+
+        if (result.length > 0){
+          res.status(200).json({response: result});
+        }else{
+          res.status(200).json({response: result});
+        }
+     });
+
+  } catch (error) {
+    res.status(500).json({message: error});
+  }
+}
+
 module.exports = {
   createEditResipe,
-  getAllResipePerUser
+  getAllResipePerUser,
+  getResipeLimit
 };

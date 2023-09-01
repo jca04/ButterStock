@@ -68,5 +68,29 @@ export const saveEditRespie = async (data) => {
   } catch (error) {
     return {message: error};
   }
+}
 
+export const getResipeLimit = async (id) => {
+  try {
+      let tokenStr= getToken();
+ 
+      const response = await axios.post('http://localhost:3000/api/resipe/getResipeLimit',  {
+        headers: { Authorization: `Bearer ${tokenStr}` },
+        data: {
+          "data": id
+        }
+      });
+
+      if (response.data){
+        if (Array.isArray(response.data.response)){
+          return response.data.response;
+        }else{
+          return false;
+        }
+      }else{
+        false;
+      }
+  } catch (error) {
+    return {message: error};
+  }
 }

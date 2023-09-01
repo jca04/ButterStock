@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import "../public/css/showRespieStyle.css";
-import { getResipes, getIngredient,saveEditRespie } from "../api/resipe";
+import { getResipes, getIngredient,saveEditRespie, getResipeLimit } from "../api/resipe";
 import Navbar from "./reuseComponents/navbar";
 import { useParams } from "react-router-dom";
 import {AiOutlineSearch, AiOutlineCloseCircle, AiOutlineLoading3Quarters} from "react-icons/ai";
+import {MdOutlineNoFood, MdNoDrinks} from 'react-icons/md';
 import {BiImageAdd} from 'react-icons/bi';
 import { BiAddToQueue } from "react-icons/bi";
 import { Field, Form, Formik } from "formik";
 import Select from 'react-select';
-import makeAnimated from 'react-select/animated';
+import { toast } from "react-toastify";
 
 function ShowRespie() {
   //localState
@@ -29,6 +30,13 @@ function ShowRespie() {
 
   const showToastMessage = () => {
     toast.success("Guardado con exito", {
+      position: toast.POSITION.TOP_CENTER,
+    });
+  };
+
+
+  const showToastMessageErr = () => {
+    toast.error("Ha ocurrido un error", {
       position: toast.POSITION.TOP_CENTER,
     });
   };
@@ -63,31 +71,21 @@ function ShowRespie() {
     getResipesPerRestaurant();
   }, []);
 
+  //obtener ingredientes
   let getIngredients = async (data) => {
     const response = await getIngredient(id);
     try {
       if (Array.isArray(response)) {
         setIngredient(response);
-        let dataIngredient = response;
-        let newData = data.filter((val, index) => {
-          let ingredient = [];
-          dataIngredient.filter((value) => {
-            if (value.id_receta == val.id_receta) {
-              ingredient.push(value);
-            }
-          });
-
-          return (val.ingredient = ingredient);
-        });
-
         setContinue(true);
-        setResipes(newData);
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error)
+    }
   };
 
 
-
+//validacion en los campos
   const validateTxt = (values) => {
     let error = "";
     if (values.length == 0 ){
@@ -108,17 +106,20 @@ function ShowRespie() {
     return error;
   }
 
+  //Renderizado de la recetas
   const mapResipe = () => {
     return stateResipe.map((row) => {
       let imagen;
       if (row.imagen){
-        imagen = <img  className="img-respie" src={`http://localhost:5173/src/public/uploads/${row.imagen}`}/>;
-      }else if (row.tipo_receta === 'plato'){
-        imagen = "plaot";
-      }else if (row.tipo_receta === 'bebida'){
-        imagen = "bebida";
-      }else if (row.tipo_receta === 'postre'){
+        imagen = <img className="img-respie" src={`http://localhost:5173/src/public/uploads/${row.imagen}`}/>;
+      }else if (row.tipo_receta === 'Plato'){
+        imagen = <MdOutlineNoFood/>;
+      }else if (row.tipo_receta === 'Bebida'){
+        imagen = <MdNoDrinks/>;
+      }else if (row.tipo_receta === 'Postre'){
         imagen = "postre";
+      }else{
+        imagen = "otro";
       }
 
       contador++;
@@ -135,6 +136,8 @@ function ShowRespie() {
     });
   };
 
+
+  // Renderizado del html
   return (
     <>
       <Navbar />
@@ -204,6 +207,7 @@ function ShowRespie() {
       {
         activeModal ? (
           <section className="modal-respie-create">
+          {console.log(activeModal)}
             <section className="modal-data-respie">
               <div className="aside-respie-left">
                 <div className="img-aside-respie">
@@ -249,6 +253,7 @@ function ShowRespie() {
                           let id_ingredientSend = e.getAttribute('cod'); 
                           let selectData = document.getElementById("select-"+index).value;
 
+
                           if (value == ''){
                             value = 0;
                           }else{
@@ -263,22 +268,38 @@ function ShowRespie() {
                         values.tipoPlato = tipoPlato.value;
                         values.id_restaurant = id;
 
+                        //Guardar o editar la receta
                         const response = await saveEditRespie(values); 
                         if (response){
                           //todo funciono bien
-                          showToastMessage();
+                          if (values.id_receta.length == 0){
+                            //se creo una nueva receta falta consultarla para agregarla al arreglo general
+                            const responseLimit = await getResipeLimit(id);
+                            if (Array.isArray(responseLimit)){
+                              stateResipe.unshift(responseLimit[0]);
+                              setResipes(stateResipe);
+                              showToastMessage();
+                              setModal(null); 
+                              setInSelect([]);
+                            }
+                            //cuando se esta editando va por este lado
+                          }else{
+
+                          }
                         }else{
                           //algo fallo y no se deberia fallar
+                          showToastMessageErr();
+                        } 
 
-                        }
-                        setErro(null)
+                        setErro(null);
 
                       }catch(err){
+                        console.log(err)
                       }
                     }}
 
                   >
-                    {({ handleSubmit, values, touched, isSubmitting, errors }) => (
+                    {({ handleSubmit, touched, isSubmitting, errors }) => (
                       <Form onSubmit={handleSubmit} className="form-respie">
                         <Field type="hidden" name="id_receta"/>
                         <div className="section-form-respie">
@@ -326,7 +347,7 @@ function ShowRespie() {
                                           <tr key={row.label}>
                                             <td> {row.label} </td>
                                             <td> 
-                                              <input className="input-cantidad-resipe" step="any" id={`${index}`} cod={`${row.value}`}  type="number" placeholder="cantidad ingrediente"  />  
+                                              <input className="input-cantidad-resipe" step="any" id={`${index}`} cod={`${row.value}`} count={`${row.cantidad_total_ingrediente}`} type="number" placeholder="cantidad ingrediente" />  
                                             </td>
                                             <td> 
                                               <span className="span-table-respie">
