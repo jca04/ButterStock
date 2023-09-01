@@ -24,7 +24,6 @@ function ShowRespie() {
   const [respiseFormated, setRFormta] = useState([]);
   const [errorselet, setErro] = useState(null);
   const [ingredientInEdit, setEditIngre] = useState([]);
-  const [subRecetas, setSubRecetas] = useState([]);
   const { id } = useParams();
   const dataTipoPlato = [{"label": "Plato", "value": "Plato"},{"label": "Bebida", "value": "Bebida"},{"label": "Postre", "value": "Postre"},{"label": "Otro", "value": "Otro"}];
   let contador = 0;
@@ -155,7 +154,7 @@ function ShowRespie() {
         }else if (row.tipo_receta === 'Bebida'){
           imagen = <MdNoDrinks/>;
         }else if (row.tipo_receta === 'Postre'){
-          imagen = "postre";
+          imagen = "postre falta imagen";
         }else{
           imagen = "otro";
         }
