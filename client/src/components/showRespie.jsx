@@ -260,6 +260,7 @@ function ShowRespie() {
       {
         activeModal ? (
           <section className="modal-respie-create">
+          {console.log(activeModal)}
             <section className="modal-data-respie">
               <div className="aside-respie-left">
                 <div className="img-aside-respie">
@@ -302,6 +303,7 @@ function ShowRespie() {
                         }
 
                         let dataTable = [];
+
                         document.querySelectorAll(".input-cantidad-resipe").forEach((e) => {
                           let value = e.value;
                           let index = e.getAttribute('id');

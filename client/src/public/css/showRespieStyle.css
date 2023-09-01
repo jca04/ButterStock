@@ -361,6 +361,7 @@ color: red;
 }
 
 
+
 .load-respie-send{
   animation: giro 0.5s infinite
 }
@@ -375,3 +376,4 @@ color: red;
     transform: rotate(90deg);
   }
 }
+

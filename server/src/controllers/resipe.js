@@ -18,6 +18,8 @@ const createEditResipe = async (req, res) => {
         if (err){
            return res.status(500).json({message: err});
         }
+        return true;
+      });
 
         let arrnew = []
 
@@ -166,6 +168,7 @@ const getAllResipePerUser =  (req, res) => {
         res.status(400).json({ message: err });
       }
 
+
       if (result.length > 0 || result.length == 0) {
         let arrConcat = [];
         for (var i in result){
@@ -177,6 +180,7 @@ const getAllResipePerUser =  (req, res) => {
 
           //Consulta de todos los ingredientes para guardarlos en result y entregar ingrediente por recetas
           conn.query('SELECT Ir.*, i.nombre_ingrediente  FROM tbl_ingredientes_receta AS Ir INNER JOIN tbl_ingredientes AS i ON Ir.id_ingrediente = i.id_ingrediente WHERE Ir.id_receta  IN ("'+parseData+'") && Ir.activo = 1;',
+
            (err, resultIn) => {
             if (err){
               res.status(400).json({ message: err });
