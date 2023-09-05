@@ -1,0 +1,19 @@
+@url = http://localhost:3000/api/users
+@token = JWT-TOKEN
+
+### login
+POST {{ url }}/login
+Content-Type: application/json
+
+{
+    "contraseña": "admin",
+    "correo": "layyagami9@gmail.com"
+}
+
+### Get all users
+GET {{ url }}
+Authorization: Bearer {{ token }}
+
+### GET user login
+GET {{ url }}/getUser
+Authorization: Bearer {{ token }}
