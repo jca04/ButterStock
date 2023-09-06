@@ -2,8 +2,11 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App.jsx";
+import axios from "axios";
 import { Provider } from "react-redux";
-import {store} from "./app/store.js";
+import { store } from "./app/store.js";
+
+axios.defaults.baseURL = "http://localhost:3000/api";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

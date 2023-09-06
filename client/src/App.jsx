@@ -12,6 +12,7 @@ import ShowRespie from "./components/showRespie";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { isAuthenticated } from "./auth/auth";
+import Ingredients from "./components/Ingredients";
 
 function App() {
   return (
@@ -19,15 +20,60 @@ function App() {
       <ToastContainer />
       <Routes>
         <Route exact path="*" element={<NotFound />} />
-        <Route exact path="/login" element={!isAuthenticated() ? <LogginUser /> : <Navigate to="/homepage" />}/>
-        <Route exact path="/homepage" element={isAuthenticated() ? <HomePage /> : <Navigate to="/login" />}/>
+        <Route
+          exact
+          path="/login"
+          element={
+            !isAuthenticated() ? <LogginUser /> : <Navigate to="/homepage" />
+          }
+        />
+        <Route
+          exact
+          path="/homepage"
+          element={isAuthenticated() ? <HomePage /> : <Navigate to="/login" />}
+        />
         <Route exact path="/createRestaurant" element={<FormRestaurant />} />
         <Route exact path="/" element={<LandingPage />} />
-        <Route exact path="/configurations" element={isAuthenticated() ? <MyRestaurante/> : <Navigate to="/login" />}/>
-        <Route exact path="/AllRestaurant" element={isAuthenticated() ? <AllRestaurant/> : <Navigate to="/login" />}/>
-        <Route exact path="/users" element={isAuthenticated() ? <Users/> : <Navigate to="/login" />}/>
-        <Route exact path="/SuperAdminUser" element={isAuthenticated() ? <SuperAdminUser/> : <Navigate to="/login" />}/>
-        <Route exact path="respies/all/:id" element={isAuthenticated() ? <ShowRespie/> : <Navigate to="/login" />}/>
+        <Route
+          exact
+          path="/configurations"
+          element={
+            isAuthenticated() ? <MyRestaurante /> : <Navigate to="/login" />
+          }
+        />
+        <Route
+          exact
+          path="/AllRestaurant"
+          element={
+            isAuthenticated() ? <AllRestaurant /> : <Navigate to="/login" />
+          }
+        />
+        <Route
+          exact
+          path="/users"
+          element={isAuthenticated() ? <Users /> : <Navigate to="/login" />}
+        />
+        <Route
+          exact
+          path="/SuperAdminUser"
+          element={
+            isAuthenticated() ? <SuperAdminUser /> : <Navigate to="/login" />
+          }
+        />
+        <Route
+          exact
+          path="/respies/all/:id"
+          element={
+            isAuthenticated() ? <ShowRespie /> : <Navigate to="/login" />
+          }
+        />
+        <Route
+          exact
+          path="/ingredients/all/:id"
+          element={
+            isAuthenticated() ? <Ingredients /> : <Navigate to="/login" />
+          }
+        />
       </Routes>
     </>
   );
