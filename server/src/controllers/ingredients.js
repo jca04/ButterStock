@@ -68,21 +68,25 @@ const createIngredient = async (req, res) => {
 
 const getIngredientsWithRecipe = async (req, res) => {
   try {
-    const { id_restaurant } = req.body;
+    // , && i.activo = 1 && r.id_restaurant = ? && r.activo = 1 && ir.activo = 1
+    // r.activo
+
+    const id_restaurant = req.body.data.id;
     conn.query(
       "SELECT i.nombre_ingrediente, i.id_ingrediente, i.unidad_medida, " +
         "i.costo_unitario, i.costo_total, i.porcentaje_participacion, " +
-        "i.cantidad_procion_elaborar, i.cantidad_total_ingrediente, " +
-        "r.nombre_receta, r.imagen, r.cantidad_plato, r.activo, " +
+        "i.cantidad_procion_elaborar, i.cantidad_total_ingrediente, i.activo, " +
+        "r.nombre_receta, r.imagen, r.cantidad_plato,  " +
         "r.sub_receta, ir.cantidad_por_receta " +
         "FROM tbl_ingredientes AS i " +
         "INNER JOIN tbl_ingredientes_receta AS ir ON i.id_ingrediente = ir.id_ingrediente " +
         "INNER JOIN tbl_recetas AS r ON r.id_receta = ir.id_receta " +
-        "WHERE i.id_restaurant = ? && i.activo = 1 && r.id_restaurant = ? && r.activo = 1 && ir.activo = 1 " +
-        "ORDER BY i.time_stamp DESC;",
+        "WHERE i.id_restaurant = ?" +
+        "ORDER BY i.time_stamp ASC;",
       [id_restaurant, id_restaurant],
       (err, result) => {
         if (err) {
+          console.log(err);
           res.status(400).json({ message: err });
         } else {
           if (result.length > 0 || result.length == 0) {
@@ -95,6 +99,7 @@ const getIngredientsWithRecipe = async (req, res) => {
                   nombre_ingrediente: row.nombre_ingrediente,
                   unidad_medida: row.unidad_medida,
                   cantidad_total_ingrediente: row.cantidad_total_ingrediente,
+                  ingrediente_activo: row.activo,
                   costo_unitario: row.costo_unitario,
                   cantidad_porcion_elaborar: row.cantidad_procion_elaborar,
                   costo_total: row.costo_total,
@@ -107,7 +112,6 @@ const getIngredientsWithRecipe = async (req, res) => {
                 nombre_receta: row.nombre_receta,
                 imagen: row.imagen,
                 cantidad_plato: row.cantidad_plato,
-                activo: row.activo,
                 sub_receta: row.sub_receta,
                 cantidad_por_receta: row.cantidad_por_receta,
               });
@@ -120,6 +124,46 @@ const getIngredientsWithRecipe = async (req, res) => {
       }
     );
   } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: error });
+  }
+};
+
+const banIngredient = (req, res) => {
+  try {
+    const { id } = req.body;
+
+    conn.query(
+      "UPDATE tbl_ingredientes SET activo = 0 WHERE id_ingrediente = ?",
+      [id],
+      (err, result) => {
+        if (err) {
+          res.status(400).json({ message: err });
+        } else {
+          res.status(200).json({ message: "Ingrediente eliminado" });
+        }
+      }
+    );
+  } catch (error) {
+    res.status(400).json({ message: error });
+  }
+};
+
+const unbanIngredient = (req, res) => {
+  try {
+    const { id } = req.body;
+    conn.query(
+      "UPDATE tbl_ingredientes SET activo = 1 WHERE id_ingrediente = ?",
+      [id],
+      (err, result) => {
+        if (err) {
+          res.status(400).json({ message: err });
+        } else {
+          res.status(200).json({ message: "Ingrediente activado" });
+        }
+      }
+    );
+  } catch (error) {
     res.status(400).json({ message: error });
   }
 };
@@ -128,4 +172,6 @@ module.exports = {
   getIngredient,
   createIngredient,
   getIngredientsWithRecipe,
+  banIngredient,
+  unbanIngredient,
 };
