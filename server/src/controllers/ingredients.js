@@ -14,16 +14,18 @@ const getIngredient = async (req, res) => {
         }
         if (result.length > 0 || result.length == 0) {
           //editar los datos para que lleguen como {label: "" , value:"sad"} para el select
-          for (var i in result) {
+          for (var i in result){ 
+
             result[i] = {
-              label: result[i]["nombre_ingrediente"],
-              value: result[i]["id_ingrediente"],
-              id_receta: result[i]["id_receta"],
-              unidad_medida: result[i]["unidad_medida"],
-              cantidad_total_ingrediente:
-                result[i]["cantidad_total_ingrediente"],
+              "label" : result[i]['nombre_ingrediente'],
+              "value" : result[i]["id_ingrediente"],
+              "id_receta" : result[i]["id_receta"],
+              "unidad_medida" : result[i]["unidad_medida"],
+              "cantidad_total_ingrediente" :result[i]["cantidad_total_ingrediente"]
             };
           }
+
+
           res.status(200).json({ result });
         }
       }
