@@ -8,5 +8,3 @@ module.exports = {
   DB_PASS : process.env.DB_PASS,
   JWT_SECRET: process.env.JWT_SECRET,
 };
- 
-

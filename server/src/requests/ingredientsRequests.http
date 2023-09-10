@@ -1,0 +1,12 @@
+@url = http://localhost:3000/api/ingredient
+
+@jwt = JWT-TOKEN
+
+## GET INGREDIENTS WITH RECIPES
+GET {{url}}/
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+    "id_restaurant": "5959837d-7e15-40c1-abdd-4224a9c3ad9c"
+}

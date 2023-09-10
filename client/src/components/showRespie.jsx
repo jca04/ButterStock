@@ -273,6 +273,7 @@ function ShowRespie() {
       {
         activeModal ? (
           <section className="modal-respie-create">
+          {console.log(activeModal)}
             <section className="modal-data-respie">
               <div className="aside-respie-left">
                 <div className="img-aside-respie">
@@ -315,6 +316,7 @@ function ShowRespie() {
                         }
 
                         let dataTable = [];
+
                         document.querySelectorAll(".input-cantidad-resipe").forEach((e) => {
                           let value = e.value;
                           let index = e.getAttribute('id');
@@ -322,7 +324,7 @@ function ShowRespie() {
                           let selectData = document.getElementById("select-"+index).value;
                           let cantidad_ingrediente_a_restar = parseFloat(e.getAttribute('count'));
                           let cantidad_ingrediente_a_restar_general = parseFloat(e.getAttribute('countgeneral'));
-                          
+
                           if (isNaN(cantidad_ingrediente_a_restar)){
                             cantidad_ingrediente_a_restar = cantidad_ingrediente_a_restar_general;
                           }

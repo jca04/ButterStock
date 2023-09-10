@@ -3,60 +3,51 @@ import { getToken } from "../auth/auth";
 
 
 export const getResipes = async (id) => {
-    try {
-        let tokenStr= getToken();
+  try {
+    let tokenStr = getToken();
 
-        const response = await axios.post('http://localhost:3000/api/resipe/resipes',  {
-          headers: { Authorization: `Bearer ${tokenStr}` },
-          data: {
-            "id": id
-          }
-        });
+    const response = await axios.post("/resipe/resipes", {
+      headers: { Authorization: `Bearer ${tokenStr}` },
+      data: {
+        id: id,
+      },
+    });
 
-        if (response.status == 200){
-          return response.data.result;
-        }else{
-          return {message : "Error"};
-        }
-
-    } catch (error) {
-      return {message: error};
+    if (response.status == 200) {
+      return response.data.result;
+    } else {
+      return { message: "Error" };
     }
-}
+  } catch (error) {
+    return { message: error };
+  }
+};
 
 export const getIngredient = async (id) => {
   try {
-      let tokenStr= getToken();
- 
-      const response = await axios.post('http://localhost:3000/api/ingredient/getIngredients',  {
-        headers: { Authorization: `Bearer ${tokenStr}` },
-        data: {
-          "id" : id
-        }
+    let tokenStr = getToken();
 
-      });
+    const response = await axios.post("/ingredient/getIngredients", {
+      headers: { Authorization: `Bearer ${tokenStr}` },
+      data: {
+        id: id,
+      },
+    });
 
-      if (response.status == 200){
-        return response.data.result;
-      }else{
-        return {message : "Error"};
-      }
-
+    if (response.status == 200) {
+      return response.data.result;
+    } else {
+      return { message: "Error" };
+    }
   } catch (error) {
-    return {message: error};
+    return { message: error };
   }
 }
 
+
 export const saveEditRespie = async (data) => {
   try {
-      let tokenStr= getToken();
- 
-      const response = await axios.post('http://localhost:3000/api/resipe/create-edit',  {
-        headers: { Authorization: `Bearer ${tokenStr}` },
-        data: {
-          "data": data
-        }
-      });
+    let tokenStr = getToken();
 
       if (response.data){ 
         if (response.data.message){
@@ -68,8 +59,9 @@ export const saveEditRespie = async (data) => {
         }else response.data.message;
       } 
   } catch (error) {
-    return {message: error};
+    return { message: error };
   }
+
 }
 
 export const getResipe = async(id, id_receta) => {
@@ -97,3 +89,4 @@ export const getResipe = async(id, id_receta) => {
     console.log(error)
   }
 }
+
