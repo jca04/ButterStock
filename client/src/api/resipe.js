@@ -49,6 +49,13 @@ export const saveEditRespie = async (data) => {
   try {
     let tokenStr = getToken();
 
+    const response = await axios.post('/resipe/create-edit',  {
+      headers: { Authorization: `Bearer ${tokenStr}` },
+      data: {
+        "data": data
+      }
+    });
+
       if (response.data){ 
         if (response.data.message){
           if (response.data.id_create != undefined){
@@ -61,14 +68,13 @@ export const saveEditRespie = async (data) => {
   } catch (error) {
     return { message: error };
   }
-
 }
 
 export const getResipe = async(id, id_receta) => {
   try {
     let tokenStr= getToken();
  
-      const response = await axios.post('http://localhost:3000/api/resipe/getRespieEdit',  {
+      const response = await axios.post('/resipe/getRespieEdit',  {
         headers: { Authorization: `Bearer ${tokenStr}` },
         data: {
           "id": id,
@@ -76,15 +82,17 @@ export const getResipe = async(id, id_receta) => {
         }
       });
 
-      if (response.data){
-        if (Array.isArray(response.data.response)){
-          return response.data.response;
-        }else{
-          return false;
-        }
-      }else{
-        false;
-      }
+      console.log(response)
+
+      if (response.data){ 
+        if (response.data.message){
+          if (response.data.id_create != undefined){
+            return response.data.id_create;
+          }else{
+            return response.data.message;
+          }
+        }else response.data.message;
+      } 
   } catch (error) {
     console.log(error)
   }

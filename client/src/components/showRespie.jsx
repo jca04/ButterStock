@@ -215,7 +215,7 @@ function ShowRespie() {
         <h2>Recetas</h2>
       </section>
       <section className="create-respie">
-        <button onClick={() => {setModal({}); setInSelect([]); setEditIngre([])}}>
+        <button onClick={() => {setModal({}); setInSelect([]); setEditIngre([]); setRespiSelet([])}}>
           Agregar nueva receta <BiAddToQueue />
         </button>
       </section>
@@ -351,6 +351,7 @@ function ShowRespie() {
                           if (values.id_receta.length == 0){
                             //se creo una nueva receta falta consultarla para agregarla al arreglo general
                             const responseLimit = await getResipe(id, response);
+                            console.log(responseLimit)
                             if (Array.isArray(responseLimit)){
                               stateResipe.unshift(responseLimit[0]);
                               setResipes(stateResipe);
@@ -362,6 +363,7 @@ function ShowRespie() {
                             //cuando se esta editando va por este lado
                           }else{
                             const responseEdit = await getResipe(id, values.id_receta);
+                            console.log(responseEdit)
                             if (Array.isArray(responseEdit)){
                               let resultEdit = responseEdit.length > 0 ? responseEdit[0] : {};
                               let id_respie = responseEdit.length > 0 ? responseEdit[0].id_receta : '';
@@ -495,7 +497,6 @@ function ShowRespie() {
                         <div className="section-form-colum">  
                           <label htmlFor="Sub-receta">Sub-recetas</label>
                           {/* Select para las sub-recetas */}
-                          {console.log(activeModal)}
                           <Select id="Sub-receta" onChange={(e) => { setRespiSelet(e);}}
                               closeMenuOnSelect={false}
                               defaultValue={activeModal.sub_recetas}
