@@ -1,0 +1,41 @@
+@url = http://localhost:3000/api/peps
+
+### Ingresar saldo inicial
+POST {{ url }}/saldo/ee9accdf-63c8-40e9-ad01-d90e6cf4e5af
+Content-Type: application/json
+
+{
+    "cantidad": 200,
+    "costo": 5650
+}
+
+
+### Ingresar entrada
+POST {{ url }}/entrada/ee9accdf-63c8-40e9-ad01-d90e6cf4e5af
+Content-Type: application/json
+
+{
+    "cantidad": 150,
+    "costo": 6500
+}
+
+### Calcular peps
+POST {{ url }}/calcular/ee9accdf-63c8-40e9-ad01-d90e6cf4e5af
+Content-Type: application/json
+
+{
+    "cantidad": 250
+}
+
+
+### Obtener las entradas
+GET {{ url }}/entradas-data/ee9accdf-63c8-40e9-ad01-d90e6cf4e5af
+
+### Obtener las salidas
+GET {{ url }}/salidas-data/ee9accdf-63c8-40e9-ad01-d90e6cf4e5af
+
+### Obtener el saldo
+GET {{ url }}/saldo-data/ee9accdf-63c8-40e9-ad01-d90e6cf4e5af
+
+### Eliminar todos los datos
+DELETE {{ url }}/deleteSaldo

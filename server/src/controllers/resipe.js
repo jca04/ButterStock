@@ -35,7 +35,6 @@ const createEditResipe = async (req, res) => {
   
             //Insertar las referencias de la subReceta hacia las recetas padres en la tabla tbl_subRecetas
             let arrIdsSubReceta = []; 
-            if (hasRecetaPadre == 1){
               let arrSubRecetas = [];
               for (var i in sub_receta){
                 arrIdsSubReceta.push(sub_receta[i].value);
@@ -51,15 +50,12 @@ const createEditResipe = async (req, res) => {
 
                   if (result.affectedRows > 0){                    
                     res.status(200).json({message: true, id_create: id_receta_new });
-                  }else{
+                  }else{ 
                     res.status(200).json({message: true, id_create: id_receta_new });
                   }
                  }
                )
               }       
-            }else{
-               res.status(200).json({message: true, id_create: id_receta_new });
-            }
           });
         }
       });
@@ -150,76 +146,87 @@ const createEditResipe = async (req, res) => {
 
 const getAllResipePerUser =  (req, res) => {
   try {
-    let {data} = req.body;
+    let { data } = req.body;
     let id = data.id;
-    conn.query("SELECT * FROM tbl_recetas  WHERE id_restaurant = ? && activo = 1 ORDER BY tbl_recetas.time_stamp DESC", [id], (err, result) => {
-      if (err) {
-        res.status(400).json({ message: err });
-      }
-
-      if (result.length > 0 || result.length == 0) {
-        let arrConcat = [];
-        for (var i in result){
-          arrConcat.push(result[i].id_receta);
+    conn.query(
+      "SELECT * FROM tbl_recetas  WHERE id_restaurant = ? && activo = 1 ORDER BY tbl_recetas.time_stamp DESC",
+      [id],
+      (err, result) => {
+        if (err) {
+          res.status(400).json({ message: err });
         }
-        
-        if (arrConcat.length > 0){
-          let parseData = "" + arrConcat.join("\",\"") + "";
 
-          //Consulta de todos los ingredientes para guardarlos en result y entregar ingrediente por recetas
-          conn.query('SELECT Ir.*, i.nombre_ingrediente  FROM tbl_ingredientes_receta AS Ir INNER JOIN tbl_ingredientes AS i ON Ir.id_ingrediente = i.id_ingrediente WHERE Ir.id_receta  IN ("'+parseData+'") && Ir.activo = 1;',
-           (err, resultIn) => {
-            if (err){
-              res.status(400).json({ message: err });
-            }
+        if (result.length > 0 || result.length == 0) {
+          let arrConcat = [];
+          for (var i in result) {
+            arrConcat.push(result[i].id_receta);
+          }
 
-            if (Array.isArray(resultIn)){
-              //comparar datos para entregar con sus respectivos ingredientes
-              for (var i in result){
-                let id_receta = result[i].id_receta;
-                let arrLocal = [];
+          if (arrConcat.length > 0) {
+            let parseData = "" + arrConcat.join('","') + "";
 
-                for (var f in resultIn){
-                  if (resultIn[f].id_receta == id_receta){
-                    arrLocal.push(resultIn[f]);
+            //Consulta de todos los ingredientes para guardarlos en result y entregar ingrediente por recetas
+            conn.query(
+              'SELECT Ir.*, i.nombre_ingrediente  FROM tbl_ingredientes_receta AS Ir INNER JOIN tbl_ingredientes AS i ON Ir.id_ingrediente = i.id_ingrediente WHERE Ir.id_receta  IN ("' +
+                parseData +
+                '") && Ir.activo = 1;',
+
+              (err, resultIn) => {
+                if (err) {
+                  res.status(400).json({ message: err });
+                }
+
+                if (Array.isArray(resultIn)) {
+                  //comparar datos para entregar con sus respectivos ingredientes
+                  for (var i in result) {
+                    let id_receta = result[i].id_receta;
+                    let arrLocal = [];
+                    for (var f in resultIn) {
+                      if (resultIn[f].id_receta == id_receta) {
+                        arrLocal.push(resultIn[f]);
+                      }
+                    }
+                    // console.log(arrLocal)
+                    result[i].ingredientes = arrLocal;
                   }
                 }
-                // console.log(arrLocal)
-                result[i].ingredientes = arrLocal;
-              }
-            }
 
-            //Consultas las sub_Recetas para todas las recetas
-            conn.query('SELECT sub.*, rec.nombre_receta, rec.imagen, rec.tipo_receta FROM tbl_sub_recetas AS sub INNER JOIN tbl_recetas AS rec ON rec.id_receta =  sub.id_receta WHERE sub.id_receta IN ("'+parseData+'") && sub.activo = 1', 
-            (err, resultSub) => {
-              if (err){
-                return res.status(500).json({message: err})
-              }
+                //Consultas las sub_Recetas para todas las recetas
+                conn.query(
+                  'SELECT sub.*, rec.nombre_receta FROM tbl_sub_recetas AS sub INNER JOIN tbl_recetas AS rec ON rec.id_receta =  sub.id_receta WHERE sub.id_receta IN ("' +
+                    parseData +
+                    '") && sub.activo = 1',
+                  (err, resultSub) => {
+                    if (err) {
+                      return res.status(500).json({ message: err });
+                    }
 
-              for (var i in result){
-                let id_receta = result[i].id_receta;
-                let arrLocal = [];
-                for (var f in resultSub){
-                  if (resultSub[f].cod_receta_padre == id_receta){
-                    arrLocal.push(resultSub[f]);
+                    for (var i in result) {
+                      let id_receta = result[i].id_receta;
+                      let arrLocal = [];
+                      for (var f in resultSub) {
+                        if (resultSub[f].cod_receta_padre == id_receta) {
+                          arrLocal.push(resultSub[f]);
+                        }
+                      }
+                      result[i].sub_recetas = arrLocal;
+                    }
+
+                    res.status(200).json({ result });
                   }
-                }
-                result[i].sub_recetas = arrLocal;
+                );
               }
-
-              
-              res.status(200).json({ result });
-            });
-           });
-        }else{
-          res.status(200).json({ result });
+            );
+          } else {
+            res.status(200).json({ result });
+          }
         }
       }
-    });
+    );
   } catch (error) {
-      res.status(500).json({message: error});
+    res.status(500).json({ message: error });
   }
-}; 
+};
 
 
 //obtengo una receta ya sea editada o creada
@@ -277,7 +284,7 @@ const getResipeEdit = (req, res) => {
               }
 
               
-              res.status(200).json({ response: result });
+              res.status(200).json({ message: result });
             });
            });
       }

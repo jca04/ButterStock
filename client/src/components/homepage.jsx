@@ -48,8 +48,6 @@ function HomePage() {
     fecthData();
   }, []);
 
-
-
   return (
     <>
       <Navbar />
@@ -119,16 +117,21 @@ function HomePage() {
               <div className="txt-links">
                 <h4>Ingredientes</h4>
               </div>
-              <div className="see-link-2">
-                <div className="txt-link2">
-                  <h4>Ver Ingredientes</h4>
-                  <p>Mira, crea y edita tus Ingredientes</p>
+              <Link
+                to={`/ingredients/all/${id_restaurant}`}
+                className="url-homepage"
+              >
+                <div className="see-link-2">
+                  <div className="txt-link2">
+                    <h4>Ver Ingredientes</h4>
+                    <p>Mira, crea y edita tus Ingredientes</p>
+                  </div>
+                  <div className="icon-link-2">
+                    <AiOutlineSearch />
+                  </div>
                 </div>
-                <div className="icon-link-2">
-                  <AiOutlineSearch />
-                </div>
-              </div>
-              <div className="info-3"></div>
+                <div className="info-3"></div>
+              </Link>
             </div>
             <div className="links-link-3">
               <div className="txt-links">
@@ -148,7 +151,7 @@ function HomePage() {
           </section>
         </section>
       )}
-      <IconAside/>
+      <IconAside />
     </>
   );
 }

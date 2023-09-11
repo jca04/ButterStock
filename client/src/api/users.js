@@ -3,25 +3,23 @@ import { setToken } from "../auth/auth";
 
 export const validateUser = async (data) => {
   try {
-    const response = await axios.post("http://localhost:3000/api/users/login", {
+    const response = await axios.post("/users/login", {
       contraseña: data.pass,
       correo: data.user,
     });
-
     if (response.data.token) {
       setToken(response.data.token);
-        return { message: "continue" };
-    } 
+      return { message: "continue" };
+    }
 
-     return { message: "failed"}
-    
+    return { message: "failed" };
   } catch (error) {
     return { message: error };
   }
 };
 
 export const createUser = async (data) => {
-  const res = await axios.post("http://localhost:3000/api/users/register", {
+  const res = await axios.post("/users/register", {
     nombre: data.nombreUser,
     contraseña: data.contraseña,
     apellido: data.apellidoUser,

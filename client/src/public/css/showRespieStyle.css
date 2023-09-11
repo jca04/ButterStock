@@ -1,9 +1,9 @@
 
 .respie-father{
   width: 90%;
-  height: 87vh;
+  min-height: 87vh;
   margin-top: 6px;
-  margin: auto;
+  margin: 19px auto;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -99,6 +99,7 @@
   flex-basis: 30%;
   margin-right: 11px;
   cursor: pointer;
+  margin: 8px;
 }
 
 .box-respie:hover{
