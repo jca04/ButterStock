@@ -100,7 +100,7 @@ const getRestaurant = async (req, res) => {
         let id_user = req.user.id;
         conn.query("SELECT tbl_restaurant.id_restaurant FROM tbl_users INNER JOIN tbl_restaurant ON tbl_users.id_restaurant = tbl_restaurant.id_restaurant  WHERE id_users = ? && tbl_restaurant.activo = 1", [id_user], (err, result) => {
             if (err){
-                res.status(400).json({error})
+                res.status(400).json({err})
             }
 
             if (result.length > 0){

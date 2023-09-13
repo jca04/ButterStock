@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../public/css/showRespieStyle.css";
-import { getResipes, getIngredient,saveEditRespie, getResipe } from "../api/resipe";
+import { getResipes, getIngredient,saveEditRespie, getResipe, editIngredientsResipe } from "../api/resipe";
+import { convertion } from "../public/js/unitConversion";
 import {fileUpload} from "../app/cloudinary";
 import Navbar from "./reuseComponents/navbar";
 import {useParams } from "react-router-dom";
@@ -12,6 +13,8 @@ import { BiAddToQueue } from "react-icons/bi";
 import { Field, Form, Formik } from "formik";
 import Select from 'react-select';
 import { toast } from "react-toastify";
+
+let GLOBALINGREDIENTS = [];
 
 function ShowRespie() {
   //localState
@@ -68,7 +71,7 @@ function ShowRespie() {
             setResipes(response);
           }
 
-          getIngredients(response);
+          getIngredients();
         }
       } catch (error) {
         console.error(error);
@@ -79,10 +82,11 @@ function ShowRespie() {
   }, []);
 
   //obtener ingredientes
-  let getIngredients = async (data) => {
+  let getIngredients = async () => {
     const response = await getIngredient(id);
     try {
       if (Array.isArray(response)) {
+        GLOBALINGREDIENTS = response;
         setIngredient(response);
         setContinue(true);
       }
@@ -118,12 +122,21 @@ function ShowRespie() {
     if (row.ingredientes != undefined){
       let ingredientesEdit = row.ingredientes;
       let arrNew = [];
+      console.log(ingredient)
       ingredient.filter((fill) => {
         let value = fill.value;
         ingredientesEdit.filter((fill1) => {
           if (fill1.id_ingrediente == value){
-            arrNew.push({label: fill1.nombre_ingrediente, value: fill1.id_ingrediente, unidad_medida: fill1.unidad_medida_r, cantidad_total_ingrediente1: fill1.cantidad_por_receta, id_ingrediente_receta: fill1.id_ingrediente_receta, cantidad_total_ingredeinte_general: fill.cantidad_total_ingrediente
-            })
+            arrNew.push({
+              label: fill1.nombre_ingrediente, 
+              value: fill1.id_ingrediente, 
+              unidad_medida: fill1.unidad_medida_r, 
+              cantidad_total_ingrediente1: fill1.cantidad_por_receta, 
+              id_ingrediente_receta: fill1.id_ingrediente_receta, 
+              cantidad_total_ingredeinte_general: fill.cantidad_total_ingrediente,
+              unidad_medida_original: fill1.unidad_original,
+              cantidad_editable: fill.cantidad_editable_ingrediente
+            });
           }
         })
      });
@@ -207,6 +220,42 @@ function ShowRespie() {
     element.classList.remove('circle-respie-active');
   }
 
+  //validar los ingredientes
+  const validateIngredient = (row, index) => {
+    let idInput = 'resipe_'+index;
+    //valor de las unidades de medida
+    let valueSelect = document.getElementById('select-'+index).value;
+    //valor de la cantidad del ingrediente
+    let valueInput = parseFloat(document.getElementById(idInput).value);
+    let unityOriginal = row.unidad_medida;
+    let quantityBD = row.cantidad_total_ingredeinte_general == undefined ? row.cantidad_total_ingrediente : row.cantidad_total_ingredeinte_general ;
+    let valueConvertion = convertion(valueSelect, valueInput , unityOriginal);
+
+    document.getElementById(idInput).classList.remove('input-exhausted');
+    if (document.getElementById(idInput + 'exhauste')) document.getElementById( idInput + 'exhauste').remove();
+
+    if ((quantityBD - valueConvertion) < 0){
+      const p = document.createElement('p');
+      p.textContent = 'Agotado';
+      p.setAttribute('id',idInput +'exhauste')
+      document.getElementById(idInput).parentNode.appendChild(p);
+      document.getElementById(idInput).classList.add('input-exhausted');
+    }
+
+    //Agregar a GLOBALINGREDIENTS la cantidad de ingrediente que se resta desde aqui
+    GLOBALINGREDIENTS = GLOBALINGREDIENTS.filter((rowIn) => {
+      if (row.value == rowIn.value){
+        rowIn.cantidad_editable_ingrediente = quantityBD - valueConvertion;
+        document.getElementById('total_'+index).textContent = '' + quantityBD - valueConvertion;
+        rowIn.send = true
+      }
+      return rowIn;
+    });
+
+    console.log(JSON.stringify(GLOBALINGREDIENTS))
+
+  }
+
   // Renderizado del html
   return (
     <>
@@ -273,7 +322,6 @@ function ShowRespie() {
       {
         activeModal ? (
           <section className="modal-respie-create">
-          {console.log(activeModal)}
             <section className="modal-data-respie">
               <div className="aside-respie-left">
                 <div className="img-aside-respie">
@@ -319,7 +367,7 @@ function ShowRespie() {
 
                         document.querySelectorAll(".input-cantidad-resipe").forEach((e) => {
                           let value = e.value;
-                          let index = e.getAttribute('id');
+                          let index = e.getAttribute('index');
                           let id_ingredientSend = e.getAttribute('cod'); 
                           let selectData = document.getElementById("select-"+index).value;
                           let cantidad_ingrediente_a_restar = parseFloat(e.getAttribute('count'));
@@ -338,7 +386,7 @@ function ShowRespie() {
                         });
 
                         values.ingredientes = dataTable;
-                        values.sub_receta = dataRespiSel;
+                        values.sub_receta =  !isSubRespie ? dataRespiSel : [];
                         values.tipoPlato = tipoPlato.value;
                         values.id_restaurant = id;
                         values.imagen = imagen;
@@ -355,19 +403,14 @@ function ShowRespie() {
                             if (Array.isArray(responseLimit)){
                               stateResipe.unshift(responseLimit[0]);
                               setResipes(stateResipe);
-                              showToastMessage();
-                              setModal(null); 
-                              setInSelect([]);
-                              activeDesactieToggle();
                             }
                             //cuando se esta editando va por este lado
                           }else{
                             const responseEdit = await getResipe(id, values.id_receta);
-                            console.log(responseEdit)
+
                             if (Array.isArray(responseEdit)){
                               let resultEdit = responseEdit.length > 0 ? responseEdit[0] : {};
                               let id_respie = responseEdit.length > 0 ? responseEdit[0].id_receta : '';
-
                               let arr_respi = stateResipe;
                               
                               for (var i in arr_respi){
@@ -375,21 +418,22 @@ function ShowRespie() {
                                   arr_respi[i] = resultEdit;
                                 }
                               }
-
                               setResipes(arr_respi);
-                              showToastMessage();
-                              setModal(null); 
-                              setInSelect([]);
-                              activeDesactieToggle();
                             }
                           }
+
+                          //Editar los valores de la receta
+                          const responseIngredients = await editIngredientsResipe(id, GLOBALINGREDIENTS);
+
+                          showToastMessage();
+                          setModal(null); 
+                          setInSelect([]);
+                          activeDesactieToggle();
                         }else{
                           //algo fallo y no se deberia fallar
                           showToastMessageErr();
                         } 
-
                         setErro(null);
-
                       }catch(err){
                         console.log(err)
                       }
@@ -440,13 +484,16 @@ function ShowRespie() {
                         <div className="section-form-colum">  
                           <label htmlFor="ingredient">Ingredientes</label>
                           {/* Select multiple libreria react select */}
-                            <Select onChange={(e) => {setInSelect(e);}}
+                          {console.log(ingredient)}
+                            <Select onChange={(e) => {setInSelect(e)}}
                               closeMenuOnSelect={false}
                               defaultValue={ingredientInEdit.length > 0 ? ingredientInEdit : null}
                               isMulti
                               options={ingredient}
                               placeholder="Seleccione los ingredientes para crear la receta"
                           />
+                                  {console.log(ingredientSelect)}
+
                            <div className="error-respi"></div>   
                             {
                               ingredientSelect.length > 0 ?
@@ -457,6 +504,8 @@ function ShowRespie() {
                                       <th>Nombre</th>
                                       <th>Cantidad por ingrediente</th>
                                       <th>Unidad de medida</th>
+                                      <th>Cantidad disponible</th>
+                                      <th>Unidad de medida original</th>
                                     </tr>
                                   </thead>
                                   <tbody>
@@ -465,26 +514,27 @@ function ShowRespie() {
                                           <tr key={row.label}>
                                             <td> {row.label} </td>
                                             <td> 
-                                              <input className="input-cantidad-resipe" step="any" id={`${index}`} cod={`${row.value}`} count={`${row.cantidad_total_ingrediente}`} 
-                                              countgeneral={`${row.cantidad_total_ingredeinte_general}`} type="number" placeholder="cantidad ingrediente" defaultValue={row.cantidad_total_ingrediente1 ? row.cantidad_total_ingrediente1 : 0} />  
+                                              <input className="input-cantidad-resipe" step="1" min="0" index={index} id={`resipe_${index}`} cod={`${row.value}`} count={`${row.cantidad_total_ingrediente}`} 
+                                              countgeneral={`${row.cantidad_total_ingredeinte_general}`} type="number" placeholder="cantidad ingrediente" defaultValue={row.cantidad_total_ingrediente1 ? row.cantidad_total_ingrediente1 : 0} onChange={() => validateIngredient(row, index)} />  
                                             </td>
                                             <td> 
                                               <span className="span-table-respie">
                                                 Inicial : {row.unidad_medida} 
                                               </span>
-                                              <select className="select-respie-gra" id={`select-${index}`} defaultValue={row.unidad_medida != undefined ? row.unidad_medida : ""}>
-                                                {/* <option selected={true} disabled={true} defaultValue={""} value="unidad">Unidad de medida</option> */}
+                                              <select className="select-respie-gra"  id={`select-${index}`} defaultValue={row.unidad_medida != undefined ? row.unidad_medida : ""} onChange={() => validateIngredient(row, index)}>
                                                 <option value="und">und</option>
                                                 <option value="gr">gr</option>
                                                 <option value="mg">mg</option>
                                                 <option value="lb">lb</option>
-                                                <option value="kr">kr</option>
+                                                <option value="kg">kg</option>
                                                 <option value="oz">oz</option>
                                                 <option value="lt">lt</option>
                                                 <option value="cm3">cm3</option>
                                                 <option value="ml">ml</option>
                                               </select>
                                              </td>
+                                             <td id={`total_${index}`}>{row.cantidad_editable == undefined ? row.cantidad_editable_ingrediente :row.cantidad_editable }</td>
+                                             <td>{row.unidad_medida}</td>
                                           </tr>
                                         )
                                       })}
@@ -494,6 +544,7 @@ function ShowRespie() {
                               : (null)                            
                             }
                         </div>
+                        {!isSubRespie ? (
                         <div className="section-form-colum">  
                           <label htmlFor="Sub-receta">Sub-recetas</label>
                           {/* Select para las sub-recetas */}
@@ -534,6 +585,7 @@ function ShowRespie() {
                               ) : (null)
                             }
                         </div>
+                        ) : (null)}
                          <div className="section-form-colum">  
                           <label htmlFor="tipo_plato">Tipo de Receta</label>
                           {/* Select normal para tipo de plato */}
@@ -556,6 +608,48 @@ function ShowRespie() {
                    )}
                   </Formik>
                 </div>
+              </div>
+
+              {/* tabla de la informacion general de la receta */}
+              <div className="div-info-resipe">
+                <table className="tbl-info-resipe">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="td-info-resipe">Subtotal</td>
+                    <td className="td-info-data-resipe">$ 485200</td>
+                  </tr>
+                  <tr>
+                    <td className="td-info-resipe">Margen de error</td>
+                    <td className="td-info-data-resipe">5%</td>
+                  </tr>
+                  <tr>
+                    <td className="td-info-resipe">SubTotal + margen de error</td>
+                    <td className="td-info-data-resipe">$ 50000</td>
+                  </tr>
+                  <tr>
+                    <td className="td-info-resipe">Margen contribucion</td>
+                    <td className="td-info-data-resipe">$ 6000</td>
+                  </tr>
+                  <tr>
+                    <td className="td-info-resipe">Costo potencial venta</td>
+                    <td className="td-info-data-resipe">$ 7000</td>
+                  </tr>
+                  <tr>
+                    <td className="td-info-resipe">Iva</td>
+                    <td className="td-info-data-resipe">19%</td>
+                  </tr>
+                  <tr>
+                    <td className="td-info-resipe">Costo venta</td>
+                    <td className="td-info-data-resipe">$ 7400</td>
+                  </tr>
+                </tbody>
+                </table>
               </div>
             </section>
           </section>

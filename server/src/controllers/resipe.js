@@ -26,7 +26,7 @@ const createEditResipe = async (req, res) => {
 
         if (arrnew.length > 0){
           //Insertar todos los ingredientes que esta receta haya creado
-          conn.query("INSERT INTO tbl_ingredientes_receta (id_ingrediente_receta, unidad_medida_r,  cantidad_por_receta, activo,   id_ingrediente, id_receta) VALUES ?",
+          conn.query("INSERT INTO tbl_ingredientes_receta (id_ingrediente_receta, unidad_medida_r,  cantidad_por_receta, activo, id_ingrediente, id_receta) VALUES ?",
           [arrnew], 
           (err, resultdata) => {
             if (err){
@@ -55,7 +55,9 @@ const createEditResipe = async (req, res) => {
                   }
                  }
                )
-              }       
+              } else{
+                res.status(200).json({message: true, id_create: id_receta_new });
+              }      
           });
         }
       });
@@ -167,7 +169,7 @@ const getAllResipePerUser =  (req, res) => {
 
             //Consulta de todos los ingredientes para guardarlos en result y entregar ingrediente por recetas
             conn.query(
-              'SELECT Ir.*, i.nombre_ingrediente  FROM tbl_ingredientes_receta AS Ir INNER JOIN tbl_ingredientes AS i ON Ir.id_ingrediente = i.id_ingrediente WHERE Ir.id_receta  IN ("' +
+              'SELECT Ir.*, i.nombre_ingrediente, i.unidad_medida AS unidad_original  FROM tbl_ingredientes_receta AS Ir INNER JOIN tbl_ingredientes AS i ON Ir.id_ingrediente = i.id_ingrediente WHERE Ir.id_receta  IN ("' +
                 parseData +
                 '") && Ir.activo = 1;',
 
@@ -295,8 +297,41 @@ const getResipeEdit = (req, res) => {
 
 }
 
+//editar la cantidad de los ingredientes
+const editQuantity = (req, res) => {
+
+  try {
+    let {data} = req.body; 
+    let ingredients = data.ingredient;
+    let id_restaurant = data.id;
+
+    console.log(ingredients, id_restaurant)
+
+    let arrSendIngredient = ingredients.filter((row) => row.send !== undefined);
+    if (arrSendIngredient.length > 0){
+      for (let i in arrSendIngredient){
+        if (arrSendIngredient[i] != undefined){
+          conn.query('UPDATE tbl_ingredientes SET cantidad_editable_ingrediente = ? WHERE id_restaurant = ? && id_ingrediente = ?', [arrSendIngredient[i]['cantidad_editable_ingrediente'], id_restaurant, arrSendIngredient[i]['value']], 
+          (err, result) => {
+            if (err){
+              return res.status(500).json({message: err});
+            }
+            console.log(err,result)
+          })
+        }
+      }
+    }
+    console.log(arrSendIngredient)
+  } catch (error) {
+    console.log(error)
+  }
+
+  res.status(200).json({message: 'aqui'})
+}
+
 module.exports = {
   createEditResipe,
   getAllResipePerUser,
-  getResipeEdit
+  getResipeEdit,
+  editQuantity
 };

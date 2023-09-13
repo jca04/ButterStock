@@ -1,10 +1,10 @@
 import axios from "axios";
 import { getToken } from "../auth/auth";
 
-
+let tokenStr = getToken();
+console.log(tokenStr)
 export const getResipes = async (id) => {
   try {
-    let tokenStr = getToken();
 
     const response = await axios.post("/resipe/resipes", {
       headers: { Authorization: `Bearer ${tokenStr}` },
@@ -25,8 +25,6 @@ export const getResipes = async (id) => {
 
 export const getIngredient = async (id) => {
   try {
-    let tokenStr = getToken();
-
     const response = await axios.post("/ingredient/getIngredients", {
       headers: { Authorization: `Bearer ${tokenStr}` },
       data: {
@@ -47,7 +45,12 @@ export const getIngredient = async (id) => {
 
 export const saveEditRespie = async (data) => {
   try {
-    let tokenStr = getToken();
+    const response = await axios.post('/resipe/create-edit',  {
+      headers: { Authorization: `Bearer ${tokenStr}` },
+      data: {
+        "data": data
+      }
+    });
 
     const response = await axios.post('/resipe/create-edit',  {
       headers: { Authorization: `Bearer ${tokenStr}` },
@@ -71,9 +74,7 @@ export const saveEditRespie = async (data) => {
 }
 
 export const getResipe = async(id, id_receta) => {
-  try {
-    let tokenStr= getToken();
- 
+  try { 
       const response = await axios.post('/resipe/getRespieEdit',  {
         headers: { Authorization: `Bearer ${tokenStr}` },
         data: {
@@ -81,8 +82,6 @@ export const getResipe = async(id, id_receta) => {
           "respie": id_receta
         }
       });
-
-      console.log(response)
 
       if (response.data){ 
         if (response.data.message){
@@ -95,6 +94,23 @@ export const getResipe = async(id, id_receta) => {
       } 
   } catch (error) {
     console.log(error)
+    return {message: error};
   }
 }
 
+export const editIngredientsResipe = async(id, ingredient) => {
+
+  try {
+    const response = await axios.post('/resipe/editQuantity', {
+      headers: { Authorization: `Bearer ${tokenStr}` },
+      data: {
+        "id": id,
+        "ingredient" : ingredient
+      }
+    });
+
+    console.log(response);
+  } catch (error) {
+    return {message: error}
+  }
+}

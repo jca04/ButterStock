@@ -6,7 +6,7 @@ const getIngredient = async (req, res) => {
     let id_restaurant = req.body.data.id;
     //Consulta a la tabla ingredientes para obtener su id y nombre y asi poder ingresarlo en la tabla tbl_ingredientes_receta, donde se pone que ingrediente va con esta receta
     conn.query(
-      "SELECT i.nombre_ingrediente, i.id_ingrediente,  i.unidad_medida, i.cantidad_total_ingrediente FROM tbl_ingredientes AS i WHERE i.id_restaurant = ? && i.activo = 1 GROUP BY i.id_ingrediente ORDER BY i.time_stamp DESC;",
+      "SELECT i.nombre_ingrediente, i.id_ingrediente,  i.unidad_medida, i.cantidad_total_ingrediente, i.costo_total, i.cantidad_editable_ingrediente FROM tbl_ingredientes AS i WHERE i.id_restaurant = ? && i.activo = 1 GROUP BY i.id_ingrediente ORDER BY i.time_stamp DESC;",
       [id_restaurant],
       (err, result) => {
         if (err) {
@@ -21,7 +21,9 @@ const getIngredient = async (req, res) => {
               "value" : result[i]["id_ingrediente"],
               "id_receta" : result[i]["id_receta"],
               "unidad_medida" : result[i]["unidad_medida"],
-              "cantidad_total_ingrediente" :result[i]["cantidad_total_ingrediente"]
+              "cantidad_total_ingrediente" :result[i]["cantidad_total_ingrediente"],
+              "costo_total" : result[i]["costo_total"],
+              "cantidad_editable_ingrediente" : result[i]["cantidad_editable_ingrediente"]
             };
           }
 
@@ -85,7 +87,7 @@ const getIngredientsWithRecipe = async (req, res) => {
         "INNER JOIN tbl_recetas AS r ON r.id_receta = ir.id_receta " +
         "WHERE i.id_restaurant = ?" +
         "ORDER BY i.time_stamp ASC;",
-      [id_restaurant, id_restaurant],
+      [id_restaurant],
       (err, result) => {
         if (err) {
           console.log(err);
