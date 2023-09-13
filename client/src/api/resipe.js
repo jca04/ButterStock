@@ -52,6 +52,13 @@ export const saveEditRespie = async (data) => {
       }
     });
 
+    const response = await axios.post('/resipe/create-edit',  {
+      headers: { Authorization: `Bearer ${tokenStr}` },
+      data: {
+        "data": data
+      }
+    });
+
       if (response.data){ 
         if (response.data.message){
           if (response.data.id_create != undefined){
