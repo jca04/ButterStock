@@ -14,8 +14,6 @@ import { Field, Form, Formik } from "formik";
 import Select from 'react-select';
 import { toast } from "react-toastify";
 
-let GLOBALINGREDIENTS = [];
-
 function ShowRespie() {
   //localState
   const [stateResipe, setResipes] = useState([]);
@@ -86,7 +84,6 @@ function ShowRespie() {
     const response = await getIngredient(id);
     try {
       if (Array.isArray(response)) {
-        GLOBALINGREDIENTS = response;
         setIngredient(response);
         setContinue(true);
       }
@@ -122,7 +119,6 @@ function ShowRespie() {
     if (row.ingredientes != undefined){
       let ingredientesEdit = row.ingredientes;
       let arrNew = [];
-      console.log(ingredient)
       ingredient.filter((fill) => {
         let value = fill.value;
         ingredientesEdit.filter((fill1) => {
@@ -228,7 +224,7 @@ function ShowRespie() {
     //valor de la cantidad del ingrediente
     let valueInput = parseFloat(document.getElementById(idInput).value);
     let unityOriginal = row.unidad_medida;
-    let quantityBD = row.cantidad_total_ingredeinte_general == undefined ? row.cantidad_total_ingrediente : row.cantidad_total_ingredeinte_general ;
+    let quantityBD = row.cantidad_total_ingredeinte_general == undefined ? row.cantidad_editable_ingrediente    : row.cantidad_total_ingredeinte_general ;
     let valueConvertion = convertion(valueSelect, valueInput , unityOriginal);
 
     document.getElementById(idInput).classList.remove('input-exhausted');
@@ -242,17 +238,14 @@ function ShowRespie() {
       document.getElementById(idInput).classList.add('input-exhausted');
     }
 
-    //Agregar a GLOBALINGREDIENTS la cantidad de ingrediente que se resta desde aqui
-    GLOBALINGREDIENTS = GLOBALINGREDIENTS.filter((rowIn) => {
+    ingredient.filter((rowIn) => {
       if (row.value == rowIn.value){
-        rowIn.cantidad_editable_ingrediente = quantityBD - valueConvertion;
         document.getElementById('total_'+index).textContent = '' + quantityBD - valueConvertion;
-        rowIn.send = true
+        document.getElementById(idInput).setAttribute('quantytyToRest', quantityBD - valueConvertion);
       }
       return rowIn;
     });
 
-    console.log(JSON.stringify(GLOBALINGREDIENTS))
 
   }
 
@@ -264,7 +257,7 @@ function ShowRespie() {
         <h2>Recetas</h2>
       </section>
       <section className="create-respie">
-        <button onClick={() => {setModal({}); setInSelect([]); setEditIngre([]); setRespiSelet([])}}>
+        <button onClick={() => {setModal({}); setInSelect([]); setEditIngre([]); setRespiSelet([]);}}>
           Agregar nueva receta <BiAddToQueue />
         </button>
       </section>
@@ -422,7 +415,8 @@ function ShowRespie() {
                           }
 
                           //Editar los valores de la receta
-                          const responseIngredients = await editIngredientsResipe(id, GLOBALINGREDIENTS);
+                          let arr = [];
+                          const responseIngredients = await editIngredientsResipe(id, arr);
 
                           showToastMessage();
                           setModal(null); 
@@ -483,7 +477,6 @@ function ShowRespie() {
                         <div className="section-form-colum">  
                           <label htmlFor="ingredient">Ingredientes</label>
                           {/* Select multiple libreria react select */}
-                          {console.log(ingredient)}
                             <Select onChange={(e) => {setInSelect(e)}}
                               closeMenuOnSelect={false}
                               defaultValue={ingredientInEdit.length > 0 ? ingredientInEdit : null}
@@ -491,7 +484,6 @@ function ShowRespie() {
                               options={ingredient}
                               placeholder="Seleccione los ingredientes para crear la receta"
                           />
-                                  {console.log(ingredientSelect)}
 
                            <div className="error-respi"></div>   
                             {
