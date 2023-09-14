@@ -56,13 +56,23 @@ let jsonConvertion = {
 
 
 export const convertion = (initialUnit, quantity , convertUnit) => {
+
+  if (initialUnit == undefined){
+    return quantity;
+  }
+
+  if (convertUnit == undefined){
+    return quantity;
+  }
+
   let valueToconvertion = jsonConvertion[initialUnit][convertUnit];
-  let valueOperation = quantity * valueToconvertion;
+  let valueOperation = parseFloat(quantity * valueToconvertion);
+
 
   if (valueToconvertion == undefined){
     return quantity;
   }
 
-  return valueOperation;
+  return valueOperation.toFixed(2);
 
 }
