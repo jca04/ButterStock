@@ -392,6 +392,7 @@ function ShowRespie() {
                           if (values.id_receta.length == 0){
                             //se creo una nueva receta falta consultarla para agregarla al arreglo general
                             const responseLimit = await getResipe(id, response);
+                            console.log(responseLimit)
                             if (Array.isArray(responseLimit)){
                               stateResipe.unshift(responseLimit[0]);
                               setResipes(stateResipe);
