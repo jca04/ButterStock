@@ -2,10 +2,10 @@ import axios from "axios";
 import { getToken } from "../auth/auth";
 
 let tokenStr = getToken();
-console.log(tokenStr)
+
+
 export const getResipes = async (id) => {
   try {
-
     const response = await axios.post("/resipe/resipes", {
       headers: { Authorization: `Bearer ${tokenStr}` },
       data: {
@@ -40,31 +40,29 @@ export const getIngredient = async (id) => {
   } catch (error) {
     return { message: error };
   }
-}
-
+};
 
 export const saveEditRespie = async (data) => {
   try {
     const response = await axios.post('/resipe/create-edit',  {
       headers: { Authorization: `Bearer ${tokenStr}` },
       data: {
-        "data": data
-      }
+        data: data,
+      },
     });
-
-      if (response.data){ 
-        if (response.data.message){
-          if (response.data.id_create != undefined){
-            return response.data.id_create;
-          }else{
-            return response.data.message;
-          }
-        }else response.data.message;
-      } 
+    if (response.data) {
+      if (response.data.message) {
+        if (response.data.id_create != undefined) {
+          return response.data.id_create;
+        } else {
+          return response.data.message;
+        }
+      } else response.data.message;
+    }
   } catch (error) {
     return { message: error };
   }
-}
+};
 
 export const getResipe = async(id, id_receta) => {
   try { 
@@ -89,7 +87,7 @@ export const getResipe = async(id, id_receta) => {
     console.log(error)
     return {message: error};
   }
-}
+};
 
 export const editIngredientsResipe = async(id, ingredient) => {
 

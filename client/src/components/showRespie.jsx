@@ -14,6 +14,8 @@ import { Field, Form, Formik } from "formik";
 import Select from 'react-select';
 import { toast } from "react-toastify";
 
+let GLOBALINGREDIENTS = [];
+
 function ShowRespie() {
   //localState
   const [stateResipe, setResipes] = useState([]);
@@ -84,6 +86,7 @@ function ShowRespie() {
     const response = await getIngredient(id);
     try {
       if (Array.isArray(response)) {
+        GLOBALINGREDIENTS = response;
         setIngredient(response);
         setContinue(true);
       }
@@ -119,6 +122,7 @@ function ShowRespie() {
     if (row.ingredientes != undefined){
       let ingredientesEdit = row.ingredientes;
       let arrNew = [];
+      console.log(ingredient)
       ingredient.filter((fill) => {
         let value = fill.value;
         ingredientesEdit.filter((fill1) => {
