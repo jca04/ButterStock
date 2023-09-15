@@ -59,14 +59,6 @@ export default function Ingredients() {
       selector: (row) => row.cantidad_porcion_elaborar,
     },
     {
-      name: "Costo total",
-      selector: (row) => row.costo_total,
-    },
-    {
-      name: "Porcentaje de participación",
-      selector: (row) => row.porcentaje_participacion,
-    },
-    {
       name: "Acciones",
       cell: (row) =>
         row.ingrediente_activo == 1 ? (

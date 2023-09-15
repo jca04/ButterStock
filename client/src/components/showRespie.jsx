@@ -223,30 +223,47 @@ function ShowRespie() {
     let valueSelect = document.getElementById('select-'+index).value;
     //valor de la cantidad del ingrediente
     let valueInput = parseFloat(document.getElementById(idInput).value);
-    let unityOriginal = row.unidad_medida;
-    let quantityBD = row.cantidad_total_ingredeinte_general == undefined ? row.cantidad_editable_ingrediente    : row.cantidad_total_ingredeinte_general ;
+    //unidad de medida original
+    let unityOriginal = row.unidad_medida_original == undefined ? row.unidad_medida : row.unidad_medida_original ;
+    //stock que tiene hasta el momento el ingrediente
+    let quantityBD = row.cantidad_editable  == undefined ? row.cantidad_editable_ingrediente : row.cantidad_editable;
+    //valor que tiene el ingrediente seleccionado para esta receta
+    let valueInitialBdInput = convertion(valueSelect, row.cantidad_total_ingrediente1 == undefined ? 0 : row.cantidad_total_ingrediente1, unityOriginal) ;
+    //conversion de unidades
     let valueConvertion = convertion(valueSelect, valueInput , unityOriginal);
+    //operacion para sacar cuanto le queda al ingrediente
+    let operation = quantityBD - (valueConvertion - valueInitialBdInput);
+    //si el stock se vuelve 0 no hay que dejar que siga a aumentado
+    let isZero = false;
 
     document.getElementById(idInput).classList.remove('input-exhausted');
+    document.getElementById(idInput).removeAttribute('max', valueInput);
     if (document.getElementById(idInput + 'exhauste')) document.getElementById( idInput + 'exhauste').remove();
 
-    if ((quantityBD - valueConvertion) < 0){
+    if (operation <= 0){
       const p = document.createElement('p');
       p.textContent = 'Agotado';
       p.setAttribute('id',idInput +'exhauste')
       document.getElementById(idInput).parentNode.appendChild(p);
       document.getElementById(idInput).classList.add('input-exhausted');
+
+      if (document.getElementById(idInput).getAttribute('max') == undefined){
+        document.getElementById(idInput).setAttribute('max', valueInput);
+      }
+
+      isZero = true;
     }
 
     ingredient.filter((rowIn) => {
       if (row.value == rowIn.value){
-        document.getElementById('total_'+index).textContent = '' + quantityBD - valueConvertion;
-        document.getElementById(idInput).setAttribute('quantytyToRest', quantityBD - valueConvertion);
+        if (isZero){
+          document.getElementById('total_'+index).textContent = '0';
+        }else{
+          document.getElementById('total_'+index).textContent = '' + operation;
+          document.getElementById(idInput).setAttribute('quantytyToRest', operation);
+        }
       }
-      return rowIn;
     });
-
-
   }
 
   // Renderizado del html
@@ -311,7 +328,6 @@ function ShowRespie() {
       </section>
       {/* modal para editar y crear  */}
       {/* ------------------------------ */}
-
       {
         activeModal ? (
           <section className="modal-respie-create">
@@ -357,7 +373,7 @@ function ShowRespie() {
                         }
 
                         let dataTable = [];
-
+                        let ingredientEditColumn = [];
                         document.querySelectorAll(".input-cantidad-resipe").forEach((e) => {
                           let value = e.value;
                           let index = e.getAttribute('index');
@@ -365,6 +381,11 @@ function ShowRespie() {
                           let selectData = document.getElementById("select-"+index).value;
                           let cantidad_ingrediente_a_restar = parseFloat(e.getAttribute('count'));
                           let cantidad_ingrediente_a_restar_general = parseFloat(e.getAttribute('countgeneral'));
+                          let cantidad_editable = e.getAttribute('quantytytorest');
+
+                          if (cantidad_editable !== undefined){
+                            ingredientEditColumn.push([parseFloat(cantidad_editable), id_ingredientSend]);
+                          }
 
                           if (isNaN(cantidad_ingrediente_a_restar)){
                             cantidad_ingrediente_a_restar = cantidad_ingrediente_a_restar_general;
@@ -375,6 +396,7 @@ function ShowRespie() {
                           }else{
                             value = parseFloat(value);
                           }
+
                           dataTable.push([id_ingredientSend, value, selectData, cantidad_ingrediente_a_restar]);
                         });
 
@@ -416,8 +438,14 @@ function ShowRespie() {
                           }
 
                           //Editar los valores de la receta
-                          let arr = [];
-                          const responseIngredients = await editIngredientsResipe(id, arr);
+                          if (ingredientEditColumn.length > 0){
+                            const responseIngredients = await editIngredientsResipe(id, ingredientEditColumn);
+                            if (responseIngredients){
+                              console.log(ingredientEditColumn)
+                              await getIngredients();
+                            }
+                          }
+                        
 
                           showToastMessage();
                           setModal(null); 
@@ -481,9 +509,9 @@ function ShowRespie() {
                             <Select onChange={(e) => {setInSelect(e)}}
                               closeMenuOnSelect={false}
                               defaultValue={ingredientInEdit.length > 0 ? ingredientInEdit : null}
-                              isMulti
                               options={ingredient}
                               placeholder="Seleccione los ingredientes para crear la receta"
+                              isMulti
                           />
 
                            <div className="error-respi"></div>   
@@ -526,7 +554,7 @@ function ShowRespie() {
                                               </select>
                                              </td>
                                              <td id={`total_${index}`}>{row.cantidad_editable == undefined ? row.cantidad_editable_ingrediente :row.cantidad_editable }</td>
-                                             <td>{row.unidad_medida}</td>
+                                             <td>{row.unidad_medida_original == undefined ? row.unidad_medida : row.unidad_medida_original}</td>
                                           </tr>
                                         )
                                       })}
@@ -593,7 +621,7 @@ function ShowRespie() {
                             <button type="submit" disabled={isSubmitting}>{isSubmitting ? (
                               <AiOutlineLoading3Quarters className="load-respie-send"/>
                            ) : (
-                        "Enviar"
+                            "Enviar"
                       )}</button>                    
                         </div>
                       </Form>

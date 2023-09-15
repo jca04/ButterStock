@@ -52,13 +52,6 @@ export const saveEditRespie = async (data) => {
       }
     });
 
-    const response = await axios.post('/resipe/create-edit',  {
-      headers: { Authorization: `Bearer ${tokenStr}` },
-      data: {
-        "data": data
-      }
-    });
-
       if (response.data){ 
         if (response.data.message){
           if (response.data.id_create != undefined){
@@ -109,7 +102,9 @@ export const editIngredientsResipe = async(id, ingredient) => {
       }
     });
 
-    console.log(response);
+    if (response.status == 200){
+      return true;
+    }
   } catch (error) {
     return {message: error}
   }

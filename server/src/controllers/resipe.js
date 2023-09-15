@@ -305,23 +305,18 @@ const editQuantity = (req, res) => {
     let ingredients = data.ingredient;
     let id_restaurant = data.id;
 
-    console.log(ingredients, id_restaurant)
-
-    let arrSendIngredient = ingredients.filter((row) => row.send !== undefined);
-    if (arrSendIngredient.length > 0){
-      for (let i in arrSendIngredient){
-        if (arrSendIngredient[i] != undefined){
-          conn.query('UPDATE tbl_ingredientes SET cantidad_editable_ingrediente = ? WHERE id_restaurant = ? && id_ingrediente = ?', [arrSendIngredient[i]['cantidad_editable_ingrediente'], id_restaurant, arrSendIngredient[i]['value']], 
-          (err, result) => {
-            if (err){
-              return res.status(500).json({message: err});
-            }
-            console.log(err,result)
-          })
-        }
+    if (ingredients.length > 0){
+      for (let i in ingredients){
+        conn.query('UPDATE tbl_ingredientes SET cantidad_editable_ingrediente = ? WHERE id_restaurant = ? && id_ingrediente = ?', [ingredients[i][0], id_restaurant, ingredients[i][1]], 
+        (err) => {
+          if (err){
+            return res.status(500).json({message: err});
+          }
+        });
       }
     }
-    console.log(arrSendIngredient)
+
+    res.status(200).json({message: 'ok'});
   } catch (error) {
     console.log(error)
   }

@@ -72,6 +72,6 @@ export const convertion = (initialUnit, quantity , convertUnit) => {
     return quantity;
   }
 
-  return valueOperation.toFixed(2);
+  return parseFloat(valueOperation.toFixed(2));
 
 }

@@ -348,6 +348,7 @@ color: red;
 
 .input-cantidad-resipe{
   padding: 6px;
+  width: 90%;
 }
 
 .img-box{
@@ -369,11 +370,11 @@ color: red;
 
 @keyframes giro {
   0% {
-    transform: rotate(0deg);
+    transform: rotate(358deg);
   }
 
   100% {
-    transform: rotate(90deg);
+    transform: rotate(9deg);
   }
 }
 
