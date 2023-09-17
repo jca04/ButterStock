@@ -87,7 +87,7 @@ const getIngredientsWithRecipe = (req, res) => {
         "LEFT JOIN tbl_recetas AS r ON r.id_receta = ir.id_receta " +
         "WHERE i.id_restaurant = ? AND (r.id_restaurant = ? OR r.id_receta IS NULL) " +
         "ORDER BY i.time_stamp ASC;",
-      [id_restaurant, id_restaurant],
+      [id_restaurant],
       (err, result) => {
         if (err) {
           res.status(400).json({ message: err });

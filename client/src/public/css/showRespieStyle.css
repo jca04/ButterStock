@@ -348,6 +348,7 @@ color: red;
 
 .input-cantidad-resipe{
   padding: 6px;
+  width: 90%;
 }
 
 .img-box{
@@ -369,11 +370,11 @@ color: red;
 
 @keyframes giro {
   0% {
-    transform: rotate(0deg);
+    transform: rotate(358deg);
   }
 
   100% {
-    transform: rotate(90deg);
+    transform: rotate(9deg);
   }
 }
 
@@ -459,3 +460,90 @@ color: red;
   border: 1px solid red;
   outline: none;
 }
+
+
+.div-image-respie{
+  height: 100%;
+  width: 100%;
+  display: flex;
+}
+
+.material-button-root{
+  width: 100%;
+}
+
+.icon-resipe-image{
+  font-size: 6em;
+  color: #86761E;
+}
+
+.file-mosaic-footer-right{
+  display: none !important;
+}
+.files-ui-file-mosaic-main-container {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+.files-ui-file-mosaic-icon-layer-container{
+  height: 100% !important;
+  width: 100% !important;
+}
+
+.files-ui-file-mosaic-image-layer{
+  height: 100% !important;
+}
+
+.Toastify__progress-bar--success{
+  background: #FFEA96 !important;
+}
+
+.sending-respie{
+  display: flex;
+  background: rgb(0, 0, 0, 0.7);
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  z-index: 6;
+}
+
+.info-sending-respie{
+  background: #FFFAE7;
+  height: 15%;
+  margin: 15% auto;
+  width: 30%;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.icon-loading-respie{
+  display: flex;
+}
+
+.load-send-respie{
+  margin: 17px auto;
+  font-size: 3em;
+  animation: giro 0.5s infinite;
+}
+
+.txt-loading-respie{
+  text-align: center;
+}
+
+.finisg-send-respie{
+  margin-top: 17px;
+  font-size: 3em;
+}
+
+body::-webkit-scrollbar, .body-respie::-webkit-scrollbar{
+  width: 12px;
+}
+
+body::-webkit-scrollbar-thumb, .body-respie::-webkit-scrollbar-thumb{
+  border-radius: 5px;
+  background-color: #FFEA96;
+
+}
+
+
