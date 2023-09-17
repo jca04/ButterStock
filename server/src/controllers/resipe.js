@@ -15,8 +15,7 @@ const createEditResipe = async (req, res) => {
            return res.status(500).json({message: err});
         }
 
-        let arrnew = []
-
+        let arrnew = [];
         for (var i in ingredient){
           let id_ingrediente = ingredient[i][0];
           let cantidad_ingrediente_plato = ingredient[i][1];
@@ -151,7 +150,7 @@ const getAllResipePerUser =  (req, res) => {
     let { data } = req.body;
     let id = data.id;
     conn.query(
-      "SELECT * FROM tbl_recetas  WHERE id_restaurant = ? && activo = 1 ORDER BY tbl_recetas.time_stamp DESC",
+      "SELECT r.*, inf.margen_error, inf.sub_total, inf.sub_total_M_E, inf.margen_contribucion, inf.costo_potencial_venta, inf.iva, inf.costo_venta FROM tbl_recetas AS r LEFT JOIN tbl_inforeceta AS inf ON r.id_receta = inf.id_receta WHERE r.id_restaurant = ? && r.activo = 1 ORDER BY r.time_stamp DESC;",
       [id],
       (err, result) => {
         if (err) {
