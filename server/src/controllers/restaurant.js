@@ -35,14 +35,11 @@ const create = async (req, res) => {
     let file = "";
     let uuid = uuidv4();
     let { restaurant, ciudad, direccion } = req.body;
-    if (req.file === undefined) {
-        file = "";
-    } else file = req.file.filename;
 
     try {
         await conn.query(
             "INSERT INTO tbl_restaurant (id_restaurant, nombre, ciudad, direccion,  pais, icono, activo) VALUES (?,?,?,?,?,?,?)",
-            [uuid, restaurant, ciudad, direccion, "Colombia", file, 1],
+            [uuid, restaurant, ciudad, direccion, "Colombia", '', 1],
             (err, result) => {
                 if (err) {
                     res.status(200).json({ error: err });
@@ -50,7 +47,7 @@ const create = async (req, res) => {
                     res.status(200).json({ messgae: uuid });
                 }
             }
-        );
+        ); 
     } catch (err) {
         res.status(500).json({ err });
     }
