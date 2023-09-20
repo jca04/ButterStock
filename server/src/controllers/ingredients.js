@@ -78,14 +78,14 @@ const getIngredientsWithRecipe = (req, res) => {
     const id_restaurant = req.body.data.id;
     conn.query(
       "SELECT i.nombre_ingrediente, i.id_ingrediente, i.unidad_medida, " +
-        "i.costo_unitario, i.costo_total, i.porcentaje_participacion, " +
+        "i.costo_unitario, i.costo_total, " +
         "i.cantidad_procion_elaborar, i.cantidad_total_ingrediente, i.activo, " +
         "r.nombre_receta, r.imagen, r.cantidad_plato,  " +
         "r.sub_receta, ir.cantidad_por_receta " +
         "FROM tbl_ingredientes AS i " +
         "LEFT JOIN tbl_ingredientes_receta AS ir ON i.id_ingrediente = ir.id_ingrediente " +
         "LEFT JOIN tbl_recetas AS r ON r.id_receta = ir.id_receta " +
-        "WHERE i.id_restaurant = ? AND (r.id_restaurant = ? OR r.id_receta IS NULL) " +
+        "WHERE i.id_restaurant = ?" +
         "ORDER BY i.time_stamp ASC;",
       [id_restaurant],
       (err, result) => {
@@ -106,7 +106,6 @@ const getIngredientsWithRecipe = (req, res) => {
                   costo_unitario: row.costo_unitario,
                   cantidad_porcion_elaborar: row.cantidad_procion_elaborar,
                   costo_total: row.costo_total,
-                  porcentaje_participacion: row.porcentaje_participacion,
                   recetas: [],
                 };
               }

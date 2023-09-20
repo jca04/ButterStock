@@ -13,7 +13,6 @@ import { BiAddToQueue } from "react-icons/bi";
 import { Field, Form, Formik } from "formik";
 import Select from 'react-select';
 import { toast } from "react-toastify";
-import { Fade } from "react-awesome-reveal";
 import { FileInputButton, FileMosaic } from "@files-ui/react";
 
 let unitArr = ['kg','lb','oz','gr','mg','und'];
@@ -504,7 +503,7 @@ function ShowRespie() {
                           setInSelect([]);
                           activeDesactieToggle();
                           setSending(false);
-                        }, 3000);
+                        }, 2000);
                         setErro(null);
                       }catch(err){
                         console.log(err)
