@@ -508,11 +508,16 @@ color: red;
   z-index: 6;
 }
 
-.info-sending-respie{
-  background: #FFFAE7;
-  height: 15%;
+.body-info-respie{
   margin: 15% auto;
   width: 30%;
+  height: 50%;
+}
+
+.info-sending-respie{
+  background: #FFFAE7;
+  height: auto;
+  width: 100%;
   border-radius: 5px;
   padding: 10px;
 }

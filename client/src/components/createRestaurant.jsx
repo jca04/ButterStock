@@ -266,7 +266,6 @@ function FormRestaurant() {
                                 "direccion",
                                 saveRestarunt.direccion
                             );
-                            FormRestaurant.append("image", fileState);
 
                             try {
                                 const response = await createRestaurant(

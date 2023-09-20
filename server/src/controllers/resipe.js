@@ -31,34 +31,33 @@ const createEditResipe = async (req, res) => {
             if (err){
              return res.status(500).json({message: err});
             }
-  
-            //Insertar las referencias de la subReceta hacia las recetas padres en la tabla tbl_subRecetas
-            let arrIdsSubReceta = []; 
-              let arrSubRecetas = [];
-              for (var i in sub_receta){
-                arrIdsSubReceta.push(sub_receta[i].value);
-                arrSubRecetas.push([uuidv4(), sub_receta[i].value, id_receta_new, 1]);
-              }
-    
-              if (arrSubRecetas.length > 0){
-                conn.query("INSERT INTO tbl_sub_recetas (id_sub_receta,id_receta, cod_receta_padre, activo) VALUES ?",
-                 [arrSubRecetas], (err, result) => {
-                  if (err){
-                    return res.status(500).json({message: err});
-                  }
-
-                  if (result.affectedRows > 0){                    
-                    res.status(200).json({message: true, id_create: id_receta_new });
-                  }else{ 
-                    res.status(200).json({message: true, id_create: id_receta_new });
-                  }
-                 }
-               )
-              } else{
-                res.status(200).json({message: true, id_create: id_receta_new });
-              }      
           });
         }
+
+        //Insertar las referencias de la subReceta hacia las recetas padres en la tabla tbl_subRecetas
+        let arrIdsSubReceta = []; 
+        let arrSubRecetas = [];
+        for (var i in sub_receta){
+          arrIdsSubReceta.push(sub_receta[i].value);
+          arrSubRecetas.push([uuidv4(), sub_receta[i].value, id_receta_new, 1]);
+        }
+    
+        if (arrSubRecetas.length > 0){
+          conn.query("INSERT INTO tbl_sub_recetas (id_sub_receta,id_receta, cod_receta_padre, activo) VALUES ?",
+          [arrSubRecetas], (err, result) => {
+            if (err){
+              return res.status(500).json({message: err});
+            }
+
+            if (result.affectedRows > 0){                    
+              res.status(200).json({message: true, id_create: id_receta_new });
+            }else{ 
+              res.status(200).json({message: true, id_create: id_receta_new });
+            }
+          });
+        } else{
+          res.status(200).json({message: true, id_create: id_receta_new });
+        }      
       });
       //aqui se empieza a editar las recetas
     }else{
@@ -150,7 +149,7 @@ const getAllResipePerUser =  (req, res) => {
     let { data } = req.body;
     let id = data.id;
     conn.query(
-      "SELECT r.*, inf.margen_error, inf.sub_total, inf.sub_total_M_E, inf.margen_contribucion, inf.costo_potencial_venta, inf.iva, inf.costo_venta FROM tbl_recetas AS r LEFT JOIN tbl_inforeceta AS inf ON r.id_receta = inf.id_receta WHERE r.id_restaurant = ? && r.activo = 1 ORDER BY r.time_stamp DESC;",
+      "SELECT r.*, inf.margen_error, inf.sub_total, inf.sub_total_M_E, inf.margen_contribucion, inf.subTotal_margen_contribucion ,inf.costo_potencial_venta, inf.iva, inf.costo_venta FROM tbl_recetas AS r LEFT JOIN tbl_inforeceta AS inf ON r.id_receta = inf.id_receta WHERE r.id_restaurant = ? && r.activo = 1 ORDER BY r.time_stamp DESC;",
       [id],
       (err, result) => {
         if (err) {
@@ -231,7 +230,7 @@ const getAllResipePerUser =  (req, res) => {
 
 
 //obtengo una receta ya sea editada o creada
-const getResipeEdit = (req, res) => {
+const getResipeEdit = async (req, res) => {
   try {
     let {data} = req.body;
     let id = data.id;
@@ -297,7 +296,7 @@ const getResipeEdit = (req, res) => {
 }
 
 //editar la cantidad de los ingredientes
-const editQuantity = (req, res) => {
+const editQuantity = async (req, res) => {
 
   try {
     let {data} = req.body; 
@@ -305,27 +304,72 @@ const editQuantity = (req, res) => {
     let id_restaurant = data.id;
 
     if (ingredients.length > 0){
-      for (let i in ingredients){
-        conn.query('UPDATE tbl_ingredientes SET cantidad_editable_ingrediente = ? WHERE id_restaurant = ? && id_ingrediente = ?', [ingredients[i][0], id_restaurant, ingredients[i][1]], 
-        (err) => {
+      if (ingredients[0] !== null && ingredients[0] != NaN){
+        conn.query('UPDATE tbl_ingredientes SET cantidad_editable_ingrediente = ? WHERE id_restaurant = ? && id_ingrediente = ?', [ingredients[0], id_restaurant ,ingredients[1]], 
+        (err, result) => {
           if (err){
             return res.status(500).json({message: err});
           }
+
+          if (result.protocol41){
+             res.status(200).json({message: 'ok'});
+          }else res.status(500).json({message:'erro'});
         });
+      }else{
+        res.status(200).json({message: 'ok'});
       }
     }
-
-    res.status(200).json({message: 'ok'});
   } catch (error) {
     console.log(error)
   }
+}
 
-  res.status(200).json({message: 'aqui'})
+
+//editar e insertar la info de la receta
+const infoResipe = async (req, res) => {
+  try {
+    console.log(req.body)
+    let {data} = req.body;
+    let idResipe = data.id;
+    let info = data.info
+
+
+    conn.query('SELECT COUNT(*) AS cantidad FROM tbl_inforeceta WHERE id_receta	= ?' , [idResipe], 
+    (err, result) => {
+      if (err){
+        return res.status(500).json({message: err});
+      }
+
+      if (result.length <= 1){
+        //no existe
+        if (result[0].cantidad == 0){
+          conn.query('INSERT INTO tbl_inforeceta (id_inforeceta, margen_error, sub_total, sub_total_M_E, margen_contribucion, subTotal_margen_contribucion,costo_potencial_venta, iva,	costo_venta, id_receta) VALUES (?,?,?,?,?,?,?,?,?,?)', [uuidv4(), 0.05, info.subTotal, info.margenError, 0.6, info.margenContribucion, info.costoPotencialVenta, 0.19, info.costoVenta, idResipe],
+          (err, result) => {
+            console.log(result, err)
+            if (err) {
+              res.status(500).json({message: err});
+            }
+
+            if (result.protocol41){
+              res.status(200).json({message: 'ok'});
+            }
+          });
+        }else{
+          //si existe
+        }
+      }
+    })
+
+
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 module.exports = {
   createEditResipe,
   getAllResipePerUser,
   getResipeEdit,
-  editQuantity
+  editQuantity,
+  infoResipe
 };
