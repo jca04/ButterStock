@@ -359,8 +359,6 @@ const infoResipe = async (req, res) => {
         }
       }
     })
-
-
   } catch (error) {
     console.log(error)
   }
