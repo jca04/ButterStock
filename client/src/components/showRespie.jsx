@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../public/css/showRespieStyle.css";
-import { getResipes, getIngredient,saveEditRespie, getResipe, editIngredientsResipe } from "../api/resipe";
+import { getResipes, getIngredient,saveEditRespie, getResipe, editIngredientsResipe, apiInfoResipe } from "../api/resipe";
 import { convertion } from "../public/js/unitConversion";
 import {fileUpload} from "../app/cloudinary";
 import Navbar from "./reuseComponents/navbar";
@@ -349,7 +349,6 @@ function ShowRespie() {
       "iva" : iva,
       "costo_venta" :  costoVenta.toFixed(2)
     });
-
   }
 
 
@@ -567,6 +566,7 @@ function ShowRespie() {
 
                         let dataTable = [];
                         let ingredientEditColumn = [];
+                        
                         document.querySelectorAll(".input-cantidad-resipe").forEach((e) => {
                           let value = e.value;
                           let index = e.getAttribute('index');
@@ -671,7 +671,6 @@ function ShowRespie() {
                         }
 
                         setRFormta(arrSubRespie);
-
                         setTimeout(() => {
                           showToastMessage();
                           setModal(null); 
@@ -679,7 +678,6 @@ function ShowRespie() {
                           activeDesactieToggle();
                           setSending(false);
                         }, 1500);
-
                         setErro(null);
 
                       }catch(err){
@@ -761,7 +759,6 @@ function ShowRespie() {
                               placeholder="Seleccione los ingredientes para crear la receta"
                               isMulti
                           />
-
                            <div className="error-respi">{ingredientError ? (<p className="error">{'*Debe seleccionar al menos un ingrediente'}</p>) : null}</div>   
                             {
                               ingredientSelect.length > 0 ?

@@ -87,7 +87,7 @@ export const getResipe = async(id, id_receta) => {
     console.log(error)
     return {message: error};
   }
-};
+}
 
 export const editIngredientsResipe = async(id, ingredient) => {
 
