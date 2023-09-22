@@ -2,8 +2,8 @@
 .respie-father{
   width: 90%;
   min-height: 87vh;
-  margin-top: 6px;
-  margin: 19px auto;
+  height: auto;
+  margin: 0px auto;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -50,6 +50,7 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
+  height: 100%;
   background-color: #FFFAE7;
   border-radius: 5px;
   padding: 5px;
@@ -64,10 +65,19 @@
   margin-bottom: 15px;
 }
 
-.search-respie, .sub-search-respie{
+.search-section{
+  display: flex;
+  width: 100%;
+  margin: auto;
+  justify-content: center;
+}
+
+.search-respie{
    background-color: white;
    border-radius: 5px;
-   width: 50%;
+   width: 35%;
+   padding: 10px;
+   margin-top: 20px;
    box-shadow: 1px 1px 5px #848484;
 }
 .search-respie > div, .sub-search-respie > div{
@@ -81,6 +91,7 @@
   border-radius: 5px;
   border: none;
   outline: none;
+  width: 100%;
 }
 .data-respie, .sub-data-respie{
   display: flex;
@@ -551,4 +562,32 @@ body::-webkit-scrollbar-thumb, .body-respie::-webkit-scrollbar-thumb{
 
 }
 
+.info-ingredients-respie{
+  margin-top: 35px;
+}
+
+.info-ingredients-respie > button{
+  width: 100%;
+  padding: 10px;
+  outline: none;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  background-color: #FFEA96;
+  font-size: 15px;
+}
+
+.info-ingredients-respie > button:hover{
+  background-color: #F5B702;
+  transition: all 300ms ease-in-out;
+}
+
+.info-ingredients-respie > button > a{
+  text-decoration: none;
+  color: black;
+}
+
+.h4-go-ingredients{
+  font-weight: 500;
+}
 
