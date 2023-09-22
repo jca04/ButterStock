@@ -109,18 +109,3 @@ export const editIngredientsResipe = async(id, ingredient) => {
     return {message: error}
   }
 }
-
-export const apiInfoResipe = async (info, id_resipe) => {
-  try {
-    const response = await axios.post('/resipe/apiInfoResipe', {
-      headers: { Authorization: `Bearer ${tokenStr}` },
-      data: {
-        "id": id_resipe,
-        "info" : info
-      }
-    })
-
-  } catch (error) {
-    console.log(error)
-  }
-}

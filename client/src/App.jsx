@@ -67,7 +67,7 @@ function App() {
             isAuthenticated() ? <ShowRespie /> : <Navigate to="/login" />
           }
         />
-        <Route
+        <Route 
           exact
           path="/ingredients/all/:id"
           element={
