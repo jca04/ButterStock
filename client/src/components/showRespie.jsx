@@ -19,6 +19,7 @@ let unitArr = ['kg','lb','oz','gr','mg','und'];
 
 function ShowRespie() {
   //localState
+  const [costSubs, setCostSub] = useState(0);
   const [stateResipe, setResipes] = useState([]);
   const [resipeAux, setResipeAux] = useState([]);
   const [ingredient, setIngredient] = useState([]);
@@ -94,7 +95,9 @@ function ShowRespie() {
     try {
       if (Array.isArray(response)) {
         setIngredient(response);
-        setContinue(true);
+        setTimeout(() => {
+          setContinue(true);
+        }, 100)
       }
     } catch (error) {
       console.log(error)
@@ -210,7 +213,7 @@ function ShowRespie() {
           //recetas
           if (row.sub_receta == 0){
             return (
-             <div className={`box-respie ${contador > 3 ? "" : "" }`} key={row.id_receta} onClick={(e) => {setModal(row); editIngredients(row); editSubRecetas(row), setIsSubRespie(isSubReceta), setRespiSelet(row.sub_recetas); setImagenShow(row); }}>
+             <div className={`box-respie ${contador > 3 ? "" : "" }`} key={row.id_receta} onClick={(e) => {setModal(row); editIngredients(row); editSubRecetas(row), setIsSubRespie(isSubReceta), setRespiSelet(row.sub_recetas); setImagenShow(row); setCostSub(0)}}>
                <div className="title-box">
                  {row.nombre_receta ? row.nombre_receta : "N/A"}
                </div>
@@ -223,7 +226,7 @@ function ShowRespie() {
           //sub-recetas
           if (row.sub_receta == 1){
             return (
-             <div className={`box-respie ${contador > 3 ? "" : "" }`} key={row.id_receta} onClick={(e) => {setModal(row); editIngredients(row); editSubRecetas(row), setIsSubRespie(isSubReceta), setRespiSelet(row.sub_recetas); setImagenShow(row);}}>
+             <div className={`box-respie ${contador > 3 ? "" : "" }`} key={row.id_receta} onClick={(e) => {setModal(row); editIngredients(row); editSubRecetas(row), setIsSubRespie(isSubReceta), setRespiSelet(row.sub_recetas); setImagenShow(row); setCostSub(0)}}>
                <div className="title-box">
                  {row.nombre_receta ? row.nombre_receta : "N/A"}
                </div>
@@ -303,13 +306,18 @@ function ShowRespie() {
   };
 
   //funcion onchange del formulario para la informacion de la receta
-  const onchangeForm = () => {
+  const onchangeForm = (arr) => {
+    let arrIngredients = ingredientSelect;
+    if (arr != undefined){
+      arrIngredients = arr;
+    }
+
     //cuando se crea una nueva receta
     let sumatoria = 0;
-    for (let i in ingredientSelect){
-      let unidadMedida = ingredientSelect[i].unidad_medida;
-      let costoUnitario = ingredientSelect[i].costo_unitario;
-      let idIngrediente = ingredientSelect[i].value;
+    for (let i in arrIngredients){
+      let unidadMedida = arrIngredients[i].unidad_medida;
+      let costoUnitario = arrIngredients[i].costo_unitario;
+      let idIngrediente = arrIngredients[i].value;
       let inputIngrediente = document.querySelector('input[cod='+idIngrediente+']');
 
       if (inputIngrediente){
@@ -437,65 +445,64 @@ function ShowRespie() {
       }
     }
 
-    if (sumaVenta != 0){
-      let costoVenta = infoReceta.costo_venta;
-
-      if (costoVenta != undefined){
-        sumaVenta = (parseFloat(costoVenta) +  parseFloat(sumaVenta)).toFixed(2);
-  
-        let newInfo = infoReceta;
-        newInfo.costo_venta = sumaVenta;
-        setInfoReceta(newInfo)
-      }
-    }
+    setCostSub(parseFloat(sumaVenta.toFixed(2)));
+    onchangeForm();
   }
 
   // Renderizado del html
   return (
     <>
       <Navbar />
-      <section className="title-page">
-        <h2>Recetas</h2>
-      </section>
-      <section className="create-respie">
-        <button onClick={() => {setModal({}); setInSelect([]); setEditIngre([]); setRespiSelet([]); setImage(undefined); setInfoReceta({}); }}>
-          Agregar nueva receta <BiAddToQueue />
-        </button>
-      </section>
-      <section className="search-section">
-         <div className="search-respie">
-          <div>
-            <input type="text" className="search" placeholder="Buscar Receta" onInput={(e) => searchRespie(e.target.value)}/>
-            <span>
-              <AiOutlineSearch />
-            </span>
-          </div>
-        </div>
-      </section>
-      <section className="respie-father">
-        {/* Recetas  */}
-        <section className="respie">
-          <div className="title-respie">
-            <h2>Lista de Recetas</h2>
-          </div>
-          {/* Data recetas */}
-          <div className="data-respie">
-            {mapResipe(0, stateResipe)}
-          </div>
-        </section>
-        {/* Sub-recetas */}
-        <section className="sub-respie">
-          <section className="sub-respie">
-            <div className="sub-title-respie">
-              <h2>Lista de Sub-Recetas</h2>
-            </div>
-            {/* Data recetas */}
-            <div className="sub-data-respie">
-            { mapResipe(1, stateResipe)}
+      {isContinue ? (
+        <>
+          <section className="title-page">
+            <h2>Recetas</h2>
+          </section>
+          <section className="create-respie">
+            <button onClick={() => {setModal({}); setInSelect([]); setEditIngre([]); setRespiSelet([]); setImage(undefined); setInfoReceta({}); }}>
+              Agregar nueva receta <BiAddToQueue />
+            </button>
+          </section>
+          <section className="search-section">
+            <div className="search-respie">
+              <div>
+                <input type="text" className="search" placeholder="Buscar Receta" onInput={(e) => searchRespie(e.target.value)}/>
+                <span>
+                  <AiOutlineSearch />
+                </span>
+              </div>
             </div>
           </section>
+          <section className="respie-father">
+          {/* Recetas  */}
+          <section className="respie">
+            <div className="title-respie">
+              <h2>Lista de Recetas</h2>
+            </div>
+            {/* Data recetas */}
+            <div className="data-respie">
+              {mapResipe(0, stateResipe)}
+            </div>
+          </section>
+          {/* Sub-recetas */}
+          <section className="sub-respie">
+            <section className="sub-respie">
+              <div className="sub-title-respie">
+                <h2>Lista de Sub-Recetas</h2>
+              </div>
+              {/* Data recetas */}
+              <div className="sub-data-respie">
+                { mapResipe(1, stateResipe)}
+              </div>
+            </section>
+          </section>
         </section>
-      </section>
+      </>
+      ) : ( 
+        <div className="loading-first-resipe">
+          <AiOutlineLoading3Quarters className="loading-first-resipe-svg"/>
+        </div>
+        )}
       {/* modal para editar y crear  */}
       {/* ------------------------------ */}
       {
@@ -553,7 +560,6 @@ function ShowRespie() {
                       setSending(true);
 
                       let imagen = activeModal.imagen != undefined ? activeModal.imagen : '';
-
                       if (valueImage != undefined){
                         if (valueImage.file != undefined){
                           imagen = await fileUpload(valueImage.file);
@@ -593,13 +599,18 @@ function ShowRespie() {
                           dataTable.push([id_ingredientSend, value, selectData, cantidad_ingrediente_a_restar]);
                         });
 
+                        let infoRecetaSum = infoReceta;
+                        if (infoRecetaSum != undefined){
+                          infoRecetaSum.costo_venta_final = parseFloat(infoRecetaSum.costo_venta) + parseFloat(costSubs)
+                        }
+
                         values.ingredientes = dataTable;
                         values.sub_receta =  !isSubRespie ? dataRespiSel : [];
                         values.tipoPlato = tipoPlato.value;
                         values.id_restaurant = id;
                         values.imagen = imagen;
                         values.isSubreceta = isSubRespie ? 1 : 0;
-                        values.infoReceta = infoReceta;
+                        values.infoReceta = infoRecetaSum;
 
                         //Guardar o editar la receta
                         let idResipeSend = values.id_receta;
@@ -754,7 +765,7 @@ function ShowRespie() {
                         <div className="section-form-colum">  
                           <label htmlFor="ingredient">Ingredientes</label>
                           {/* Select multiple libreria react select */}
-                            <Select onChange={(e) => {setInSelect(e); onchangeForm(); setIngredientError(false)}}
+                            <Select onChange={(e) => {setInSelect(e); setIngredientError(false);  onchangeForm(e)}}
                               closeMenuOnSelect={false}
                               defaultValue={ingredientInEdit.length > 0 ? ingredientInEdit : null}
                               options={ingredient}
@@ -940,7 +951,7 @@ function ShowRespie() {
                     <td className="td-info-resipe">Costo venta</td>
                   </tr>
                   <tr>
-                   <td className="td-info-data-resipe">{JSON.stringify(infoReceta) != '{}' ? (<p>${infoReceta.costo_venta}</p>) : ('N/A')}</td>
+                   <td className="td-info-data-resipe">{JSON.stringify(infoReceta) != '{}' ? (<p>${parseFloat(infoReceta.costo_venta) + parseFloat(costSubs)}</p>) : ('N/A')}</td>
                   </tr>
                 </tbody>
                 </table>

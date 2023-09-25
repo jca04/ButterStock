@@ -591,3 +591,16 @@ body::-webkit-scrollbar-thumb, .body-respie::-webkit-scrollbar-thumb{
   font-weight: 500;
 }
 
+.loading-first-resipe{
+  display: flex;
+  width: 90%;
+  margin: auto;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+}
+
+.loading-first-resipe-svg{
+  font-size: 3.5em;
+  animation: giro 0.5s infinite;
+}
