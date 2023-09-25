@@ -44,26 +44,42 @@ const createIngredient = async (req, res) => {
       unidad_medida,
       costo_unitario,
       cantidad_porcion_elaborar,
-      costo_total,
-      porcentaje_participacion,
       cantidad_total_ingrediente,
     } = req.body;
 
+    const id_restaurant = req.body.data.id;
+    const costo_total = costo_unitario * cantidad_total_ingrediente;
+
+    const id_ingrediente = uuidv4();
+
     conn.query(
-      "INSERT INTO tbl_ingredientes (id_ingrediente, codigo_identificador, nombre_ingrediente, unidad_medida, costo_unitario,  cantidad_procion_elaborar, costo_total, porcentaje_participacion, cantidad_total_ingrediente, activo, id_restaurant) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO tbl_ingredientes " +
+        "(id_ingrediente,  nombre_ingrediente, unidad_medida, costo_unitario, cantidad_procion_elaborar, costo_total, cantidad_total_ingrediente, activo, id_restaurant) " +
+        "VALUES (?,?,?,?,?,?,?,?,?);",
       [
-        uuidv4(),
-        uuidv4(),
+        id_ingrediente,
         nombre_ingrediente,
         unidad_medida,
         costo_unitario,
         cantidad_porcion_elaborar,
         costo_total,
-        porcentaje_participacion,
         cantidad_total_ingrediente,
         1,
-        "5959837d-7e15-40c1-abdd-4224a9c3ad9c",
-      ]
+        id_restaurant,
+      ],
+      (err, result) => {
+        if (err) {
+          res.status(400).json({ message: err });
+        } else {
+          if (result.affectedRows > 0) {
+            res.status(200).json({ message: "Ingrediente creado" });
+          } else {
+            res
+              .status(400)
+              .json({ message: "No se pudo crear el ingrediente" });
+          }
+        }
+      }
     );
   } catch (error) {
     res.status(400).json({ message: error });
@@ -72,9 +88,6 @@ const createIngredient = async (req, res) => {
 
 const getIngredientsWithRecipe = (req, res) => {
   try {
-    // , && i.activo = 1 && r.id_restaurant = ? && r.activo = 1 && ir.activo = 1
-    // r.activo
-
     const id_restaurant = req.body.data.id;
     conn.query(
       "SELECT i.nombre_ingrediente, i.id_ingrediente, i.unidad_medida, " +
