@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../public/css/showRespieStyle.css";
-import { getResipes, getIngredient,saveEditRespie, getResipe, editIngredientsResipe } from "../api/resipe";
+import { getResipes, getIngredient,saveEditRespie, getResipe, editIngredientsResipe, apiInfoResipe } from "../api/resipe";
 import { convertion } from "../public/js/unitConversion";
 import {fileUpload} from "../app/cloudinary";
 import Navbar from "./reuseComponents/navbar";
@@ -612,6 +612,7 @@ function ShowRespie() {
                         values.isSubreceta = isSubRespie ? 1 : 0;
                         values.infoReceta = infoRecetaSum;
 
+
                         //Guardar o editar la receta
                         let idResipeSend = values.id_receta;
                         const response = await saveEditRespie(values);    
@@ -690,7 +691,6 @@ function ShowRespie() {
                           activeDesactieToggle();
                           setSending(false);
                         }, 1500);
-
                         setErro(null);
 
                       }catch(err){
@@ -772,7 +772,6 @@ function ShowRespie() {
                               placeholder="Seleccione los ingredientes para crear la receta"
                               isMulti
                           />
-
                            <div className="error-respi">{ingredientError ? (<p className="error">{'*Debe seleccionar al menos un ingrediente'}</p>) : null}</div>   
                             {
                               ingredientSelect.length > 0 ?
