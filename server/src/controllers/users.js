@@ -26,7 +26,7 @@ const registerUser = async (req, res) => {
       "SELECT nombre, apellido, correo FROM tbl_users WHERE correo = ?",
       [correo],
       (err, result) => {
-        if (err) {
+        if (err) { 
           res.status(400).json({ error: err });
         } else {
           if (result.length > 0) {
