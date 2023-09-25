@@ -20,10 +20,12 @@ const getIngredient = async (req, res) => {
               value: result[i]["id_ingrediente"],
               id_receta: result[i]["id_receta"],
               unidad_medida: result[i]["unidad_medida"],
-              cantidad_total_ingrediente: result[i]["cantidad_total_ingrediente"],
+              cantidad_total_ingrediente:
+                result[i]["cantidad_total_ingrediente"],
               costo_total: result[i]["costo_total"],
-              cantidad_editable_ingrediente: result[i]["cantidad_editable_ingrediente"],
-              costo_unitario: result[i]['costo_unitario']
+              cantidad_editable_ingrediente:
+                result[i]["cantidad_editable_ingrediente"],
+              costo_unitario: result[i]["costo_unitario"],
             };
           }
 
@@ -43,26 +45,44 @@ const createIngredient = async (req, res) => {
       unidad_medida,
       costo_unitario,
       cantidad_porcion_elaborar,
-      costo_total,
-      porcentaje_participacion,
       cantidad_total_ingrediente,
+      kardex,
     } = req.body;
 
+    const id_restaurant = req.body.data.id;
+    const costo_total = costo_unitario * cantidad_total_ingrediente;
+
+    const id_ingrediente = uuidv4();
+
     conn.query(
-      "INSERT INTO tbl_ingredientes (id_ingrediente, codigo_identificador, nombre_ingrediente, unidad_medida, costo_unitario,  cantidad_procion_elaborar, costo_total, porcentaje_participacion, cantidad_total_ingrediente, activo, id_restaurant) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO tbl_ingredientes " +
+        "(id_ingrediente,  nombre_ingrediente, unidad_medida, costo_unitario, cantidad_procion_elaborar, costo_total, cantidad_total_ingrediente, activo, kardex, id_restaurant) " +
+        "VALUES (?,?,?,?,?,?,?,?,?);",
       [
-        uuidv4(),
-        uuidv4(),
+        id_ingrediente,
         nombre_ingrediente,
         unidad_medida,
         costo_unitario,
         cantidad_porcion_elaborar,
         costo_total,
-        porcentaje_participacion,
         cantidad_total_ingrediente,
         1,
-        "5959837d-7e15-40c1-abdd-4224a9c3ad9c",
-      ]
+        kardex,
+        id_restaurant,
+      ],
+      (err, result) => {
+        if (err) {
+          res.status(400).json({ message: err });
+        } else {
+          if (result.affectedRows > 0) {
+            res.status(200).json({ message: "Ingrediente creado" });
+          } else {
+            res
+              .status(400)
+              .json({ message: "No se pudo crear el ingrediente" });
+          }
+        }
+      }
     );
   } catch (error) {
     res.status(400).json({ message: error });
@@ -71,15 +91,12 @@ const createIngredient = async (req, res) => {
 
 const getIngredientsWithRecipe = (req, res) => {
   try {
-    // , && i.activo = 1 && r.id_restaurant = ? && r.activo = 1 && ir.activo = 1
-    // r.activo
-
     const id_restaurant = req.body.data.id;
     conn.query(
       "SELECT i.nombre_ingrediente, i.id_ingrediente, i.unidad_medida, " +
         "i.costo_unitario, i.costo_total, " +
         "i.cantidad_procion_elaborar, i.cantidad_total_ingrediente, i.activo, " +
-        "r.nombre_receta, r.imagen, r.cantidad_plato,  " +
+        "r.id_receta, r.nombre_receta, r.imagen, r.cantidad_plato,  " +
         "r.sub_receta, ir.cantidad_por_receta " +
         "FROM tbl_ingredientes AS i " +
         "LEFT JOIN tbl_ingredientes_receta AS ir ON i.id_ingrediente = ir.id_ingrediente " +
