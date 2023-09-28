@@ -42,21 +42,19 @@ const createIngredient = async (req, res) => {
       nombre_ingrediente,
       unidad_medida,
       costo_unitario,
-      cantidad_porcion_elaborar,
       costo_total,
       porcentaje_participacion,
       cantidad_total_ingrediente,
     } = req.body;
 
     conn.query(
-      "INSERT INTO tbl_ingredientes (id_ingrediente, codigo_identificador, nombre_ingrediente, unidad_medida, costo_unitario,  cantidad_procion_elaborar, costo_total, porcentaje_participacion, cantidad_total_ingrediente, activo, id_restaurant) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO tbl_ingredientes (id_ingrediente, codigo_identificador, nombre_ingrediente, unidad_medida, costo_unitario,  costo_total, porcentaje_participacion, cantidad_total_ingrediente, activo, id_restaurant) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         uuidv4(),
         uuidv4(),
         nombre_ingrediente,
         unidad_medida,
         costo_unitario,
-        cantidad_porcion_elaborar,
         costo_total,
         porcentaje_participacion,
         cantidad_total_ingrediente,
@@ -78,7 +76,7 @@ const getIngredientsWithRecipe = (req, res) => {
     conn.query(
       "SELECT i.nombre_ingrediente, i.id_ingrediente, i.unidad_medida, " +
         "i.costo_unitario, i.costo_total, " +
-        "i.cantidad_procion_elaborar, i.cantidad_total_ingrediente, i.activo, " +
+        "i.cantidad_total_ingrediente, i.activo, " +
         "r.nombre_receta, r.imagen, r.cantidad_plato,  " +
         "r.sub_receta, ir.cantidad_por_receta " +
         "FROM tbl_ingredientes AS i " +
@@ -103,7 +101,6 @@ const getIngredientsWithRecipe = (req, res) => {
                   cantidad_total_ingrediente: row.cantidad_total_ingrediente,
                   ingrediente_activo: row.activo,
                   costo_unitario: row.costo_unitario,
-                  cantidad_porcion_elaborar: row.cantidad_procion_elaborar,
                   costo_total: row.costo_total,
                   recetas: [],
                 };

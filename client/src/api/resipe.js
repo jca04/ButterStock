@@ -90,7 +90,6 @@ export const getResipe = async(id, id_receta) => {
 };
 
 export const editIngredientsResipe = async(id, ingredient) => {
-
   try {
     const response = await axios.post('/resipe/editQuantity', {
       headers: { Authorization: `Bearer ${tokenStr}` },

@@ -1,6 +1,10 @@
 const conn = require("../db/db");
 const { v4: uuidv4 } = require("uuid");
 
+process.on('rejectionHandled', (error) => {
+  console.log(error)
+});
+
 const createEditResipe = async (req, res) => {
   try {
     let {id_receta , nombre_receta, descripcion, tipoPlato, cantidad_plato, ingredientes, sub_receta , id_restaurant, imagen, isSubreceta, infoReceta} = req.body.data.data;
@@ -9,68 +13,68 @@ const createEditResipe = async (req, res) => {
     //Insertar una nueva receta
     if (id_receta == ''){
       //Crear la receta inicial con sus datos
-     conn.query("INSERT INTO tbl_recetas (id_receta, nombre_receta, imagen, descripcion,cantidad_plato, activo, sub_receta, tipo_receta, id_restaurant ) VALUES(?,?,?,?,?,?,?,?,?)", [id_receta_new, nombre_receta,imagen,descripcion,cantidad_plato,1, isSubreceta, tipoPlato, id_restaurant], 
-      (err, result) => {
-        try {
-          if (err){
-            return res.status(500).json({message: err});
+      conn.query("INSERT INTO tbl_recetas (id_receta, nombre_receta, imagen, descripcion,cantidad_plato, activo, sub_receta, tipo_receta, id_restaurant ) VALUES(?,?,?,?,?,?,?,?,?)", [id_receta_new, nombre_receta, imagen, descripcion, cantidad_plato, 1, isSubreceta, tipoPlato, id_restaurant],
+        (err) => {
+          try {
+            if (err) {
+              return res.status(500).json({ message: err });
+            }
+
+            let arrnew = [];
+            for (var i in ingredient) {
+              let id_ingrediente = ingredient[i][0];
+              let cantidad_ingrediente_plato = ingredient[i][1];
+              let unidad_medida_r = ingredient[i][2];
+              arrnew.push([uuidv4(), unidad_medida_r, cantidad_ingrediente_plato, 1, id_ingrediente, id_receta_new]);
+            }
+
+            if (arrnew.length > 0) {
+              //Insertar todos los ingredientes que esta receta haya creado
+              conn.query("INSERT INTO tbl_ingredientes_receta (id_ingrediente_receta, unidad_medida_r,  cantidad_por_receta, activo, id_ingrediente, id_receta) VALUES ?",
+                [arrnew],
+                (err) => {
+                  if (err) {
+                    return res.status(500).json({ message: err });
+                  }
+                });
+            }
+
+            //Insertar las referencias de la subReceta hacia las recetas padres en la tabla tbl_subRecetas
+            let arrIdsSubReceta = [];
+            let arrSubRecetas = [];
+            for (var i in sub_receta) {
+              arrIdsSubReceta.push(sub_receta[i].value);
+              arrSubRecetas.push([uuidv4(), sub_receta[i].value, id_receta_new, 1]);
+            }
+
+            if (arrSubRecetas.length > 0) {
+              conn.query("INSERT INTO tbl_sub_recetas (id_sub_receta,id_receta, cod_receta_padre, activo) VALUES ?",
+                [arrSubRecetas], (err) => {
+                  if (err) {
+                    return res.status(500).json({ message: err });
+                  }
+                });
+            }
+
+            if (JSON.stringify(infoReceta) != '{}') {
+              let info = infoReceta;
+              conn.query('INSERT INTO tbl_inforeceta (id_inforeceta, margen_error, sub_total, sub_total_M_E, margen_contribucion, subTotal_margen_contribucion,costo_potencial_venta, iva,	costo_venta, id_receta) VALUES (?,?,?,?,?,?,?,?,?,?)', [uuidv4(), info.margen_error, info.subTotal, info.sub_total_M_E, info.margenContribucion, info.subTotal_margen_contribucion, info.costo_potencial_venta, info.iva, info.costo_venta_final, id_receta_new],
+                (err, result) => {
+                  if (err) {
+                    res.status(500).json({ message: err });
+                  }
+
+                  if (result.protocol41) {
+                    res.status(200).json({ message: true, id_create: id_receta_new });
+                  }
+                });
+            } else {
+              res.status(200).json({ message: true, id_create: id_receta_new });
+            }
+          } catch (error) {
+            res.status(500).json({ message: error });
           }
- 
-          let arrnew = [];
-          for (var i in ingredient){
-            let id_ingrediente = ingredient[i][0];
-            let cantidad_ingrediente_plato = ingredient[i][1];
-            let unidad_medida_r = ingredient[i][2];
-            arrnew.push([uuidv4(), unidad_medida_r, cantidad_ingrediente_plato, 1, id_ingrediente, id_receta_new])
-          }
- 
-          if (arrnew.length > 0){
-             //Insertar todos los ingredientes que esta receta haya creado
-            conn.query("INSERT INTO tbl_ingredientes_receta (id_ingrediente_receta, unidad_medida_r,  cantidad_por_receta, activo, id_ingrediente, id_receta) VALUES ?",
-            [arrnew], 
-            (err, resultdata) => {
-               if (err){
-                return res.status(500).json({message: err});
-              }
-            });
-          }
- 
-          //Insertar las referencias de la subReceta hacia las recetas padres en la tabla tbl_subRecetas
-          let arrIdsSubReceta = []; 
-          let arrSubRecetas = [];
-          for (var i in sub_receta){
-            arrIdsSubReceta.push(sub_receta[i].value);
-            arrSubRecetas.push([uuidv4(), sub_receta[i].value, id_receta_new, 1]);
-          }
-     
-          if (arrSubRecetas.length > 0){
-             conn.query("INSERT INTO tbl_sub_recetas (id_sub_receta,id_receta, cod_receta_padre, activo) VALUES ?",
-            [arrSubRecetas], (err, result) => {
-              if (err){
-                return res.status(500).json({message: err});
-              }
-            });
-         }      
- 
-         if (JSON.stringify(infoReceta) != '{}'){
-           let info = infoReceta
-           conn.query('INSERT INTO tbl_inforeceta (id_inforeceta, margen_error, sub_total, sub_total_M_E, margen_contribucion, subTotal_margen_contribucion,costo_potencial_venta, iva,	costo_venta, id_receta) VALUES (?,?,?,?,?,?,?,?,?,?)', [uuidv4(), info.margen_error, info.subTotal, info.sub_total_M_E, info.margenContribucion, info.subTotal_margen_contribucion, info.costo_potencial_venta, info.iva, info.costo_venta_final, id_receta_new],
-             (err, result) => {
-               if (err) {
-                 res.status(500).json({message: err});
-               }
- 
-               if (result.protocol41){
-                 res.status(200).json({message: true, id_create: id_receta_new });
-               }
-             });
-         }else{
-           res.status(200).json({message: true, id_create: id_receta_new });
-         }
-        } catch (error) {
-          res.status(500).json({message: error});
-        }
-      });
+        });
       //aqui se empieza a editar las recetas
     }else{
       //Editar la receta general  

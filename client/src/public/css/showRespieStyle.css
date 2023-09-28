@@ -449,6 +449,8 @@ color: red;
   flex-direction: column;
   align-items: center;
   padding-top: 40px;
+  height: 100%;
+  overflow-y: auto;
 
 }
 .tbl-info-resipe{
@@ -552,22 +554,26 @@ color: red;
   font-size: 3em;
 }
 
-body::-webkit-scrollbar, .body-respie::-webkit-scrollbar{
+body::-webkit-scrollbar, .body-respie::-webkit-scrollbar, .div-info-resipe::-webkit-scrollbar{
   width: 12px;
 }
 
-body::-webkit-scrollbar-thumb, .body-respie::-webkit-scrollbar-thumb{
+body::-webkit-scrollbar-thumb, .body-respie::-webkit-scrollbar-thumb, .div-info-resipe::-webkit-scrollbar-thumb{
   border-radius: 5px;
   background-color: #FFEA96;
 
 }
 
+
+
 .info-ingredients-respie{
   margin-top: 35px;
 }
 
-.info-ingredients-respie > button{
+.info-ingredients-respie > a{
+  display: block;
   width: 100%;
+  text-align: center;
   padding: 10px;
   outline: none;
   border-radius: 5px;
@@ -575,17 +581,15 @@ body::-webkit-scrollbar-thumb, .body-respie::-webkit-scrollbar-thumb{
   cursor: pointer;
   background-color: #FFEA96;
   font-size: 15px;
+  text-decoration: none;
+  color: black;
 }
 
-.info-ingredients-respie > button:hover{
+.info-ingredients-respie > a:hover{
   background-color: #F5B702;
   transition: all 300ms ease-in-out;
 }
 
-.info-ingredients-respie > button > a{
-  text-decoration: none;
-  color: black;
-}
 
 .h4-go-ingredients{
   font-weight: 500;
@@ -603,4 +607,23 @@ body::-webkit-scrollbar-thumb, .body-respie::-webkit-scrollbar-thumb{
 .loading-first-resipe-svg{
   font-size: 3.5em;
   animation: giro 0.5s infinite;
+  /* AiOutlineMedicineBox */
+}
+
+.not-ingredients-respie > p{
+  color: red;
+}
+
+
+.not-ingredients-respie > p > a{
+  text-decoration: none;
+  color: black;
+  background: rgb(246, 88, 88);
+  padding: 7px;
+  border-radius: 5px;
+}
+
+.not-ingredients-respie > p > a:hover{
+  background: red;
+  transition: all 200ms ease-in-out;
 }
