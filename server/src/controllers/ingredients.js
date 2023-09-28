@@ -42,7 +42,6 @@ const createIngredient = async (req, res) => {
       nombre_ingrediente,
       unidad_medida,
       costo_unitario,
-      costo_total,
       porcentaje_participacion,
       cantidad_total_ingrediente,
       kardex,
