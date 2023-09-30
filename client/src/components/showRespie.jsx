@@ -11,6 +11,7 @@ import {GiCupcake} from 'react-icons/gi';
 import {BiImageAdd} from 'react-icons/bi';
 import { BiAddToQueue } from "react-icons/bi";
 import {FiAlertTriangle} from 'react-icons/fi'
+import {BsInboxesFill} from 'react-icons/bs'
 import { Field, Form, Formik } from "formik";
 import Select from 'react-select';
 import { toast } from "react-toastify";
@@ -186,11 +187,21 @@ function ShowRespie() {
 
   }
 
-
   //Renderizado de la recetas
   const mapResipe = (type, arr) => {
     if (resipeAux.length > 0){
       arr = resipeAux;
+    }
+
+    let contadorReceta = 0;
+    let contadorSubReceta = 0
+
+    for (let i in arr){
+      if (arr[i]['sub_receta'] == 1){
+        contadorSubReceta++
+      }else{
+        contadorReceta++
+      }
     }
 
     if (arr.length > 0){
@@ -214,27 +225,31 @@ function ShowRespie() {
         row.index = index;
         if (type == 0){
           //recetas
-          if (row.sub_receta == 0){
+          if (row.sub_receta == 0 && contadorReceta > 0){
             return (
-             <div className={`box-respie ${contador > 3 ? "" : "" }`} key={row.id_receta} onClick={(e) => {setCostSell(row.sub_recetas); editIngredients(row); editSubRecetas(row), setIsSubRespie(isSubReceta), setRespiSelet(row.sub_recetas); setImagenShow(row); setDivide(row.cantidad_plato); setModal(row);}}>
+             <div className={`box-respie ${contador > 3 ? "" : "" }`} key={row.id_receta} onClick={() => {setCostSell(row.sub_recetas); editIngredients(row); editSubRecetas(row), setIsSubRespie(isSubReceta), setRespiSelet(row.sub_recetas); setImagenShow(row); setDivide(row.cantidad_plato); setModal(row);}}>
                <div className="title-box">
                  {row.nombre_receta ? row.nombre_receta : "N/A"}
                </div>
                <div className="img-box">{imagen}</div>
-              <div className="btn-box"></div>
+              <div className="btn-box-resipe">
+                <div>$ {row.costo_venta}</div>
+              </div>
              </div>
           );
          }
         }else{
           //sub-recetas
-          if (row.sub_receta == 1){
+          if (row.sub_receta == 1 && contadorSubReceta > 0){
             return (
-             <div className={`box-respie ${contador > 3 ? "" : "" }`} key={row.id_receta} onClick={(e) => {setCostSell(row.sub_recetas);  setModal(row); editIngredients(row); editSubRecetas(row), setIsSubRespie(isSubReceta), setRespiSelet(row.sub_recetas); setImagenShow(row); setDivide(row.cantidad_plato); setModal(row);}}>
+             <div className={`box-respie ${contador > 3 ? "" : "" }`} key={row.id_receta} onClick={() => {setCostSell(row.sub_recetas);  setModal(row); editIngredients(row); editSubRecetas(row), setIsSubRespie(isSubReceta), setRespiSelet(row.sub_recetas); setImagenShow(row); setDivide(row.cantidad_plato); setModal(row);}}>
                <div className="title-box">
                  {row.nombre_receta ? row.nombre_receta : "N/A"}
                </div>
                <div className="img-box">{imagen}</div>
-              <div className="btn-box"></div>
+               <div className="btn-box-resipe">
+                <div>$ {row.costo_venta}</div>
+              </div>
              </div>
           );
          }
@@ -498,18 +513,19 @@ function ShowRespie() {
       <Navbar />
       {isContinue ? (
         <>
+        <div className="body-respie-all">
           <section className="title-page">
+          <BsInboxesFill/>
             <h2>Recetas</h2>
           </section>
-          <section className="create-respie">
-            <button onClick={() => {setModal({}); setInSelect([]); setEditIngre([]); setRespiSelet([]); setImage(undefined); setInfoReceta({}); }}>
-              Agregar nueva receta <BiAddToQueue />
-            </button>
-          </section>
+          <div className="backgroun-resipe">
           <section className="search-section">
+            <button onClick={() => {setModal({}); setInSelect([]); setEditIngre([]); setRespiSelet([]); setImage(undefined); setInfoReceta({}); }}>
+            <BiAddToQueue /> Agregar nueva receta 
+            </button>
             <div className="search-respie">
               <div>
-                <input type="text" className="search" placeholder="Buscar Receta" onInput={(e) => searchRespie(e.target.value)}/>
+                <input type="text" className="search" placeholder="Buscar" onInput={(e) => searchRespie(e.target.value)}/>
                 <span>
                   <AiOutlineSearch />
                 </span>
@@ -529,17 +545,17 @@ function ShowRespie() {
           </section>
           {/* Sub-recetas */}
           <section className="sub-respie">
-            <section className="sub-respie">
-              <div className="sub-title-respie">
-                <h2>Lista de Sub-Recetas</h2>
+            <div className="sub-title-respie">
+              <h2>Lista de Sub-Recetas</h2>
+            </div>
+            {/* Data recetas */}
+            <div className="sub-data-respie">
+              { mapResipe(1, stateResipe)}
               </div>
-              {/* Data recetas */}
-              <div className="sub-data-respie">
-                { mapResipe(1, stateResipe)}
-              </div>
-            </section>
           </section>
         </section>
+        </div>
+      </div>
       </>
       ) : ( 
         <div className="loading-first-resipe">
@@ -818,21 +834,8 @@ function ShowRespie() {
                         {/* Select multiple */}
                         <div className="section-form-colum">  
                           <label htmlFor="ingredient">Ingredientes</label>
-                          {console.log(ingredient)}
                           {/* Select multiple libreria react select */}
-                            <Select onChange={(e) => {
-                              console.log(e)
-                              if (e.length > 0){
-                                if (e[0].value == 'irAIngredientes'){
-                                 window.open('http://localhost:5173/ingredients/all/'+id+'', '_target');
-                                 setIngredient([])
-                                }else{
-                                  setInSelect(e); setIngredientError(false);  onchangeForm(e);
-                                }
-                              }else{
-                                setInSelect(e); setIngredientError(false);  onchangeForm(e);
-                              }
-                            }}
+                            <Select onChange={(e) => {setInSelect(e); setIngredientError(false);  onchangeForm(e);}}
                               closeMenuOnSelect={false}
                               defaultValue={ingredientInEdit.length > 0 ? ingredientInEdit : null}
                               options={ingredient}
