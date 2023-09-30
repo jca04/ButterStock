@@ -486,6 +486,193 @@ function ShowRespie() {
         let iva = infoReceta.iva;
         let value = 0;
 
+        if (divide != 0){
+          value = (parseFloat(margenContribucion) +  parseFloat(margenError)) / divide;
+        }
+        
+
+        let costo_venta = parseFloat(value + (value * iva))  + setCostSell(row, true);
+
+        json = {
+        'costo_potencial_venta' : value,
+        'costo_venta' : parseFloat(costo_venta.toFixed(2))
+        }
+
+        return costo_venta.toFixed(2)
+        
+      }
+    }else{
+      return ('N/A');
+    }
+  }
+
+  const removeFile = () => {
+    setImage(undefined);
+  };
+
+  //funcion onchange del formulario para la informacion de la receta
+  const onchangeForm = (arr) => {
+    let arrIngredients = ingredientSelect;
+    if (arr != undefined){
+      arrIngredients = arr;
+    }
+
+    //cuando se crea una nueva receta
+    let sumatoria = 0;
+    for (let i in arrIngredients){
+      let unidadMedida = arrIngredients[i].unidad_medida;
+      let costoUnitario = arrIngredients[i].costo_unitario;
+      let idIngrediente = arrIngredients[i].value;
+      let inputIngrediente = document.querySelector('input[cod='+idIngrediente+']');
+
+      if (inputIngrediente){
+        let index = inputIngrediente.getAttribute('index');
+        let selectValue = document.getElementById('select-'+index).value; 
+        let valueConvertion = inputIngrediente.value
+        if (valueConvertion == '') valueConvertion = 1;
+
+        let costoUnitarioValor = convertion(selectValue, parseFloat(valueConvertion), unidadMedida);
+        sumatoria = sumatoria + (costoUnitarioValor *  costoUnitario);     
+      }
+    }
+
+
+    //margen de error
+    let margenError = infoReceta.margen_error != undefined ? infoReceta.margen_error : 0.05;
+    let valueMargenError =  sumatoria + (sumatoria * margenError);
+
+    //margen contribucion
+    let margenContribucion = infoReceta.margenContribucion != undefined ? infoReceta.margenContribucion : 0.3;
+    let valueMargenContribucion = valueMargenError + (valueMargenError * margenContribucion);
+
+    //costo potencial venta
+    let costoPotencialVenta = (valueMargenError + valueMargenContribucion)
+
+    //costo Venta
+    let iva = infoReceta.iva != undefined ? infoReceta.iva : 0.19;
+    let costoVenta = costoPotencialVenta + (costoPotencialVenta * iva);
+
+    setInfoReceta({
+      "subTotal" : sumatoria.toFixed(0),
+      "margen_error" : margenError,
+      "sub_total_M_E" :valueMargenError.toFixed(2),
+      "margenContribucion" : margenContribucion,
+      "subTotal_margen_contribucion" : valueMargenContribucion.toFixed(0),
+      "costo_potencial_venta" : costoPotencialVenta.toFixed(2),
+      "iva" : iva,
+      "costo_venta" :  costoVenta.toFixed(2) 
+    });
+
+  }
+
+
+  const setImagenShow = (row) => {
+    if ( row.imagen != null){
+      setImage({ id: "fileId",
+        size: 28 * 1024 * 1024,
+        type: "image/jpeg",
+        name: `${row.nombre_receta}`,
+        imageUrl: `${row.imagen}`})
+    }else{
+      setImage(0);
+    }
+  }
+
+  const setInfoRespie = (key, value) => {
+    if (infoReceta[key] != undefined){
+      if (value > 0){
+        infoReceta[key] = parseFloat((value / 100).toFixed(2));
+      }else{
+        if (value == ''){
+          if (key == 'margenContribucion'){
+            infoReceta[key] = parseFloat(0.3);
+          }else{
+            if (key == 'margen_error'){
+              infoReceta[key] = parseFloat(0.05);
+            }else{
+              if (key == 'costo_venta'){
+                infoReceta[key] = parseFloat(0);
+              }else{
+                if (key == 'iva'){
+                  infoReceta[key] = parseFloat(0.19)
+                }
+              }
+            }
+          }
+        } else{
+         infoReceta[key] = parseFloat(value);
+        }
+      }
+    }
+
+    setInfoReceta(infoReceta);
+    onchangeForm();
+    return value;
+  }
+
+  //buscar una receta 
+  const searchRespie = (text) => {
+    let arrSend = [];
+    if (text != ''){     
+      let arrSearch = stateResipe;
+      for (let i in arrSearch){
+        if (JSON.stringify(arrSearch[i]) != '{}'){
+          if (arrSearch[i].nombre_receta != undefined){
+            let textArr = arrSearch[i].nombre_receta.toLowerCase();
+            let textIn = text.toLowerCase();
+            if (textArr.includes(textIn)){
+              arrSend.push(arrSearch[i])
+            }
+          }
+        }
+      }
+    }
+
+    setResipeAux(arrSend);
+    mapResipe(0, stateResipe);
+    mapResipe(1, stateResipe);
+
+  }
+
+  //arreglar los precios si tiene subRecetas
+  const setCostSell = (row,scontinue) => {
+    let sumaVenta = 0;
+    if (row != undefined){
+      if (row.length > 0){
+        for (let ic in row){
+          let id = row[ic]['id_receta'];
+          for (let i in stateResipe){
+            if (stateResipe[i].id_receta == id){
+              if (stateResipe[i].costo_venta != null){
+                sumaVenta = sumaVenta + stateResipe[i].costo_venta;
+              }
+            }
+          }
+        }
+      }
+    }else{
+      for (let i in dataRespiSel){
+        sumaVenta = sumaVenta + dataRespiSel[i].costo_venta;
+      }
+    }
+
+
+    if (scontinue != undefined){
+      return sumaVenta;
+    }  
+  }
+ 
+  //validar el costo de venta
+  const validateCostVent = (way,row) =>{
+
+    if (JSON.stringify(infoReceta) != '{}'){
+      //costo venta
+      if (way){
+        let margenContribucion = infoReceta.subTotal_margen_contribucion
+        let margenError = infoReceta.sub_total_M_E;
+        let iva = infoReceta.iva;
+        let value = 0;
+
 
         if (divide != 0){
           value = (parseFloat(margenContribucion) +  parseFloat(margenError)) / divide;
