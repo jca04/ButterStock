@@ -1,3 +1,11 @@
+*{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family:'Work Sans', sans-serif;
+}
+
+
 .nav-homepage{
   display: flex;
   flex-direction: row;
