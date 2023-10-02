@@ -391,7 +391,6 @@ function ShowRespie() {
     }
   }
  
- 
   const setInfoRespie = (key, value) => {
     if (infoReceta[key] != undefined){
       if (value > 0){
