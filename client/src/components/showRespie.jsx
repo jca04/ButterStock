@@ -336,7 +336,7 @@ function ShowRespie() {
       let unidadMedida = arrIngredients[i].unidad_medida;
       let costoUnitario = arrIngredients[i].costo_unitario;
       let idIngrediente = arrIngredients[i].value;
-      let inputIngrediente = document.querySelector('input[cod='+idIngrediente+']');
+      let inputIngrediente = document.querySelector('input[cod="'+idIngrediente+'"]');
 
       if (inputIngrediente){
         let index = inputIngrediente.getAttribute('index');
