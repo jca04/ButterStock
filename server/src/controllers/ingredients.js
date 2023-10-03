@@ -20,10 +20,12 @@ const getIngredient = async (req, res) => {
               value: result[i]["id_ingrediente"],
               id_receta: result[i]["id_receta"],
               unidad_medida: result[i]["unidad_medida"],
-              cantidad_total_ingrediente: result[i]["cantidad_total_ingrediente"],
+              cantidad_total_ingrediente:
+                result[i]["cantidad_total_ingrediente"],
               costo_total: result[i]["costo_total"],
-              cantidad_editable_ingrediente: result[i]["cantidad_editable_ingrediente"],
-              costo_unitario: result[i]['costo_unitario']
+              cantidad_editable_ingrediente:
+                result[i]["cantidad_editable_ingrediente"],
+              costo_unitario: result[i]["costo_unitario"],
             };
           }
 
@@ -38,7 +40,6 @@ const getIngredient = async (req, res) => {
 
 const createIngredient = async (req, res) => {
   try {
-
     const {
       nombre_ingrediente,
       unidad_medida,
@@ -70,11 +71,36 @@ const createIngredient = async (req, res) => {
           res.status(400).json({ message: err });
         } else {
           if (result.affectedRows > 0) {
-            res.status(200).json({ message: "Ingrediente creado", id_ingrediente });
+            if (kardex == "PEPS") {
+              const costo_total_saldo =
+                cantidad_total_ingrediente * costo_unitario;
+              conn.query(
+                "INSERT INTO tbl_peps (id_peps, saldo_cantidad, saldo_valorUnitario, saldo_valorTotal, saldo_activo, id_ingrediente, id_restaurante) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                [
+                  uuidv4(),
+                  cantidad_total_ingrediente,
+                  costo_unitario,
+                  costo_total_saldo,
+                  1,
+                  id_ingrediente,
+                  id_restaurant,
+                ],
+                (err, result) => {
+                  if (err) {
+                    return res.status(400).json({ message: err });
+                  }
+                }
+              );
+            }
+
+            res.status(200).json({
+              message: "Ingrediente creado",
+              id_ingrediente,
+            });
           } else {
-            res
-              .status(400)
-              .json({ message: "No se pudo crear el ingrediente" });
+            res.status(400).json({
+              message: "No se pudo crear el ingrediente",
+            });
           }
         }
       }
@@ -127,14 +153,17 @@ const getIngredientsWithRecipe = (req, res) => {
                   imagen: row.imagen,
                   cantidad_plato: row.cantidad_plato,
                   sub_receta: row.sub_receta,
-                  cantidad_por_receta: row.cantidad_por_receta + ' ' + row.unidad_medida,
-                  kardex: row.kardex
+                  cantidad_por_receta:
+                    row.cantidad_por_receta + " " + row.unidad_medida,
+                  kardex: row.kardex,
                 });
               } else {
                 ingredientes[idIngrediente].recetas = [];
               }
             });
-            res.status(200).json({ ingredientes: Object.values(ingredientes) });
+            res.status(200).json({
+              ingredientes: Object.values(ingredientes),
+            });
           } else {
             res.status(400).json({ message: "No hay ingredientes" });
           }
@@ -156,17 +185,19 @@ const banIngredient = (req, res) => {
       [id],
       (err, result) => {
         try {
-          if (err){
-            res.status(400).json({message: err});
+          if (err) {
+            res.status(400).json({ message: err });
           }
 
-          if (result.affectedRows > 0){
-            //desactivar el mismo ingrediente en todas 
+          if (result.affectedRows > 0) {
+            //desactivar el mismo ingrediente en todas
 
-            res.status(200).json({message: 'Ingrediente eliminado'});
+            res.status(200).json({ message: "Ingrediente eliminado" });
           }
         } catch (error) {
-          res.status(400).json({message: 'Ha ocurrido un error inesperado'});
+          res.status(400).json({
+            message: "Ha ocurrido un error inesperado",
+          });
         }
       }
     );
@@ -182,7 +213,7 @@ const unbanIngredient = (req, res) => {
       "UPDATE tbl_ingredientes SET activo = 1 WHERE id_ingrediente = ?",
       [id],
       (err, result) => {
-        if (err) { 
+        if (err) {
           res.status(400).json({ message: err });
         } else {
           res.status(200).json({ message: "Ingrediente activado" });
@@ -196,35 +227,41 @@ const unbanIngredient = (req, res) => {
 
 const updateIngredients = async (req, res) => {
   try {
-    const {data, id} = req.body;
-    const { nombre_ingrediente,
+    const { data, id } = req.body;
+    const {
+      nombre_ingrediente,
       unidad_medida,
       costo_unitario,
       cantidad_total_ingrediente,
       costo_total,
-     kardex
+      kardex,
     } = data;
 
-    conn.query('UPDATE tbl_ingredientes SET nombre_ingrediente = ?, kardex = ? WHERE id_ingrediente = ?',[nombre_ingrediente, kardex, id],
-    (err, result) => {
-      try {
-        if (err){
-          res.status(400).json({message: 'No se pudo actualizar'});
-        }
+    conn.query(
+      "UPDATE tbl_ingredientes SET nombre_ingrediente = ?, kardex = ? WHERE id_ingrediente = ?",
+      [nombre_ingrediente, kardex, id],
+      (err, result) => {
+        try {
+          if (err) {
+            res.status(400).json({ message: "No se pudo actualizar" });
+          }
 
-        if (result.affectedRows > 0){
-          res.status(200).json({message: 'Se ha actualizado correctamente'});
-        }else{
-          res.status(400).json({message:'No se pudo actualizar'})
+          if (result.affectedRows > 0) {
+            res.status(200).json({
+              message: "Se ha actualizado correctamente",
+            });
+          } else {
+            res.status(400).json({ message: "No se pudo actualizar" });
+          }
+        } catch (error) {
+          res.status(400).json({ message: "No se pudo actualizar" });
         }
-      } catch (error) {
-        res.status(400).json({message: 'No se pudo actualizar'});
       }
-    })
+    );
   } catch (error) {
-    res.status(400).json({message: 'Ha ocurrido un error inesperado'});
+    res.status(400).json({ message: "Ha ocurrido un error inesperado" });
   }
-}
+};
 
 module.exports = {
   getIngredient,
@@ -232,5 +269,5 @@ module.exports = {
   getIngredientsWithRecipe,
   banIngredient,
   unbanIngredient,
-  updateIngredients
+  updateIngredients,
 };

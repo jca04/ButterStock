@@ -51,7 +51,7 @@ const entradas = (req, res) => {
   try {
     const { id_ingredient } = req.params;
     const id_restaurant = req.body.data.id;
-    const { cantidad, costo_unitario, unidad_medida } = req.body;
+    const { cantidad, costo_unitario, unidad_medida, detalle } = req.body;
 
     conn.query(
       "SELECT unidad_medida, costo_unitario, costo_total, cantidad_total_ingrediente, cantidad_editable_ingrediente FROM tbl_ingredientes WHERE id_ingrediente = ? && id_restaurant = ? && activo = 1",
@@ -62,12 +62,12 @@ const entradas = (req, res) => {
         } else {
           // Traigo los saldos de la tabla peps para actualizar el costo unitario con el primer saldo que entre
 
-          const [saldos] = await conn.query(
+          const saldos = await queryAsync(
             "SELECT saldo_cantidad, saldo_valorUnitario, saldo_valorTotal FROM tbl_peps WHERE id_ingrediente = ? && id_restaurante = ? && saldo_activo = 1 ORDER BY time_stamp ASC",
             [id_ingredient, id_restaurant]
           );
 
-          const primer_saldo_valorUnitario = saldos.saldo_valorUnitario;
+          const primer_saldo_valorUnitario = saldos[0].saldo_valorUnitario;
 
           const unidad_medida_ingrediente = result[0].unidad_medida;
 
@@ -109,7 +109,7 @@ const entradas = (req, res) => {
               } else {
                 if (result.affectedRows > 0) {
                   conn.query(
-                    "INSERT INTO tbl_peps (id_peps, entrada_cantidad, entrada_valorUnitario, entrada_valorTotal, saldo_cantidad, saldo_valorUnitario, saldo_valorTotal, saldo_activo, id_ingrediente, id_restaurante) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO tbl_peps (id_peps, entrada_cantidad, entrada_valorUnitario, entrada_valorTotal, saldo_cantidad, saldo_valorUnitario, saldo_valorTotal, saldo_activo, detalle, id_ingrediente, id_restaurante) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     [
                       uuidv4(),
                       cantidad_convertida,
@@ -119,6 +119,7 @@ const entradas = (req, res) => {
                       costo_unitario_por_unidad_medida,
                       cantidad_convertida * costo_unitario_por_unidad_medida,
                       1,
+                      detalle,
                       id_ingredient,
                       id_restaurant,
                     ],
@@ -127,9 +128,9 @@ const entradas = (req, res) => {
                         return res.status(400).json({ message: err });
                       } else {
                         if (result.affectedRows > 0) {
-                          res
-                            .status(200)
-                            .json({ message: "Entrada registrada" });
+                          res.status(200).json({
+                            message: "Entrada registrada",
+                          });
                         }
                       }
                     }
@@ -393,6 +394,38 @@ const salidas = async (req, res) => {
                   }
                 }
               }
+            } else {
+              // Actualizo el estado del primer saldo
+              const actualizarSaldo = await queryAsync(
+                "UPDATE tbl_peps SET saldo_activo = 0 WHERE id_peps = ?",
+                [primerSaldo.id_peps]
+              );
+              if (actualizarSaldo.affectedRows > 0) {
+                // Verifico si hay mas saldos para insertarlos en la tabla de saldos
+                const saldosRestantes = saldos.slice(1);
+                // Actualizo el estado de los saldos restantes y despues los inserto en la tabla de saldos
+                for (const saldo of saldosRestantes) {
+                  const acutalizarSaldoRestante = await queryAsync(
+                    "UPDATE tbl_peps SET saldo_activo = 0 WHERE id_peps = ?",
+                    [saldo.id_peps]
+                  );
+
+                  if (acutalizarSaldoRestante.affectedRows > 0) {
+                    await queryAsync(
+                      "INSERT INTO tbl_peps (id_peps, saldo_cantidad, saldo_valorUnitario, saldo_valorTotal, saldo_activo, id_ingrediente, id_restaurante) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                      [
+                        uuidv4(),
+                        saldo.saldo_cantidad,
+                        saldo.saldo_valorUnitario,
+                        saldo.saldo_valorTotal,
+                        1,
+                        id_ingredient,
+                        id_restaurant,
+                      ]
+                    );
+                  }
+                }
+              }
             }
           }
         }
@@ -400,7 +433,9 @@ const salidas = async (req, res) => {
 
       res.status(200).json({ message: "Salida registrada" });
     } else {
-      res.status(400).json({ message: "No se pudo actualizar el ingrediente" });
+      res.status(400).json({
+        message: "No se pudo actualizar el ingrediente",
+      });
     }
   } catch (error) {
     res.status(400).json({ message: error });
@@ -409,13 +444,57 @@ const salidas = async (req, res) => {
 
 const kardexPeps = async (req, res) => {
   try {
-    const { id_ingredient } = req.params;
+    const { id_ingredient } = req.body.data;
+    const { id_receta } = req.body.data;
     const id_restaurant = req.body.data.id;
-    const saldos = await queryAsync(
-      "SELECT * FROM tbl_peps WHERE id_ingrediente = ? && id_restaurante = ? ORDER BY time_stamp ASC",
-      [id_ingredient, id_restaurant]
-    );
-    res.status(200).json({ saldos });
+
+    if (!id_ingredient && id_receta) {
+      const ingredientes = await queryAsync(
+        "SELECT id_ingrediente FROM tbl_ingredientes_receta WHERE id_receta = ?",
+        [id_receta]
+      );
+
+      const kardex_receta = [];
+      for (const ingrediente of ingredientes) {
+        const nombreIngrediente = await queryAsync(
+          "SELECT nombre_ingrediente FROM tbl_ingredientes WHERE id_ingrediente = ?",
+          [ingrediente.id_ingrediente]
+        );
+        // Traigo todo el kardex de cada ingrediente de la receta y lo guardo en un array de objetos con el nombre del ingrediente y el kardex
+
+        console.log(ingrediente.id_ingrediente);
+
+        const kardex = await queryAsync(
+          "SELECT * FROM tbl_peps WHERE id_ingrediente = ? && id_restaurante = ? ORDER BY time_stamp ASC",
+          [ingrediente.id_ingrediente, id_restaurant]
+        );
+
+        const kardex_ingrediente = {
+          ingrediente: nombreIngrediente[0].nombre_ingrediente,
+          kardex: kardex,
+        };
+
+        kardex_receta.push(kardex_ingrediente);
+      }
+      res.status(200).json(kardex_receta);
+    } else if (id_ingredient && !id_receta) {
+      const nombreIngrediente = await queryAsync(
+        "SELECT nombre_ingrediente FROM tbl_ingredientes WHERE id_ingrediente = ?",
+        [id_ingredient]
+      );
+
+      const kardex = await queryAsync(
+        "SELECT * FROM tbl_peps WHERE id_ingrediente = ? && id_restaurante = ? ORDER BY time_stamp ASC",
+        [id_ingredient, id_restaurant]
+      );
+
+      const kardex_ingrediente = {
+        ingrediente: nombreIngrediente[0].nombre_ingrediente,
+        kardex: kardex,
+      };
+
+      res.status(200).json(kardex_ingrediente);
+    }
   } catch (error) {
     res.status(400).json({ message: error });
   }

@@ -10,9 +10,9 @@ const {
   kardexPeps,
 } = require("../controllers/kardex");
 
-kardexRouter.post("/entradas/:id_ingredient", entradas);
+kardexRouter.post("/entradas/:id_ingredient", checkJwt, entradas);
 kardexRouter.post("/obtenerSaldo/:id_ingredient", obtenerSaldo);
-kardexRouter.post("/salidas/:id_ingredient", salidas);
-kardexRouter.post("/peps/:id_ingredient", kardexPeps);
+kardexRouter.post("/salidas/:id_ingredient", checkJwt, salidas);
+kardexRouter.post("/peps", checkJwt, kardexPeps);
 
 module.exports = kardexRouter;
