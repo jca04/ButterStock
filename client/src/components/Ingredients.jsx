@@ -523,7 +523,7 @@ export default function Ingredients() {
             </div>
             {JSON.stringify(idDelete) != '{}' && idDelete.recetas.length > 0  ? (
               <div className="data-alert-ingredients">
-                <p>Este ingrediente hace parte de <strong>{idDelete.recetas.length}</strong> <a href="#">recetas</a> </p>
+                <p>Este ingrediente hace parte de <strong>{idDelete.recetas.length}</strong>recetas</p>
                 <p>Si lo eliminas los valores de dichas recetas se veran afectados</p>
               </div>
             ) : (null)}

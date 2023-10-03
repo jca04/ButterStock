@@ -336,7 +336,7 @@ function ShowRespie() {
       let unidadMedida = arrIngredients[i].unidad_medida;
       let costoUnitario = arrIngredients[i].costo_unitario;
       let idIngrediente = arrIngredients[i].value;
-      let inputIngrediente = document.querySelector('input[cod='+idIngrediente+']');
+      let inputIngrediente = document.querySelector('input[cod="'+idIngrediente+'"]'); 
 
       if (inputIngrediente){
         let index = inputIngrediente.getAttribute('index');
@@ -391,6 +391,7 @@ function ShowRespie() {
     }
   }
 
+ 
   const setInfoRespie = (key, value) => {
     if (infoReceta[key] != undefined){
       if (value > 0){
@@ -448,7 +449,7 @@ function ShowRespie() {
   }
 
   //arreglar los precios si tiene subRecetas
-  const setCostSell  = (row,scontinue) => {
+  const setCostSell = (row,scontinue) => {
     let sumaVenta = 0;
     if (row != undefined){
       if (row.length > 0){
@@ -475,6 +476,7 @@ function ShowRespie() {
     }  
   }
  
+
   //validar el costo de venta
   const validateCostVent = (way,row) =>{
 
