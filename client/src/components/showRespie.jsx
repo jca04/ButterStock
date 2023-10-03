@@ -390,6 +390,7 @@ function ShowRespie() {
       setImage(0);
     }
   }
+
  
   const setInfoRespie = (key, value) => {
     if (infoReceta[key] != undefined){
@@ -475,6 +476,7 @@ function ShowRespie() {
     }  
   }
  
+
   //validar el costo de venta
   const validateCostVent = (way,row) =>{
 
@@ -485,7 +487,6 @@ function ShowRespie() {
         let margenError = infoReceta.sub_total_M_E;
         let iva = infoReceta.iva;
         let value = 0;
-
 
         if (divide != 0){
           value = (parseFloat(margenContribucion) +  parseFloat(margenError)) / divide;
