@@ -1,5 +1,6 @@
 const conn = require("../db/db");
 const { v4: uuidv4 } = require("uuid");
+const {refreshResipes} = require('./refreshResipe');
 
 const getIngredient = async (req, res) => {
   try {
@@ -92,7 +93,8 @@ const getIngredientsWithRecipe = (req, res) => {
         "i.costo_unitario, i.costo_total, " +
         "i.cantidad_total_ingrediente, i.activo, i.kardex, " +
         "r.id_receta, r.nombre_receta, r.imagen, r.cantidad_plato,  " +
-        "r.sub_receta, ir.cantidad_por_receta " +
+        "r.sub_receta, ir.cantidad_por_receta, " +
+        "ir.unidad_medida_r "+
         "FROM tbl_ingredientes AS i " +
         "LEFT JOIN tbl_ingredientes_receta AS ir ON i.id_ingrediente = ir.id_ingrediente " +
         "LEFT JOIN tbl_recetas AS r ON r.id_receta = ir.id_receta " +
@@ -127,7 +129,7 @@ const getIngredientsWithRecipe = (req, res) => {
                   imagen: row.imagen,
                   cantidad_plato: row.cantidad_plato,
                   sub_receta: row.sub_receta,
-                  cantidad_por_receta: row.cantidad_por_receta + ' ' + row.unidad_medida,
+                  cantidad_por_receta: row.cantidad_por_receta + ' ' + row.unidad_medida_r,
                   kardex: row.kardex
                 });
               } else {
@@ -151,25 +153,27 @@ const banIngredient = (req, res) => {
   try {
     const { id } = req.body;
 
-    conn.query(
-      "UPDATE tbl_ingredientes SET activo = 0 WHERE id_ingrediente = ?",
-      [id],
-      (err, result) => {
-        try {
-          if (err){
-            res.status(400).json({message: err});
-          }
+    refreshResipes(id);
 
-          if (result.affectedRows > 0){
-            //desactivar el mismo ingrediente en todas 
+    // conn.query(
+    //   "UPDATE tbl_ingredientes SET activo = 0 WHERE id_ingrediente = ?",
+    //   [id],
+    //   (err, result) => {
+    //     try {
+    //       if (err){
+    //         res.status(400).json({message: err});
+    //       }
 
-            res.status(200).json({message: 'Ingrediente eliminado'});
-          }
-        } catch (error) {
-          res.status(400).json({message: 'Ha ocurrido un error inesperado'});
-        }
-      }
-    );
+    //       if (result.affectedRows > 0){
+    //         //desactivar el mismo ingrediente en todas 
+
+    //         res.status(200).json({message: 'Ingrediente eliminado'});
+    //       }
+    //     } catch (error) {
+    //       res.status(400).json({message: 'Ha ocurrido un error inesperado'});
+    //     }
+    //   }
+    // );
   } catch (error) {
     res.status(400).json({ message: error });
   }
@@ -194,6 +198,9 @@ const unbanIngredient = (req, res) => {
   }
 };
 
+
+//funcion que actualiza los datos de los ingredientes
+//por el momento solo actualiza el nombre y el kardex 
 const updateIngredients = async (req, res) => {
   try {
     const {data, id} = req.body;
