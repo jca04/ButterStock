@@ -10,7 +10,6 @@ import { MdFastfood } from "react-icons/md";
 import Plot from "react-plotly.js";
 import { AiOutlineSearch, AiOutlineLoading3Quarters } from "react-icons/ai";
 
-
 // import {useDispatch, useSelector} from 'react-redux'
 
 function HomePage() {
@@ -63,12 +62,14 @@ function HomePage() {
               <div className="txt-comanda">
                 <h4>Comandas</h4>
               </div>
-              <div className="init-comanda">
-                <div className="init-comanda-txt">Iniciar Comanda</div>
-                <div className="icon-comanda">
-                  <MdFastfood />
+              <Link to={`/comandas/${id_restaurant}`} className="url-homepage">
+                <div className="init-comanda">
+                  <div className="init-comanda-txt">Iniciar Comanda</div>
+                  <div className="icon-comanda">
+                    <MdFastfood />
+                  </div>
                 </div>
-              </div>
+              </Link>
             </div>
             <div className="grafh">
               <Plot
@@ -137,15 +138,20 @@ function HomePage() {
               <div className="txt-links">
                 <h4>Inventario</h4>
               </div>
-              <div className="see-link-3">
-                <div className="txt-link3">
-                  <h4>Ver inventario</h4>
-                  <p>Mira, crea tus reportes pebs</p>
+              <Link
+                to={`/inventario/${id_restaurant}`}
+                className="url-homepage"
+              >
+                <div className="see-link-3">
+                  <div className="txt-link3">
+                    <h4>Ver inventario</h4>
+                    <p>Mira, crea tus reportes pebs</p>
+                  </div>
+                  <div className="icon-link-3">
+                    <AiOutlineSearch />
+                  </div>
                 </div>
-                <div className="icon-link-3">
-                  <AiOutlineSearch />
-                </div>
-              </div>
+              </Link>
               <div className="info-3"></div>
             </div>
           </section>

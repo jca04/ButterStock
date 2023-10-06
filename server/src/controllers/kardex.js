@@ -446,7 +446,7 @@ const kardexPeps = async (req, res) => {
   try {
     const { id_ingredient } = req.body.data;
     const { id_receta } = req.body.data;
-    const id_restaurant = req.body.data.id;
+    // const id_restaurant = req.body.data.id;
 
     if (!id_ingredient && id_receta) {
       const ingredientes = await queryAsync(
@@ -455,6 +455,7 @@ const kardexPeps = async (req, res) => {
       );
 
       const kardex_receta = [];
+
       for (const ingrediente of ingredientes) {
         const nombreIngrediente = await queryAsync(
           "SELECT nombre_ingrediente FROM tbl_ingredientes WHERE id_ingrediente = ?",
@@ -462,11 +463,9 @@ const kardexPeps = async (req, res) => {
         );
         // Traigo todo el kardex de cada ingrediente de la receta y lo guardo en un array de objetos con el nombre del ingrediente y el kardex
 
-        console.log(ingrediente.id_ingrediente);
-
         const kardex = await queryAsync(
-          "SELECT * FROM tbl_peps WHERE id_ingrediente = ? && id_restaurante = ? ORDER BY time_stamp ASC",
-          [ingrediente.id_ingrediente, id_restaurant]
+          "SELECT * FROM tbl_peps WHERE id_ingrediente = ? ORDER BY time_stamp ASC",
+          [ingrediente.id_ingrediente]
         );
 
         const kardex_ingrediente = {
@@ -484,8 +483,8 @@ const kardexPeps = async (req, res) => {
       );
 
       const kardex = await queryAsync(
-        "SELECT * FROM tbl_peps WHERE id_ingrediente = ? && id_restaurante = ? ORDER BY time_stamp ASC",
-        [id_ingredient, id_restaurant]
+        "SELECT * FROM tbl_peps WHERE id_ingrediente = ? ORDER BY time_stamp ASC",
+        [id_ingredient]
       );
 
       const kardex_ingrediente = {
