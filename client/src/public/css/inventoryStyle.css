@@ -1,0 +1,8 @@
+.father_inventario {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  position: relative;
+  width: 90%;
+  margin-top: 20px;
+}

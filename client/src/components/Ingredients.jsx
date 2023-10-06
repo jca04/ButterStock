@@ -36,7 +36,6 @@ export default function Ingredients() {
     document.title = "Ingredientes";
     const res = async () => {
       const response = await getIngredients(id).then(setLoading(false));
-      console.log(response)
       setIngredients(response.ingredientes);
     };
     res();
