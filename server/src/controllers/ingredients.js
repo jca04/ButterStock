@@ -1,5 +1,6 @@
 const conn = require("../db/db");
 const { v4: uuidv4 } = require("uuid");
+const {refreshResipes} = require('./refreshResipe');
 
 const getIngredient = async (req, res) => {
   try {
@@ -40,6 +41,7 @@ const getIngredient = async (req, res) => {
 
 const createIngredient = async (req, res) => {
   try {
+
     const {
       nombre_ingrediente,
       unidad_medida,
@@ -118,7 +120,8 @@ const getIngredientsWithRecipe = (req, res) => {
         "i.costo_unitario, i.costo_total, " +
         "i.cantidad_total_ingrediente, i.activo, i.kardex, " +
         "r.id_receta, r.nombre_receta, r.imagen, r.cantidad_plato,  " +
-        "r.sub_receta, ir.cantidad_por_receta " +
+        "r.sub_receta, ir.cantidad_por_receta, " +
+        "ir.unidad_medida_r "+
         "FROM tbl_ingredientes AS i " +
         "LEFT JOIN tbl_ingredientes_receta AS ir ON i.id_ingrediente = ir.id_ingrediente " +
         "LEFT JOIN tbl_recetas AS r ON r.id_receta = ir.id_receta " +
@@ -153,9 +156,8 @@ const getIngredientsWithRecipe = (req, res) => {
                   imagen: row.imagen,
                   cantidad_plato: row.cantidad_plato,
                   sub_receta: row.sub_receta,
-                  cantidad_por_receta:
-                    row.cantidad_por_receta + " " + row.unidad_medida,
-                  kardex: row.kardex,
+                  cantidad_por_receta: row.cantidad_por_receta + ' ' + row.unidad_medida_r,
+                  kardex: row.kardex
                 });
               } else {
                 ingredientes[idIngrediente].recetas = [];
@@ -176,31 +178,18 @@ const getIngredientsWithRecipe = (req, res) => {
 };
 
 //desactivar un ingrediente
-const banIngredient = (req, res) => {
+const banIngredient = async (req, res) => {
   try {
     const { id } = req.body;
 
-    conn.query(
-      "UPDATE tbl_ingredientes SET activo = 0 WHERE id_ingrediente = ?",
-      [id],
-      (err, result) => {
-        try {
-          if (err) {
-            res.status(400).json({ message: err });
-          }
+    const update = await refreshResipes(id, 'delete');
 
-          if (result.affectedRows > 0) {
-            //desactivar el mismo ingrediente en todas
-
-            res.status(200).json({ message: "Ingrediente eliminado" });
-          }
-        } catch (error) {
-          res.status(400).json({
-            message: "Ha ocurrido un error inesperado",
-          });
-        }
-      }
-    );
+    if (update.message == 'OK'){
+      res.status(200).json({message: 'Ingrediente eliminado'});
+    }else{
+      res.status(400).json({message: 'Ha ocurrido un erro inesperado'});
+    }
+    console.log(update)
   } catch (error) {
     res.status(400).json({ message: error });
   }
@@ -213,7 +202,7 @@ const unbanIngredient = (req, res) => {
       "UPDATE tbl_ingredientes SET activo = 1 WHERE id_ingrediente = ?",
       [id],
       (err, result) => {
-        if (err) {
+        if (err) { 
           res.status(400).json({ message: err });
         } else {
           res.status(200).json({ message: "Ingrediente activado" });
@@ -225,43 +214,40 @@ const unbanIngredient = (req, res) => {
   }
 };
 
+
+//funcion que actualiza los datos de los ingredientes
+//por el momento solo actualiza el nombre y el kardex 
 const updateIngredients = async (req, res) => {
   try {
-    const { data, id } = req.body;
-    const {
-      nombre_ingrediente,
+    const {data, id} = req.body;
+    const { nombre_ingrediente,
       unidad_medida,
       costo_unitario,
       cantidad_total_ingrediente,
       costo_total,
-      kardex,
+     kardex
     } = data;
 
-    conn.query(
-      "UPDATE tbl_ingredientes SET nombre_ingrediente = ?, kardex = ? WHERE id_ingrediente = ?",
-      [nombre_ingrediente, kardex, id],
-      (err, result) => {
-        try {
-          if (err) {
-            res.status(400).json({ message: "No se pudo actualizar" });
-          }
-
-          if (result.affectedRows > 0) {
-            res.status(200).json({
-              message: "Se ha actualizado correctamente",
-            });
-          } else {
-            res.status(400).json({ message: "No se pudo actualizar" });
-          }
-        } catch (error) {
-          res.status(400).json({ message: "No se pudo actualizar" });
+    conn.query('UPDATE tbl_ingredientes SET nombre_ingrediente = ?, kardex = ? WHERE id_ingrediente = ?',[nombre_ingrediente, kardex, id],
+    (err, result) => {
+      try {
+        if (err){
+          res.status(400).json({message: 'No se pudo actualizar'});
         }
+
+        if (result.affectedRows > 0){
+          res.status(200).json({message: 'Se ha actualizado correctamente'});
+        }else{
+          res.status(400).json({message:'No se pudo actualizar'})
+        }
+      } catch (error) {
+        res.status(400).json({message: 'No se pudo actualizar'});
       }
-    );
+    })
   } catch (error) {
-    res.status(400).json({ message: "Ha ocurrido un error inesperado" });
+    res.status(400).json({message: 'Ha ocurrido un error inesperado'});
   }
-};
+}
 
 module.exports = {
   getIngredient,
@@ -269,5 +255,5 @@ module.exports = {
   getIngredientsWithRecipe,
   banIngredient,
   unbanIngredient,
-  updateIngredients,
+  updateIngredients
 };

@@ -6,7 +6,7 @@ const {
   getIngredientsWithRecipe,
   banIngredient,
   unbanIngredient,
-  updateIngredients,
+  updateIngredients
 } = require("../controllers/ingredients");
 const router = express.Router();
 
@@ -15,6 +15,6 @@ router.post("/createIngredient", checkJwt, createIngredient);
 router.post("/ingredients", checkJwt, getIngredientsWithRecipe);
 router.put("/ban-ingredient", checkJwt, banIngredient);
 router.put("/unban-ingredient", checkJwt, unbanIngredient);
-router.put("/update-ingredient", checkJwt, updateIngredients);
+router.put("/update-ingredient", checkJwt, updateIngredients)
 
 module.exports = router;
