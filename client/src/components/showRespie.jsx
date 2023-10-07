@@ -62,36 +62,35 @@ function ShowRespie() {
 
   useEffect(() => {
     document.title = "Recetas";
-    //consulta de todas las recetas
-    let getResipesPerRestaurant = async () => {
-      const response = await getResipes(id);
-      try {
-        if (Array.isArray(response)) {
-          if (response.length > 0) {
-           let arr = [];
-            //formatear las recetas para meterlas en un array y que este datos vaya a un select
-            for (var i in response){
-              if (response[i].sub_receta == 1){
-                response[i].label = response[i].nombre_receta,
-                response[i].value = response[i].id_receta,
-                arr.push(response[i]);
-              }
-            }
-            setRFormta(arr);
-            setResipes(response);
-          } else {
-            setResipes(response);
-          }
-
-          getIngredients();
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
     getResipesPerRestaurant();
   }, []);
+
+  //consulta de todas las recetas
+  let getResipesPerRestaurant = async () => {
+    const response = await getResipes(id);
+    try {
+       if (Array.isArray(response)) {
+        if (response.length > 0) {
+          let arr = [];
+          //formatear las recetas para meterlas en un array y que este datos vaya a un select
+          for (var i in response){
+            if (response[i].sub_receta == 1){
+              response[i].label = response[i].nombre_receta,
+              response[i].value = response[i].id_receta,
+              arr.push(response[i]);
+            }
+          }
+          setRFormta(arr);
+          setResipes(response);
+        } else {
+          setResipes(response);
+        }
+          getIngredients();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   //obtener ingredientes
   let getIngredients = async () => {
@@ -124,7 +123,7 @@ function ShowRespie() {
     let error = "";
     if (values.length == 0 ){
       error = "*El campo debe ser llenado";
-    }else if (values.length > 400){
+    }else if (values.length > 499){
       error = "*El campo debe tener minimo 400 caracteres";
     }
     return error;
@@ -333,10 +332,11 @@ function ShowRespie() {
     //cuando se crea una nueva receta
     let sumatoria = 0;
     for (let i in arrIngredients){
-      let unidadMedida = arrIngredients[i].unidad_medida;
+      let unidadMedida = arrIngredients[i].unidad_medida_original != undefined ? arrIngredients[i].unidad_medida_original : arrIngredients[i].unidad_medida;
       let costoUnitario = arrIngredients[i].costo_unitario;
       let idIngrediente = arrIngredients[i].value;
       let inputIngrediente = document.querySelector('input[cod="'+idIngrediente+'"]'); 
+
 
       if (inputIngrediente){
         let index = inputIngrediente.getAttribute('index');
@@ -344,7 +344,9 @@ function ShowRespie() {
         let valueConvertion = inputIngrediente.value
         if (valueConvertion == '') valueConvertion = 1;
 
+
         let costoUnitarioValor = convertion(selectValue, parseFloat(valueConvertion), unidadMedida);
+
         sumatoria = sumatoria + (costoUnitarioValor *  costoUnitario);     
       }
     }
@@ -487,13 +489,12 @@ function ShowRespie() {
         let iva = infoReceta.iva;
         let value = 0;
 
-
         if (divide != 0){
           value = (parseFloat(margenContribucion) +  parseFloat(margenError)) / divide;
         }
         
 
-        let costo_venta = parseFloat(value + (value * iva))  + setCostSell(row, true);
+        let costo_venta = parseFloat(value + (value * iva))  + setCostSell(dataRespiSel, true);
 
         json = {
         'costo_potencial_venta' : value,
@@ -505,6 +506,46 @@ function ShowRespie() {
       }
     }else{
       return ('N/A');
+    }
+  }
+
+  //intervalo para volver a renderizar ingrediente cuando estos se hayan actualizado eliminado o creado
+  const intervalIngredients = setInterval(() => {
+      const valueLocal = localStorage.getItem('refreshIngredients');
+      if (valueLocal != undefined){
+        getResipesPerRestaurant();
+        setModal(null);
+        localStorage.removeItem('refreshIngredients')
+      }
+  }, 1000);
+
+
+  //validar los datos de los numero
+  const validateNumber = (value) => {
+    let error = '';
+    if (value.length == 0){
+      error = '* Este campo debe ser llenado';
+    }
+
+    return error
+  }
+
+  //renderizar los valores de la sub receta dentro de una receta
+
+  const showSubRecipe = (row, recipes) => {
+    const id_sub_receta = row.id_receta;
+
+    for (let i in recipes){
+      if (recipes[i].id_receta == id_sub_receta){
+        return (
+          <tr key={recipes[i].id_receta}>
+            <td>{recipes[i].imagen == '' ? 'No tiene' : <img className="img-table-subRespie" src={`${recipes[i].imagen}`}/>}</td>
+            <td>{recipes[i].nombre_receta}</td>
+            <td>{recipes[i].tipo_receta}</td>
+            <td>${recipes[i].costo_venta}</td>
+          </tr>
+        );
+      }
     }
   }
 
@@ -526,10 +567,8 @@ function ShowRespie() {
             </button>
             <div className="search-respie">
               <div>
+                  <AiOutlineSearch  className="icon-search-recipe"/>
                 <input type="text" className="search" placeholder="Buscar" onInput={(e) => searchRespie(e.target.value)}/>
-                <span>
-                  <AiOutlineSearch />
-                </span>
               </div>
             </div>
           </section>
@@ -757,6 +796,9 @@ function ShowRespie() {
 
                         setErro(null);
 
+
+                        localStorage.setItem('refreshRecipe', true);
+
                       }catch(err){
                         console.log(err)
                       }
@@ -789,7 +831,13 @@ function ShowRespie() {
                         <div className="section-form-respie">
                           <div className="input-rows-respie">
                           <label className="label-form-respie" htmlFor="nombre_receta">Nombre de la {isSubRespie ? 'sub receta' : 'receta'}</label>
-                            <Field type="text" name="nombre_receta" id="nombre_receta" placeholder="Digite el nombre de la receta" validate={validateTxt}/>
+                            <Field type="text" name="nombre_receta" id="nombre_receta" placeholder="Digite el nombre de la receta" validate={validateTxt}   
+                              style={
+                                errors.nombre_receta &&
+                                touched.nombre_receta && {
+                                border: "1px solid red",
+                                }
+                              }/>
                             <div className="error-respi">{errors.nombre_receta && touched.nombre_receta && ( <p className="error">{errors.nombre_receta}</p>)}</div>                       
                           </div>
                           <div className="input-rows-respie">
@@ -807,28 +855,56 @@ function ShowRespie() {
                         </div>
                         <div className="section-form-colum">  
                           <label htmlFor="descripcion">Descripcion de la {isSubRespie ? 'sub receta' : 'receta'}</label>
-                          <Field component="textarea" rows="2" validate={validateTxtarea} placeholder="Descripcion de la receta" className="textarea-respie" type="textarea" id="descripcion" name="descripcion"/>
+                          <Field component="textarea" rows="2" validate={validateTxtarea} placeholder={`Descripcion de la ${isSubRespie ? 'sub receta' : 'receta'}`} className="textarea-respie" type="textarea" id="descripcion" name="descripcion"
+                            style={
+                                errors.descripcion &&
+                                touched.descripcion && {
+                                border: "1px solid red",
+                                }
+                            }
+                          />
                           <div className="error-respi">{errors.descripcion && touched.descripcion && ( <p className="error">{errors.descripcion}</p>)}</div>    
                         </div>
                         <div className="section-form-respie">
                           <div className="input-rows-respie"> 
                           <label className="label-form-respie" htmlFor="margen_error">Margen de error %</label>
-                            <Field type="number" name="margenError" id="margen_error" placeholder="Digite el margen de error" min={'0'} onInput={(e) => setInfoRespie('margen_error', e.target.value)}/>
+                            <Field type="number" name="margenError" id="margen_error" placeholder="Digite el margen de error" validate={validateNumber} min={'0'} onInput={(e) => setInfoRespie('margen_error', e.target.value)}
+                              style={
+                                errors.margenError &&
+                                touched.margenError && {
+                                border: "1px solid red",
+                                }
+                              }
+                            />
                             <div className="error-respi">{errors.margenError && touched.margenError && ( <p className="error">{errors.margenError}</p>)}</div>                 
                           </div>
                           <div className="input-rows-respie">
                             <label htmlFor="margenContribucion">Margen de contribucion %</label>
-                            <Field type="number" name="margenContribucion" id="margenContribucion" min={'0'} placeholder="Digite el margen de contribucion" onInput={(e) => setInfoRespie('margenContribucion', e.target.value)}/>
+                            <Field type="number" name="margenContribucion" id="margenContribucion"  validate={validateNumber}  min={'0'} placeholder="Digite el margen de contribucion" onInput={(e) => setInfoRespie('margenContribucion', e.target.value)}
+                              style={
+                                errors.margenContribucion &&
+                                touched.margenContribucion && {
+                                border: "1px solid red",
+                                }
+                              }
+                            />
                             <div className="error-respi">{errors.margenContribucion && touched.margenContribucion && ( <p className="error">{errors.margenContribucion}</p>)}</div>    
                          </div>
                          <div className="input-rows-respie"> 
-                          <label className="label-form-respie" htmlFor="iva">Iva % (Opcional)</label>
-                            <Field type="number" name="iva" id="iva" placeholder="Digite el iva (opcional)" min={'0'} onInput={(e) => setInfoRespie('iva', e.target.value)}/>
-                            <div className="error-respi"></div>                 
+                          <label className="label-form-respie" htmlFor="iva">Iva % </label>
+                            <Field type="number" name="iva" id="iva" placeholder="Digite el iva (opcional)"  validate={validateNumber}  min={'0'} onInput={(e) => setInfoRespie('iva', e.target.value)}
+                              style={
+                                errors.iva &&
+                                touched.iva && {
+                                border: "1px solid red",
+                                }
+                              }
+                            />
+                           <div className="error-respi">{errors.iva && touched.iva && ( <p className="error">{errors.iva}</p>)}</div>                    
                           </div>
                          <div className="input-rows-respie">
                             <label htmlFor="costoVenta">Costo venta (Opcional)</label>
-                            <Field type="number" name="costoVenta" id="costoVenta" min={'0'} step={'any'} placeholder="Digite el costo de venta si lo tiene" onInput={(e) => setInfoRespie('costo_venta', e.target.value)}  onChange={() => setCostVent(e.target.value)}/>
+                            <Field type="number" name="costoVenta" id="costoVenta" min={'0'} step={'any'} placeholder="Digite el costo de venta si lo tiene" onInput={(e) => setInfoRespie('costo_venta', e.target.value)}/>
                             <div className="error-respi"></div>    
                          </div>
                         </div>
@@ -872,7 +948,7 @@ function ShowRespie() {
                                                 Inicial : {row.unidad_medida} 
                                               </span>
                                               <select className="select-respie-gra"  id={`select-${index}`} defaultValue={row.unidad_medida != undefined ? row.unidad_medida : ""} onChange={() => {validateIngredient(row, index); onchangeForm()}}>
-                                              {!row.unidad_medida != undefined  && !row.unidad_medida.includes(unitArr) ? (
+                                              {!row.unidad_medida != undefined  && unitArr.includes(row.unidad_medida) ? (
                                                   <>
                                                   <option value="und">und</option>
                                                   <option value="gr">gr</option>
@@ -922,18 +998,13 @@ function ShowRespie() {
                                     <th>imagen</th>
                                     <th>Nombre</th>
                                     <th>Tipo receta</th>
+                                    <th>Costo</th>
                                   </tr>
                                 </thead>
                                 <tbody>
                                   {
                                     dataRespiSel.map((row) => {
-                                      return (
-                                        <tr key={row.label}>
-                                          <td>{row.imagen == null ? 'no tiene' : <img className="img-table-subRespie" src={row.imagen} /> }</td>
-                                          <td>{row.nombre_receta}</td>
-                                          <td>{row.tipo_receta}</td>
-                                        </tr>
-                                      )
+                                      return showSubRecipe(row,stateResipe)
                                     })
                                   }
                                 </tbody>

@@ -13,6 +13,9 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { isAuthenticated } from "./auth/auth";
 import Ingredients from "./components/Ingredients";
+import Comandas from "./components/Comandas";
+import Inventory from "./components/Inventory";
+import Kardex from "./components/Kardex";
 
 function App() {
   return (
@@ -74,6 +77,9 @@ function App() {
             isAuthenticated() ? <Ingredients /> : <Navigate to="/login" />
           }
         />
+        <Route exact path="/comandas/:id" element= {isAuthenticated() ? <Comandas /> : <Navigate to="/login" />} />
+        <Route exact path="/inventario/:id" element= {isAuthenticated() ? <Inventory /> : <Navigate to="/login" />} />
+        <Route exact path="/kardex/:id_ingrediente" element = {isAuthenticated() ? <Kardex /> : <Navigate to="/login" />} />
       </Routes>
     </>
   );

@@ -32,16 +32,18 @@ export default function Ingredients() {
   const [alertDelete, setAlertDelete] = useState(false);
   const [idDelete, setIdDelete] = useState({});
   const [searchTable, setSearchTable] = useState({});
+  const [isDeleting, setDeleting] = useState(false);
   const { id } = useParams();
 
   useEffect(() => {
     document.title = "Ingredientes";
-    const res = async () => {
-      const response = await getIngredients(id).then(setLoading(false));
-      setIngredients(response.ingredientes);
-    };
     res();
   }, []);
+
+  const res = async () => {
+    const response = await getIngredients(id).then(setLoading(false));
+    setIngredients(response.ingredientes);
+  };
 
   const toastDangerDelete = (text) => {
     toast.error(text, {
@@ -109,7 +111,7 @@ export default function Ingredients() {
   const columns = [
     {
       name: "Ingrediente",
-      selector: (row) => row.nombre_ingrediente,
+      selector: (row) =>  row.nombre_ingrediente,
     },
     {
       name: "Unidad de medida",
@@ -207,13 +209,18 @@ export default function Ingredients() {
   };
 
   const deleteIngredient = async () => {
-    console.log(idDelete.id_ingrediente);
+    setAlertDelete(false);
+    setDeleting(true);
     const response = await banIngredient(idDelete.id_ingrediente);
-    // if (res.message == "Ingrediente eliminado") {
+    if (response.message == "Ingrediente eliminado"){
+      toastDangerDelete(response.message);
+      setTimeout(() => {
+      setDeleting(false);
+      }, (800));
 
-    // } else {
-    //     toastDangerDelete();
-    // }
+      res();
+      localStorage.setItem('refreshIngredients', true);
+    }
   };
 
   const validateText = (value) => {
@@ -290,6 +297,16 @@ export default function Ingredients() {
     setSearchTable(resultNoRepe);
   };
 
+
+  //intervalo para actulizar la pagina
+  const intervaloRecipe = setInterval(() => {
+    const local = localStorage.getItem('refreshRecipe');
+    if (local != undefined){
+      res();
+      localStorage.removeItem('refreshRecipe');
+    }
+  }, 1000);
+
   return (
     <>
       <Navbar />
@@ -357,10 +374,9 @@ export default function Ingredients() {
                             kardex: values.kardex,
                           };
 
-                          let arr = ingredients;
-                          arr.unshift(jsonAdd);
-                          setIngredients(arr);
-
+                      
+                          res();
+                          localStorage.setItem('refreshIngredients', true);
                           toastSucces(response.message);
                         } else {
                           window.location.reload();
@@ -387,6 +403,7 @@ export default function Ingredients() {
                         });
 
                         toastSucces(response);
+                        localStorage.setItem('refreshIngredients', true);
                       } else {
                         toastDangerDelete(response);
                       }
@@ -435,7 +452,6 @@ export default function Ingredients() {
                           >
                             Unidad de medida
                           </label>
-                          {console.log(isEditing)}
                           <Select
                             onChange={(e) => setGramage(e)}
                             className="select-gramace-ingredients"
@@ -588,6 +604,7 @@ export default function Ingredients() {
                   setForm(true);
                   setCostTotal(0);
                   toatInfo();
+                  setEditing({});
                 }}
               >
                 <AiOutlineAppstoreAdd />
@@ -636,7 +653,6 @@ export default function Ingredients() {
               </div>
             ) : null}
             <div className="btn-alert-ingredient">
-              {console.log(idDelete)}
               <button
                 type="button"
                 className="btn-delete-ingredient"
@@ -658,6 +674,18 @@ export default function Ingredients() {
           </div>
         </div>
       ) : null}
+      {isDeleting ? (
+        <div className="sending-respie">
+          <div className="body-info-respie">
+            <div className="info-sending-respie">
+              <div className="icon-loading-respie">
+                <AiOutlineLoading3Quarters className="load-send-respie"/>
+              </div>
+              <div className="txt-loading-respie">Eliminando ingrediente</div>
+            </div>
+          </div>
+        </div>
+      ) : (null)}
     </>
   );
 }

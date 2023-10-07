@@ -55,6 +55,7 @@ body {
   color: black;
 }
 
+
 .btn-edit:hover {
   background-color: #ffea96;
 }
@@ -189,6 +190,7 @@ body {
   flex-direction: column;
 }
 
+
 .input-all-ingredients {
   display: flex;
   flex-direction: row;
@@ -197,6 +199,7 @@ body {
   justify-content: space-around;
   flex-direction: column;
 }
+
 
 .input-all-ingredients > input {
   flex-basis: 30%;
@@ -213,11 +216,13 @@ body {
   font-size: 0.8em;
 }
 
+
 .select-gramace-ingredients {
   cursor: pointer;
   font-size: 1em;
   flex-basis: 30%;
 }
+
 
 .btn-send-ingredients {
   display: flex;
@@ -234,6 +239,7 @@ body {
   background-color: #ffea96;
   box-shadow: 1px 1px 5px #86761e;
 }
+
 
 .btn-send-ingredients > button:hover {
   transform: scale(1.1);
@@ -290,11 +296,13 @@ body {
   padding: 10px;
 }
 
+
 .info-alert-ingredient {
   display: flex;
   justify-content: center;
   padding: 10px;
 }
+
 
 .info-alert-ingredient > p {
   font-size: 1em;
@@ -372,4 +380,47 @@ body {
   padding-left: 10px;
   margin-right: 25px;
   border:1px solid silver
+}
+
+.sending-respie {
+  display: flex;
+  background: rgb(0, 0, 0, 0.4);
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  z-index: 6;
+}
+
+.body-info-respie {
+  margin: auto;
+  width: 30%;
+  height: 50%;
+}
+
+.info-sending-respie {
+  background: #fffae7;
+  height: auto;
+  width: 100%;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.icon-loading-respie {
+  display: flex;
+}
+
+.load-send-respie {
+  margin: 17px auto;
+  font-size: 3em;
+  animation: giro 0.5s infinite;
+}
+
+.txt-loading-respie {
+  text-align: center;
+}
+
+.finisg-send-respie {
+  margin-top: 17px;
+  font-size: 3em;
 }
