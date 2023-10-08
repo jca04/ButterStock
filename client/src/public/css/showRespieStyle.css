@@ -7,7 +7,12 @@
 
 
 .body-respie-all{
-  background-color: #fff1b9 !important;
+  background: rgb(255, 255, 255);
+  background: linear-gradient(
+    356deg,
+    rgba(255, 255, 255, 1) 38%,
+    rgba(255, 234, 150, 1) 90%
+  );
   display: flex;
   flex-direction: column;
 }
@@ -106,29 +111,34 @@ body{
   width: 88%;
   margin: auto;
   justify-content: end;
-  align-items: baseline;
+  align-items: center;
+  margin-top: 20px;
 }
 
 .search-respie {
   background-color: white;
   border-radius: 5px;
   width: 35%;
-  padding: 10px;
-  margin-top: 20px;
-  box-shadow: 1px 1px 5px #848484;
+  border: 1px solid silver;
 }
 .search-respie > div,
 .sub-search-respie > div {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding-left: 10px;
 }
 
 .search {
   border-radius: 5px;
   border: none;
+  padding: 10px;
   outline: none;
   width: 100%;
+}
+
+.icon-search-recipe{
+  font-size: 27px;
 }
 .data-respie,
 .sub-data-respie {
@@ -376,6 +386,7 @@ body{
   width: 100%;
   text-align: center;
   overflow: auto;
+  font-size: 1.1em;
   border-bottom: 1px solid silver;
   border-top: 1px solid silver;
 }
@@ -405,13 +416,19 @@ body{
 .select-respie-gra {
   padding: 6px;
   cursor: pointer;
-  font-size: 0.8em;
+  font-size: 1em;
+  border: 1px solid silver;
+  border-radius: 5px;
+  outline: none;
 }
 
 .input-cantidad-resipe {
   padding: 6px;
   width: 90%;
+  border-radius: 5px;
   font-size: 0.8em;
+  outline: none;
+  border:  1px solid silver;
 }
 
 .img-box {

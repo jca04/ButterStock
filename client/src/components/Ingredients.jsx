@@ -5,16 +5,17 @@ import {
   getIngredients,
   unbanIngredient,
   createIngredient,
-  updateIngredients
+  updateIngredients,
 } from "../api/ingredients";
 import Navbar from "./reuseComponents/navbar";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import DataTable from "react-data-table-component";
 import "../public/css/ingredientsStyle.css";
 import { toast } from "react-toastify";
-import {CiCircleAlert} from 'react-icons/ci';
+import { CiCircleAlert } from "react-icons/ci";
 import { BiFoodMenu } from "react-icons/bi";
-import { AiOutlineAppstoreAdd } from "react-icons/ai";
+import { AiOutlineAppstoreAdd, AiOutlineSearch } from "react-icons/ai";
+import { MdImageNotSupported } from "react-icons/md";
 import { Field, Form, Formik } from "formik";
 import Select from "react-select";
 
@@ -28,18 +29,21 @@ export default function Ingredients() {
   const [gramage, setGramage] = useState({ label: "gr", value: "gr" });
   const [kardex, setKardex] = useState({ label: "PEPS", value: "PEPS" });
   const [costTotal, setCostTotal] = useState(0);
-  const [alertDelete, setAlertDelete]  = useState(false);
+  const [alertDelete, setAlertDelete] = useState(false);
   const [idDelete, setIdDelete] = useState({});
+  const [searchTable, setSearchTable] = useState({});
+  const [isDeleting, setDeleting] = useState(false);
   const { id } = useParams();
 
   useEffect(() => {
     document.title = "Ingredientes";
-    const res = async () => {
-      const response = await getIngredients(id).then(setLoading(false));
-      setIngredients(response.ingredientes);
-    };
     res();
   }, []);
+
+  const res = async () => {
+    const response = await getIngredients(id).then(setLoading(false));
+    setIngredients(response.ingredientes);
+  };
 
   const toastDangerDelete = (text) => {
     toast.error(text, {
@@ -64,15 +68,44 @@ export default function Ingredients() {
       theme: "light",
     });
   };
+
+  const toatInfo = () => {
+    toast.info(
+      <div>
+        los valores como: <div>- el costo unitario </div>{" "}
+        <div>- la unidad de medida</div>
+        <div>- cantidad</div> no se podran editar posteriormente
+      </div>,
+      {
+        position: "top-right",
+        autoClose: 3500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        progress: undefined,
+        theme: "light",
+      }
+    );
+  };
+
   const paginationComponentOptions = {
-    rowsPerPageText: 'Filas por página',
-    rangeSeparatorText: 'de',
+    rowsPerPageText: "Filas por página",
+    rangeSeparatorText: "de",
     selectAllRowsItem: true,
-    selectAllRowsItemText: 'Todos',
+    selectAllRowsItemText: "Todos",
   };
 
   const subHeaderComponent = useMemo(() => {
-    return <input type="text" onInput={(e) => search(e.target.value)} />;
+    return (
+      <div className="search-bar-ingredient">
+        <AiOutlineSearch />
+        <input
+          placeholder="Buscar"
+          type="text"
+          onInput={(e) => search(e.target.value)}
+        />
+      </div>
+    );
   });
 
   const columns = [
@@ -90,44 +123,50 @@ export default function Ingredients() {
     },
     {
       name: "Costo unitario",
-      selector: (row) => '$'+row.costo_unitario,
+      selector: (row) => "$" + row.costo_unitario,
     },
     {
       name: "Costo total",
-      selector: (row) => '$'+row.costo_total,
+      selector: (row) => "$" + row.costo_total,
     },
     {
-      name: 'Kardex',
-      selector: (row) => row.kardex
+      name: "Kardex",
+      selector: (row) => row.kardex,
     },
     {
       name: "Acciones",
-      cell: (row) =>
-      <>
-        <div className="div-actions-ingredients">
-          <button className="btn btn-edit" onClick={async () => {
-            console.log(row)
-
-            setCostTotal(row.costo_total)
-            setEditing(row); 
-            setGramage({'label': row.unidad_medida, 'value': row.unidad_medida});
-            setKardex({'label': row.kardex, 'value':row.kardex});
-            
-            setForm(true);
-            }}>
-            Editar
-          </button>
-        </div>
-        <div className="div-actions-ingredients">
-          <button className="btn btn-danger" onClick={async () => {
+      cell: (row) => (
+        <>
+          <div className="div-actions-ingredients">
+            <button
+              className="btn btn-edit"
+              onClick={async () => {
+                setCostTotal(row.costo_total);
+                setEditing(row);
+                setGramage({
+                  label: row.unidad_medida,
+                  value: row.unidad_medida,
+                });
+                setKardex({ label: row.kardex, value: row.kardex });
+                setForm(true);
+              }}
+            >
+              Editar
+            </button>
+          </div>
+          <div className="div-actions-ingredients">
+            <button
+              className="btn btn-danger"
+              onClick={async () => {
                 setIdDelete(row);
                 setAlertDelete(true);
               }}
             >
-            Eliminar
-          </button>
-        </div>
-      </>
+              Eliminar
+            </button>
+          </div>
+        </>
+      ),
     },
   ];
 
@@ -137,27 +176,21 @@ export default function Ingredients() {
         name: "Imagen",
         selector: (row) => (
           <>
-          {console.log(row)}
-            <img src={row.imagen} alt="receta" className="img_receta" />
+            {row.imagen == "" ? (
+              <MdImageNotSupported className="img-not-found-image" />
+            ) : (
+              <img src={row.imagen} alt="receta" className="img_receta" />
+            )}
           </>
         ),
-        style: {
-          marginTop: "10px",
-        },
       },
       {
         name: "Nombre receta",
         selector: (row) => row.nombre_receta,
-        style: {
-          marginTop: "10px",
-        },
       },
       {
         name: "Uso de ingrediente",
         selector: (row) => row.cantidad_por_receta,
-        style: {
-          marginTop: "10px",
-        },
       },
     ];
     return (
@@ -168,24 +201,27 @@ export default function Ingredients() {
             data={row.data.recetas}
             responsive={true}
             pagination
+            paginationComponentOptions={paginationComponentOptions}
           />
         </section>
       </>
     );
   };
 
-
   const deleteIngredient = async () => {
-    console.log(idDelete.id_ingrediente)
-    // const response = await banIngredient(idDelete.id_ingrediente);
-    // if (res.message == "Ingrediente eliminado") {
+    setAlertDelete(false);
+    setDeleting(true);
+    const response = await banIngredient(idDelete.id_ingrediente);
+    if (response.message == "Ingrediente eliminado"){
+      toastDangerDelete(response.message);
+      setTimeout(() => {
+      setDeleting(false);
+      }, (800));
 
-    // } else {
-    //     toastDangerDelete();
-    // }
-
-  }
-
+      res();
+      localStorage.setItem('refreshIngredients', true);
+    }
+  };
 
   const validateText = (value) => {
     let error = "";
@@ -228,6 +264,49 @@ export default function Ingredients() {
     }
   };
 
+  //filtro tabla ingredientes
+  const search = (value) => {
+    let arrSearch = [];
+
+    if (value != "" && value != " ") {
+      for (let i in ingredients) {
+        for (let val in ingredients[i]) {
+          if (val != "id_ingrediente" && val != "ingrediente_activo") {
+            if (!Array.isArray(ingredients[i][val])) {
+              let valueS = "";
+              if (typeof ingredients[i][val] == "number") {
+                valueS = JSON.stringify(ingredients[i][val]);
+              } else {
+                valueS = ingredients[i][val];
+              }
+
+              if (valueS.includes(value)) {
+                console.log(valueS, value);
+                arrSearch.push(ingredients[i]);
+               
+                
+              }
+            }
+          }
+        }
+      }
+    }
+
+    const dataEmpty = new Set(arrSearch);
+    let resultNoRepe = [...dataEmpty];
+    setSearchTable(resultNoRepe);
+  };
+
+
+  //intervalo para actulizar la pagina
+  const intervaloRecipe = setInterval(() => {
+    const local = localStorage.getItem('refreshRecipe');
+    if (local != undefined){
+      res();
+      localStorage.removeItem('refreshRecipe');
+    }
+  }, 1000);
+
   return (
     <>
       <Navbar />
@@ -235,20 +314,36 @@ export default function Ingredients() {
         <div className="form-all-ingredients">
           <div className="body-form-all-ingredients">
             <div className="close-modal-all-ingredients">
-              <button type="button" onClick={() => {setForm(false); setEditing({})}}>
+              <button
+                type="button"
+                onClick={() => {
+                  setForm(false);
+                  setEditing({});
+                }}
+              >
                 Cerrar
               </button>
             </div>
             <div className="title-form-ingredients">
-              {JSON.stringify(isEditing) != '{}' ? ('Editar') : ('Crear')} ingrediente
+              {JSON.stringify(isEditing) != "{}" ? "Editar" : "Crear"}{" "}
+              ingrediente
             </div>
             <div className="form-ingredients">
               <Formik
                 initialValues={{
-                  nombre_ingrediente: JSON.stringify(isEditing) != '{}' ?  (isEditing.nombre_ingrediente) : (""),
+                  nombre_ingrediente:
+                    JSON.stringify(isEditing) != "{}"
+                      ? isEditing.nombre_ingrediente
+                      : "",
                   unidad_medida: "",
-                  costo_unitario: JSON.stringify(isEditing) != '{}' ?  (isEditing.costo_unitario) : (0),
-                  cantidad_total_ingrediente: JSON.stringify(isEditing) != '{}' ?  (isEditing.cantidad_total_ingrediente) : (0),
+                  costo_unitario:
+                    JSON.stringify(isEditing) != "{}"
+                      ? isEditing.costo_unitario
+                      : 0,
+                  cantidad_total_ingrediente:
+                    JSON.stringify(isEditing) != "{}"
+                      ? isEditing.cantidad_total_ingrediente
+                      : 0,
                   costo_total: valueCostoTotal,
                   kardex: "",
                 }}
@@ -258,14 +353,17 @@ export default function Ingredients() {
                     values.kardex = kardex.value;
                     values.costo_total = valueCostoTotal;
 
-
-                    if (JSON.stringify(isEditing) == '{}'){
+                    if (JSON.stringify(isEditing) == "{}") {
                       //creacion de un nuevo ingrediente
                       const response = await createIngredient(values, id);
                       if (response.message == "Ingrediente creado") {
-                        if (response.id_ingrediente != "" && response.id_ingrediente != undefined) {
+                        if (
+                          response.id_ingrediente != "" &&
+                          response.id_ingrediente != undefined
+                        ) {
                           let jsonAdd = {
-                            cantidad_total_ingrediente:values.cantidad_total_ingrediente,
+                            cantidad_total_ingrediente:
+                              values.cantidad_total_ingrediente,
                             costo_total: values.costo_total,
                             costo_unitario: values.costo_unitario,
                             id_ingrediente: response.id_ingrediente,
@@ -276,39 +374,40 @@ export default function Ingredients() {
                             kardex: values.kardex,
                           };
 
-                          let arr = ingredients
-                          arr.unshift(jsonAdd);
-                          setIngredients(arr);
-
+                      
+                          res();
+                          localStorage.setItem('refreshIngredients', true);
                           toastSucces(response.message);
-
-                        }else{
+                        } else {
                           window.location.reload();
                         }
                       } else {
                         toastDangerDelete(response.message);
                       }
-                   }else{
-                    //edicion de un ingrediente
-                    const response = await updateIngredients(values, isEditing.id_ingrediente);
-                    
-                    if (response == 'Se ha actualizado correctamente'){
-                      let arrEdit = ingredients;
+                    } else {
+                      //edicion de un ingrediente
+                      const response = await updateIngredients(
+                        values,
+                        isEditing.id_ingrediente
+                      );
 
-                      arrEdit.forEach((row) => {
-                        if (row.id_ingrediente == isEditing.id_ingrediente){
-                          row.kardex = values.kardex,
-                          row.nombre_ingrediente = values.nombre_ingrediente
-                          
-                        }
-                      });
+                      if (response == "Se ha actualizado correctamente") {
+                        let arrEdit = ingredients;
 
-                      toastSucces(response);
+                        arrEdit.forEach((row) => {
+                          if (row.id_ingrediente == isEditing.id_ingrediente) {
+                            (row.kardex = values.kardex),
+                              (row.nombre_ingrediente =
+                                values.nombre_ingrediente);
+                          }
+                        });
 
-                    }else{
-                      toastDangerDelete(response)
+                        toastSucces(response);
+                        localStorage.setItem('refreshIngredients', true);
+                      } else {
+                        toastDangerDelete(response);
+                      }
                     }
-                   }
 
                     setForm(false);
                   } catch (err) {
@@ -345,99 +444,111 @@ export default function Ingredients() {
                             <p className="error">{errors.nombre_ingrediente}</p>
                           )}
                       </div>
-                      <label
-                        className="label-input-form"
-                        htmlFor="unidad_medida"
-                      >
-                        Unidad de medida
-                      </label>
-                      <Select
-                        onChange={(e) => setGramage(e)}
-                        className="select-gramace-ingredients"
-                        closeMenuOnSelect={true}
-                        defaultValue={gramage}
-                        options={[
-                          { label: "und", value: "und" },
-                          { label: "gr", value: "gr" },
-                          { label: "lb", value: "lb" },
-                          { label: "kg", value: "kg" },
-                          { label: "oz", value: "oz" },
-                          { label: "lt", value: "lt" },
-                          { label: "cm3", value: "cm3" },
-                          { label: "ml", value: "ml" },
-                        ]}
-                        placeholder="Unidad medida"
-                        isMulti={false}
-                      />
-                      <label
-                        className="label-input-form"
-                        htmlFor="costoUnitario"
-                      >
-                        Costo Unitario
-                      </label>
-                      <Field
-                        type="number"
-                        step="any"
-                        min="1"
-                        autoComplete={"off"}
-                        placeholder="Costo unitario"
-                        onInput={costoTotal()}
-                        id="costoUnitario"
-                        name="costo_unitario"
-                        validate={validateNumber}
-                        style={
-                          errors.costo_unitario &&
-                          touched.costo_unitario && { border: "1px solid red" }
-                        }
-                      />
-                      <div className="error-respi">
-                        {errors.costo_unitario && touched.costo_unitario && (
-                          <p className="error">{errors.costo_unitario}</p>
-                        )}
-                      </div>
-                      <label className="label-input-form" htmlFor="cant">
-                        Cantidad en {gramage.label}
-                      </label>
-                      <Field
-                        type="number"
-                        step="any"
-                        min="1"
-                        id="cant"
-                        validate={validateNumber}
-                        onInput={costoTotal()}
-                        autoComplete={"off"}
-                        style={
-                          errors.cantidad_total_ingrediente &&
-                          touched.cantidad_total_ingrediente && {
-                            border: "1px solid red",
-                          }
-                        }
-                        placeholder="Cantidad total"
-                        name="cantidad_total_ingrediente"
-                      />
-                      <div className="error-respi">
-                        {errors.cantidad_total_ingrediente &&
-                          touched.cantidad_total_ingrediente && (
-                            <p className="error">
-                              {errors.cantidad_total_ingrediente}
-                            </p>
-                          )}
-                      </div>
-                      <label className="label-input-form" htmlFor="cost">
-                        Costo Total
-                      </label>
-                      <Field
-                        type="number"
-                        step="any"
-                        min="1"
-                        autoComplete={"off"}
-                        id="cost"
-                        value={costTotal !== 0  && valueCostoTotal == 0 ? costTotal : valueCostoTotal}
-                        placeholder="Costo total"
-                        disabled={true}
-                        name="costo_total"
-                      />
-                      <div className="error-respi"></div>
+                      {JSON.stringify(isEditing) == "{}" ? (
+                        <>
+                          <label
+                            className="label-input-form"
+                            htmlFor="unidad_medida"
+                          >
+                            Unidad de medida
+                          </label>
+                          <Select
+                            onChange={(e) => setGramage(e)}
+                            className="select-gramace-ingredients"
+                            closeMenuOnSelect={true}
+                            defaultValue={gramage}
+                            options={[
+                              { label: "und", value: "und" },
+                              { label: "gr", value: "gr" },
+                              { label: "lb", value: "lb" },
+                              { label: "kg", value: "kg" },
+                              { label: "oz", value: "oz" },
+                              { label: "lt", value: "lt" },
+                              { label: "cm3", value: "cm3" },
+                              { label: "ml", value: "ml" },
+                            ]}
+                            placeholder="Unidad medida"
+                            isMulti={false}
+                          />
+                          <label
+                            className="label-input-form"
+                            htmlFor="costoUnitario"
+                          >
+                            Costo Unitario
+                          </label>
+                          <Field
+                            type="number"
+                            step="any"
+                            min="1"
+                            autoComplete={"off"}
+                            placeholder="Costo unitario"
+                            onInput={costoTotal()}
+                            id="costoUnitario"
+                            name="costo_unitario"
+                            validate={validateNumber}
+                            style={
+                              errors.costo_unitario &&
+                              touched.costo_unitario && {
+                                border: "1px solid red",
+                              }
+                            }
+                          />
+                          <div className="error-respi">
+                            {errors.costo_unitario &&
+                              touched.costo_unitario && (
+                                <p className="error">{errors.costo_unitario}</p>
+                              )}
+                          </div>
+
+                          <label className="label-input-form" htmlFor="cant">
+                            Cantidad en {gramage.label}
+                          </label>
+                          <Field
+                            type="number"
+                            step="any"
+                            min="1"
+                            id="cant"
+                            validate={validateNumber}
+                            onInput={costoTotal()}
+                            autoComplete={"off"}
+                            style={
+                              errors.cantidad_total_ingrediente &&
+                              touched.cantidad_total_ingrediente && {
+                                border: "1px solid red",
+                              }
+                            }
+                            placeholder="Cantidad total"
+                            name="cantidad_total_ingrediente"
+                          />
+                          <div className="error-respi">
+                            {errors.cantidad_total_ingrediente &&
+                              touched.cantidad_total_ingrediente && (
+                                <p className="error">
+                                  {errors.cantidad_total_ingrediente}
+                                </p>
+                              )}
+                          </div>
+                          <label className="label-input-form" htmlFor="cost">
+                            Costo Total
+                          </label>
+                          <Field
+                            type="number"
+                            step="any"
+                            min="1"
+                            autoComplete={"off"}
+                            id="cost"
+                            value={
+                              costTotal !== 0 && valueCostoTotal == 0
+                                ? costTotal
+                                : valueCostoTotal
+                            }
+                            placeholder="Costo total"
+                            disabled={true}
+                            name="costo_total"
+                          />
+                          <div className="error-respi"></div>
+                        </>
+                      ) : null}
                       <label
                         className="label-input-form"
                         htmlFor="unidad_medida"
@@ -461,12 +572,13 @@ export default function Ingredients() {
                       />
                     </div>
                     <div className="btn-send-ingredients">
-                    <button type="submit" disabled={isSubmitting}>
-                      {isSubmitting ? (
-                              <AiOutlineLoading3Quarters className="load-respie-send"/>
-                           ) : (
-                            "Enviar"
-                      )}</button>  
+                      <button type="submit" disabled={isSubmitting}>
+                        {isSubmitting ? (
+                          <AiOutlineLoading3Quarters className="load-respie-send" />
+                        ) : (
+                          "Enviar"
+                        )}
+                      </button>
                     </div>
                   </Form>
                 )}
@@ -486,7 +598,15 @@ export default function Ingredients() {
           </section>
           <section className="father_all_ingredients">
             <div className="add-new-ingredient">
-              <button type="button" onClick={() => setForm(true)}>
+              <button
+                type="button"
+                onClick={() => {
+                  setForm(true);
+                  setCostTotal(0);
+                  toatInfo();
+                  setEditing({});
+                }}
+              >
                 <AiOutlineAppstoreAdd />
                 Agregar un nuevo ingrediente
               </button>
@@ -495,7 +615,7 @@ export default function Ingredients() {
               className="datatable-ingredients"
               columns={columns}
               responsive={true}
-              data={ingredients}
+              data={searchTable.length > 0 ? searchTable : ingredients}
               pointerOnHover
               pagination
               expandOnRowClicked
@@ -515,21 +635,53 @@ export default function Ingredients() {
         <div className="alert-delete-ingredient">
           <div className="body-alert-ingredient">
             <div className="header-alert-ingredient">
-              <CiCircleAlert className="icon-alert-ingredient"/>
+              <CiCircleAlert className="icon-alert-ingredient" />
             </div>
             <div className="info-alert-ingredient">
               <p>¿Estas seguro de eliminar este ingrediente?</p>
             </div>
-            {JSON.stringify(idDelete) != '{}' && idDelete.recetas.length > 0  ? (
+            {JSON.stringify(idDelete) != "{}" && idDelete.recetas.length > 0 ? (
               <div className="data-alert-ingredients">
-                <p>Este ingrediente hace parte de <strong>{idDelete.recetas.length}</strong>recetas</p>
-                <p>Si lo eliminas los valores de dichas recetas se veran afectados</p>
+                <p>
+                  Este ingrediente hace parte de{" "}
+                  <strong>{idDelete.recetas.length}</strong> recetas
+                </p>
+                <p>
+                  Si lo eliminas los valores de dichas recetas se veran
+                  afectados
+                </p>
               </div>
-            ) : (null)}
+            ) : null}
             <div className="btn-alert-ingredient">
-               {console.log(idDelete)}
-              <button type="button" className="btn-delete-ingredient" onClick={() => deleteIngredient()}>Aceptar</button>
-              <button type="button" className="btn-cancel-ingredient" onClick={() => {setAlertDelete(false); setIdDelete({})}}>Cancelar</button>
+              <button
+                type="button"
+                className="btn-delete-ingredient"
+                onClick={() => deleteIngredient()}
+              >
+                Aceptar
+              </button>
+              <button
+                type="button"
+                className="btn-cancel-ingredient"
+                onClick={() => {
+                  setAlertDelete(false);
+                  setIdDelete({});
+                }}
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+      {isDeleting ? (
+        <div className="sending-respie">
+          <div className="body-info-respie">
+            <div className="info-sending-respie">
+              <div className="icon-loading-respie">
+                <AiOutlineLoading3Quarters className="load-send-respie"/>
+              </div>
+              <div className="txt-loading-respie">Eliminando ingrediente</div>
             </div>
           </div>
         </div>
