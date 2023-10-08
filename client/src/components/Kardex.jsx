@@ -39,6 +39,8 @@ export default function Kardex() {
     </tr>
   ));
 
+
+
   return (
     <>
       <Navbar />

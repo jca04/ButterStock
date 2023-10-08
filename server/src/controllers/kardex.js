@@ -51,7 +51,7 @@ const entradas = (req, res) => {
   try {
     const { id_ingredient } = req.params;
     const id_restaurant = req.body.data.id;
-    const { cantidad, costo_unitario, unidad_medida, detalle } = req.body;
+    const { cantidad, costo_unitario, unidad_medida, detalle } = req.body.data;
 
     conn.query(
       "SELECT unidad_medida, costo_unitario, costo_total, cantidad_total_ingrediente, cantidad_editable_ingrediente FROM tbl_ingredientes WHERE id_ingrediente = ? && id_restaurant = ? && activo = 1",
@@ -149,7 +149,7 @@ const entradas = (req, res) => {
 
 const salidas = async (req, res) => {
   try {
-    const { cantidad, unidad_medida } = req.body;
+    const { cantidad, unidad_medida } = req.body.data;
     const { id_ingredient } = req.params;
     const id_restaurant = req.body.data.id;
 
