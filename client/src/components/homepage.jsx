@@ -9,6 +9,7 @@ import { removeToken } from "../auth/auth";
 import { MdFastfood } from "react-icons/md";
 import Plot from "react-plotly.js";
 import { AiOutlineSearch, AiOutlineLoading3Quarters } from "react-icons/ai";
+import Comandas from "./Comandas";
 
 // import {useDispatch, useSelector} from 'react-redux'
 
@@ -23,6 +24,7 @@ function HomePage() {
 
   const [id_restaurant, setIdRestaurant] = useState(null);
   const [isLoading, setLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     const fecthData = async () => {
@@ -47,6 +49,14 @@ function HomePage() {
     fecthData();
   }, []);
 
+  const openModal = () => {
+    setModalOpen(true);
+  }
+
+  const closeModal = () => {
+    setModalOpen(false);
+  }
+
   return (
     <>
       <Navbar />
@@ -62,14 +72,17 @@ function HomePage() {
               <div className="txt-comanda">
                 <h4>Comandas</h4>
               </div>
-              <Link to={`/comandas/${id_restaurant}`} className="url-homepage">
-                <div className="init-comanda">
+                <div className="init-comanda" onClick={openModal}>
                   <div className="init-comanda-txt">Iniciar Comanda</div>
                   <div className="icon-comanda">
                     <MdFastfood />
                   </div>
                 </div>
-              </Link>
+              {
+                modalOpen && (
+                  <Comandas closeModal={closeModal} id_restaurant = {id_restaurant} />
+                )
+              }
             </div>
             <div className="grafh">
               <Plot
