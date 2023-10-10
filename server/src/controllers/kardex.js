@@ -346,7 +346,7 @@ const salidas = async (req, res) => {
           if (nuevaSalida.affectedRows > 0) {
             // Inserto el nuevo saldo
 
-            if (cantidadActual !== 0) {
+            if (cantidadActual > 0) {
               const nuevoSaldo = await queryAsync(
                 "INSERT INTO tbl_peps (id_peps, saldo_cantidad, saldo_valorUnitario, saldo_valorTotal, saldo_activo, id_ingrediente, id_restaurante) VALUES (?, ?, ?, ?, ?, ?, ?)",
                 [
