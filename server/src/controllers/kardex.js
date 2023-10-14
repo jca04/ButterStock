@@ -375,7 +375,7 @@ const salidas = async (req, res) => {
                         "UPDATE tbl_peps SET saldo_activo = 0 WHERE id_peps = ?",
                         [saldo.id_peps]
                       );
-
+ 
                       if (acutalizarSaldoRestante.affectedRows > 0) {
                         await queryAsync(
                           "INSERT INTO tbl_peps (id_peps, saldo_cantidad, saldo_valorUnitario, saldo_valorTotal, saldo_activo, id_ingrediente, id_restaurante) VALUES (?, ?, ?, ?, ?, ?, ?)",
