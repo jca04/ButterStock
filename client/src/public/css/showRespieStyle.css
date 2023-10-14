@@ -714,3 +714,16 @@ body::-webkit-scrollbar-thumb {
   font-size: 10px;
 }
 
+.td-input-plus-recipe{
+  width: 10%;
+}
+
+.input-plus-sub-recipe{
+  width: 100%;
+  padding: 6px;
+  width: 90%;
+  border-radius: 5px;
+  font-size: 0.8em;
+  outline: none;
+  border: 1px solid silver;
+}

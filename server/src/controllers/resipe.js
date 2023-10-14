@@ -1,9 +1,6 @@
 const conn = require("../db/db");
 const { v4: uuidv4 } = require("uuid");
-
-process.on('rejectionHandled', (error) => {
-  console.log(error)
-});
+const { convertion } = require("../utils/unitConversion");
 
 const createEditResipe = async (req, res) => {
   try {
@@ -13,153 +10,165 @@ const createEditResipe = async (req, res) => {
     //Insertar una nueva receta
     if (id_receta == ''){
       //Crear la receta inicial con sus datos
-      conn.query("INSERT INTO tbl_recetas (id_receta, nombre_receta, imagen, descripcion,cantidad_plato, activo, sub_receta, tipo_receta, id_restaurant ) VALUES(?,?,?,?,?,?,?,?,?)", [id_receta_new, nombre_receta, imagen, descripcion, cantidad_plato, 1, isSubreceta, tipoPlato, id_restaurant],
-        (err) => {
-          try {
-            if (err) {
-              return res.status(500).json({ message: err });
-            }
+      const insertRecipe = await conn.query('INSERT INTO tbl_recetas '+
+      ' (id_receta, nombre_receta, imagen, descripcion,cantidad_plato, activo, sub_receta, tipo_receta, id_restaurant ) '+
+      ' VALUES(?,?,?,?,?,?,?,?,?)', 
+      [id_receta_new, nombre_receta, imagen, descripcion, cantidad_plato, 1, isSubreceta, tipoPlato, id_restaurant]);
 
-            let arrnew = [];
-            for (var i in ingredient) {
-              let id_ingrediente = ingredient[i][0];
-              let cantidad_ingrediente_plato = ingredient[i][1];
-              let unidad_medida_r = ingredient[i][2];
-              arrnew.push([uuidv4(), unidad_medida_r, cantidad_ingrediente_plato, 1, id_ingrediente, id_receta_new]);
-            }
+      //Agregar los ingredientes a un array para hacer el insert una sola vez
+      let arrnew = [];
+      for (var i in ingredient) {
+        const id_ingrediente = ingredient[i][0];
+        const cantidad_ingrediente_plato = ingredient[i][1];
+        const unidad_medida_r = ingredient[i][2];
+        arrnew.push([uuidv4(), unidad_medida_r, cantidad_ingrediente_plato, 1, id_ingrediente, id_receta_new]);
+      }
 
-            if (arrnew.length > 0) {
-              //Insertar todos los ingredientes que esta receta haya creado
-              conn.query("INSERT INTO tbl_ingredientes_receta (id_ingrediente_receta, unidad_medida_r,  cantidad_por_receta, activo, id_ingrediente, id_receta) VALUES ?",
-                [arrnew],
-                (err) => {
-                  if (err) {
-                    return res.status(500).json({ message: err });
-                  }
-                });
-            }
+      if (arrnew.length > 0){
+        const insertIngredientReceta = await conn.query('INSERT INTO tbl_ingredientes_receta '+
+        ' (id_ingrediente_receta, unidad_medida_r,  cantidad_por_receta, activo, id_ingrediente, id_receta) VALUES ?',
+        [arrnew]);
+      } 
 
-            //Insertar las referencias de la subReceta hacia las recetas padres en la tabla tbl_subRecetas
-            let arrIdsSubReceta = [];
-            let arrSubRecetas = [];
-            for (var i in sub_receta) {
-              arrIdsSubReceta.push(sub_receta[i].value);
-              arrSubRecetas.push([uuidv4(), sub_receta[i].value, id_receta_new, 1]);
-            }
+      //Insertar las referencias de la subReceta hacia las recetas padres en la tabla tbl_subRecetas
+      let arrIdsSubReceta = [];
+      let arrSubRecetas = [];
+      for (var i in sub_receta) {
+        arrIdsSubReceta.push(sub_receta[i].value);
+        arrSubRecetas.push([uuidv4(), sub_receta[i].value, id_receta_new, 1]);
+      }
 
-            if (arrSubRecetas.length > 0) {
-              conn.query("INSERT INTO tbl_sub_recetas (id_sub_receta,id_receta, cod_receta_padre, activo) VALUES ?",
-                [arrSubRecetas], (err) => {
-                  if (err) {
-                    return res.status(500).json({ message: err });
-                  }
-                });
-            }
+      if (arrSubRecetas.length > 0){
+        const insertSubRecetas = await conn.query('INSERT INTO tbl_sub_recetas (id_sub_receta,id_receta, cod_receta_padre, activo) VALUES ?',[arrSubRecetas]);
+      }
 
-            if (JSON.stringify(infoReceta) != '{}') {
-              let info = infoReceta;
-              conn.query('INSERT INTO tbl_inforeceta (id_inforeceta, margen_error, sub_total, sub_total_M_E, margen_contribucion, subTotal_margen_contribucion,costo_potencial_venta, iva,	costo_venta, id_receta) VALUES (?,?,?,?,?,?,?,?,?,?)', [uuidv4(), info.margen_error, info.subTotal, info.sub_total_M_E, info.margenContribucion, info.subTotal_margen_contribucion, info.costo_potencial_venta, info.iva, info.costo_venta_final, id_receta_new],
-                (err, result) => {
-                  if (err) {
-                    res.status(500).json({ message: err });
-                  }
+      if (JSON.stringify(infoReceta) != '{}'){
+        const info = infoReceta;
+        const insertInfoRecipe = await conn.query('INSERT INTO tbl_inforeceta '+
+        ' (id_inforeceta, margen_error, sub_total, sub_total_M_E, margen_contribucion, subTotal_margen_contribucion,costo_potencial_venta, iva,	costo_venta, id_receta) '+
+        ' VALUES (?,?,?,?,?,?,?,?,?,?)',
+        [uuidv4(), info.margen_error, info.subTotal, info.sub_total_M_E, info.margenContribucion, info.subTotal_margen_contribucion, info.costo_potencial_venta, info.iva, info.costo_venta_final, id_receta_new]);
 
-                  if (result.protocol41) {
-                    res.status(200).json({ message: true, id_create: id_receta_new });
-                  }
-                });
-            } else {
-              res.status(200).json({ message: true, id_create: id_receta_new });
-            }
-          } catch (error) {
-            res.status(500).json({ message: error });
-          }
-        });
+        if (insertInfoRecipe.protocol41){
+          res.status(200).json({message: true, id_create: id_receta_new });
+        }
+      }else{
+        res.status(200).json({ message: true, id_create: id_receta_new });
+      }
+
       //aqui se empieza a editar las recetas
     }else{
       //Editar la receta general  
-      conn.query("UPDATE tbl_recetas SET nombre_receta = ?, imagen = ?, descripcion = ?, cantidad_plato = ?, tipo_receta = ?, sub_receta = ? WHERE id_receta = ?",
-        [nombre_receta, imagen, descripcion, cantidad_plato,tipoPlato,isSubreceta ,id_receta] ,
-        (err, result) => {
-          if (err){
-            return res.status(500).json({message: err});
-          }
+      const updateRecipe = await conn.query('UPDATE tbl_recetas SET nombre_receta = ?, imagen = ?, descripcion = ?, cantidad_plato = ?, tipo_receta = ?, sub_receta = ? WHERE id_receta = ?',
+      [nombre_receta, imagen, descripcion, cantidad_plato,tipoPlato,isSubreceta ,id_receta]);
 
-          if (result.affectedRows != undefined && result.affectedRows > 0){
-            let parseData = [];
+      if (updateRecipe.affectedRows != undefined && updateRecipe.affectedRows > 0){
+        let subRecetasInsert = [];
+        for (let i in sub_receta){
+          subRecetasInsert.push([uuidv4(), sub_receta[i].value, id_receta, 1]);
+        }
 
-            for (var i in sub_receta){
-              parseData.push([uuidv4(), sub_receta[i].value, id_receta, 1]);
-            }
+        //eliminar las subRecetas 
+        const deleteSubRecipe = await conn.query('DELETE FROM tbl_sub_recetas WHERE cod_receta_padre = ?', [id_receta]);
 
-            //eliminar la recetas para que no las vean
-            //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°|
-            conn.query('DELETE FROM tbl_sub_recetas WHERE cod_receta_padre = ?', [id_receta],
-            (err, result) => {
-              if (err){
-                return res.status(500).json({message: err})
-              }
-              //insertar los nuevos registros si los tiene
-              if (parseData.length > 0){
-                if (result.protocol41 != undefined && result.protocol41 == true){
-                  conn.query('INSERT INTO tbl_sub_recetas(id_sub_receta, id_receta, cod_receta_padre, activo) VALUES ?', [parseData],
-                  (err, result) => {
-                    if (err){
-                      return res.status(500).json({message: err})
-                    }
-            //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°|
-                  });
-                }
-              }
-            //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°|°
-            //ingredientes 
-              conn.query('DELETE FROM tbl_ingredientes_receta WHERE id_receta = ?', [id_receta], 
-              (err, result) => {
-                if (err){
-                  return res.status(500).json({message: err});
-                }
-
-                let mapIngredients = ingredient.map((row) => {
-                  let rowFinal = [];
-                  rowFinal[0] = uuidv4();
-                  rowFinal[1] = row[0];
-                  rowFinal[2] = row[1];
-                  rowFinal[3] = row[2];
-                  rowFinal[4] = id_receta;
-                  rowFinal[5] = 1;
-                  return rowFinal;
-                });   
-
-                conn.query("INSERT INTO tbl_ingredientes_receta(id_ingrediente_receta, id_ingrediente, cantidad_por_receta, unidad_medida_r, id_receta, activo) VALUES ?", [mapIngredients], 
-                (err, result) => {
-                  if (err){
-                    return res.status(500).json({message: err})
-                  }
-                });
-              });
-
-              if (JSON.stringify(infoReceta) != '{}'){
-                let info = infoReceta;
-                conn.query('UPDATE tbl_inforeceta SET margen_error = ?, sub_total = ?, sub_total_M_E = ?,  margen_contribucion = ?, subTotal_margen_contribucion = ?, costo_potencial_venta = ? , iva = ?, costo_venta = ? WHERE id_receta = ? ', [info.margen_error, info.subTotal, info.sub_total_M_E, info.margenContribucion, info.subTotal_margen_contribucion, info.costo_potencial_venta, info.iva, info.costo_venta_final, id_receta],
-                (err, result) => {
-                  console.log(err,result)
-                  if (err){
-                    return res.status(500).json({message: err});
-                  }
-    
-                  if (result.affectedRows != undefined){
-                    res.status(200).json({message: true});
-                  }else{
-                    res.status(200).json({message: true});
-                  }
-                });
-              }else{
-                res.status(200).json({message: true});
-              }
-            });
+        if (deleteSubRecipe.protocol41){
+          if (subRecetasInsert.length > 0){
+            const insertSubRecipe = await conn.query('INSERT INTO tbl_sub_recetas(id_sub_receta, id_receta, cod_receta_padre, activo) VALUES ?',
+            [subRecetasInsert]);
           }
         }
-      );
+
+        //formatear los ingredientes que entra desdes el front
+        let mapIngredients = ingredient.map((row) => {
+          let rowFormated = [];
+          rowFormated[0] = uuidv4();
+          rowFormated[1] = row[0];
+          rowFormated[2] = row[1];
+          rowFormated[3] = row[2];
+          rowFormated[4] = id_receta;
+          rowFormated[5] = 1;
+
+          return rowFormated;
+        });
+
+        //consultar los ingredientes que tenga esta receta
+        const ingredientPerRecipe = await conn.query('SELECT  '+
+        ' rc.id_ingrediente, rc.unidad_medida_r, rc.cantidad_por_receta, rc.activo, '+
+        ' ing.unidad_medida AS unidadOriginal, cantidad_editable_ingrediente'+
+        ' FROM tbl_ingredientes_receta AS rc '+
+        ' INNER JOIN tbl_ingredientes AS ing'+
+        ' ON rc.id_ingrediente = ing.id_ingrediente'+
+        ' WHERE rc.id_receta = ?', [id_receta]);
+
+        //validar que los ingredientes consultados esten en el map
+        //sino, devolver el valor de cantidad al ingrediente
+        //y eliminar el ingrediente relacionado con la receta
+
+        let ingredientsNOIn = ingredientPerRecipe;
+        for (let valid in ingredientsNOIn){
+          const idIngrediente = ingredientsNOIn[valid].id_ingrediente;
+
+          if (ingredientsNOIn[valid]['delete'] == undefined){
+            for (let validMap in mapIngredients){
+              const idIngredienteMap = mapIngredients[validMap][1];
+              if (idIngredienteMap === idIngrediente){
+                ingredientsNOIn[valid]['delete'] = false;                
+              }
+            }
+          }else continue;
+        }
+
+        //Devolver el valor al ingrediente si el ingrediente es eliminado
+        for (let i in ingredientsNOIn){
+          if (ingredientsNOIn[i].delete === undefined){
+            const ingredient = ingredientsNOIn[i].id_ingrediente
+            //datos del ingrediente general
+            const unityToDelete = ingredientsNOIn[i].unidadOriginal;
+            const quantityToAdd = ingredientsNOIn[i].cantidad_editable_ingrediente;
+            //datos del ingrediente relacionada con la receta
+            const unityPresent = ingredientsNOIn[i].unidad_medida_r;
+            const quantityPresent = ingredientsNOIn[i].cantidad_por_receta;
+
+            const convertionValues =  convertion(unityPresent, quantityPresent, unityToDelete);
+            const valueFinal = parseFloat(quantityToAdd + convertionValues);
+            
+            const updateIngredientOriginal = await conn.query('UPDATE tbl_ingredientes '+
+            ' SET cantidad_editable_ingrediente = ? WHERE id_ingrediente = ?',
+            [valueFinal, ingredient]);
+
+          }
+        }
+        
+
+        //editar los ingredientes
+        const deleteIngredients = await conn.query('DELETE FROM tbl_ingredientes_receta WHERE id_receta = ?',[id_receta]);
+        if (deleteIngredients.protocol41){
+          //insertar los nuevos ingredients
+          const insertIngredients = await conn.query('INSERT INTO '+
+          ' tbl_ingredientes_receta(id_ingrediente_receta, id_ingrediente, cantidad_por_receta, unidad_medida_r, id_receta, activo) '+ 
+          ' VALUES ?',
+          [mapIngredients]);
+        }
+        
+        if (JSON.stringify(infoReceta) != '{}'){
+          const info = infoReceta;
+
+          const updateInfoRecipe = await conn.query('UPDATE '+
+          ' tbl_inforeceta SET margen_error = ?, sub_total = ?, ' +
+          ' sub_total_M_E = ?,  margen_contribucion = ?, '+
+          ' subTotal_margen_contribucion = ?, costo_potencial_venta = ? , '+
+          ' iva = ?, costo_venta = ? WHERE id_receta = ? ',
+          [info.margen_error, info.subTotal, info.sub_total_M_E, info.margenContribucion, info.subTotal_margen_contribucion, info.costo_potencial_venta, info.iva, info.costo_venta_final, id_receta]);
+
+          if (updateInfoRecipe.affectedRows != undefined){
+            res.status(200).json({message: true});
+          }else{
+            res.status(200).json({message: true});
+          }
+        }else{
+          res.status(200).json({message: true});
+        }
+      }
     }
   } catch (error) {
     res.status(500).json({message: error})
@@ -265,11 +274,12 @@ const getResipeEdit = async (req, res) => {
 
       if (result.length > 0 || result.length == 0) {
         //Consulta de todos los ingredientes para guardarlos en result y entregar ingrediente por la receta ingresada
-        conn.query('SELECT Ir.*, i.nombre_ingrediente  FROM tbl_ingredientes_receta AS Ir INNER JOIN tbl_ingredientes AS i ON Ir.id_ingrediente = i.id_ingrediente WHERE Ir.id_receta = ? && Ir.activo = 1;',[id_respie],
+        conn.query('SELECT Ir.*, i.nombre_ingrediente, i.unidad_medida AS unidad_original  FROM tbl_ingredientes_receta AS Ir INNER JOIN tbl_ingredientes AS i ON Ir.id_ingrediente = i.id_ingrediente WHERE Ir.id_receta = ? && Ir.activo = 1;',[id_respie],
           (err, resultIn) => {
             if (err){
               res.status(400).json({ message: err });
             }
+
 
             if (Array.isArray(resultIn)){
               //comparar datos para entregar con sus respectivos ingredientes
