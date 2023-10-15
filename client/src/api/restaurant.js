@@ -15,8 +15,19 @@ export const verifiedRestaurant = async (data) => {
 
 //creacion del restaurante
 export const createRestaurant = async (data) => {
-  const res = await axios.post("/restaurant/create", data);
-  return res;
+  const response = await axios.post("/restaurant/create", data);
+
+  try {
+    if (response.status == 200){
+      if (response.data != undefined){
+        return response.data;
+      }
+    }else{
+      return {message: 'Ha ocurrido un error inesperado'};
+    }
+  } catch (error) {
+    return {message: error}
+  }
 };
 
 //va en el homepage

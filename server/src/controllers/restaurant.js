@@ -1,55 +1,42 @@
 const conn = require("../db/db");
 const { v4: uuidv4 } = require("uuid");
-
-const verifiedRestaurant = async (req, res) => {
-    let name = req.body.name;
-
-    try {
-        if (name) {
-            await conn.query(
-                "SELECT id_restaurant FROM tbl_restaurant WHERE nombre = ?",
-                [name],
-                (err, result) => {
-                    if (err) {
-                        res.status(500).json({ messgae: "error" });
-                    }
-
-                    if (result.length > 0) {
-                        res.status(200).json({
-                            messgae: "restaurant exist yet",
-                        });
-                    } else {
-                        res.status(200).json({
-                            messgae: "restaurant doesn´t exist",
-                        });
-                    }
-                }
-            );
-        }
-    } catch (error) {
-        res.status(500).json({ error });
-    }
-};
-
+const { encrypt } = require("../utils/bcrypt.handle");
+//crear restaurante y el primer usuairo admin que pertenece a ese restaurante
 const create = async (req, res) => {
-    let file = "";
-    let uuid = uuidv4();
-    let { restaurant, ciudad, direccion } = req.body;
+    const uuid = uuidv4();
+    const {
+        nameRestaurant,
+        city,
+        address,
+        nameUser,
+        lastName,
+        email,
+        pass
+    } = req.body;
 
-    try {
-        await conn.query(
-            "INSERT INTO tbl_restaurant (id_restaurant, nombre, ciudad, direccion,  pais, icono, activo) VALUES (?,?,?,?,?,?,?)",
-            [uuid, restaurant, ciudad, direccion, "Colombia", '', 1],
-            (err, result) => {
-                if (err) {
-                    res.status(200).json({ error: err });
-                } else {
-                    res.status(200).json({ messgae: uuid });
-                }
+    try{
+        const passHash = await encrypt(pass);
+        //crear restaurante
+        const createRestaurant = await conn.query('INSERT INTO tbl_restaurant '+
+        ' (id_restaurant, nombre, ciudad, direccion, pais, activo) '+
+        ' VALUES (?,?,?,?,?,?)',
+        [uuid, nameRestaurant, city, address, 'Colombia', 1]);
+
+        if (createRestaurant.affectedRows > 0){
+            //crear usuario admin del restaurante
+            const createUserAdmin = await conn.query('INSERT INTO tbl_users '+
+            ' (id_users, nombre, apellido, correo, contraseña, admin, superAdmin, activo, id_restaurant) '+
+            ' VALUES (?,?,?,?,?,?,?,?, ?)',
+            [uuidv4(), nameUser, lastName, email, passHash, 1, 0, 1, uuid]);
+
+            if (createUserAdmin.affectedRows > 0){
+                res.status(200).json({message: '!Restaurante creado'})
             }
-        ); 
-    } catch (err) {
-        res.status(500).json({ err });
+        }else{
+            res.status(500).json({message: 'Ha ocurrido un error inesperado'});
+        }
+    }catch(error){
+        res.status(500).json({message: error});
     }
 };
 
@@ -114,7 +101,6 @@ const getRestaurant = async (req, res) => {
 
 module.exports = {
     create,
-    verifiedRestaurant,
     getRestaurants,
     toggleRestaurant,
     getRestaurant

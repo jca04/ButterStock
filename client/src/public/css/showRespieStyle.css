@@ -573,10 +573,6 @@ body{
   height: 100% !important;
 }
 
-.Toastify__progress-bar--success {
-  background: #ffea96 !important;
-}
-
 .sending-respie {
   display: flex;
   background: rgb(0, 0, 0, 0.7);
