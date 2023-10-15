@@ -3,6 +3,7 @@ const { convertion, convertionPrice } = require("../utils/unitConversion");
 const conn = require("../db/db");
 const { v4: uuidv4 } = require("uuid");
 const { queryAsync } = require("../utils/queryAsync");
+const { agregarSaldosRestantes } = require("../utils/kardexFunctions");
 
 const obtenerSaldo = (req, res) => {
   try {
@@ -225,87 +226,185 @@ const salidas = async (req, res) => {
             const totalActual =
               cantidadActual * segundoSaldo.saldo_valorUnitario;
 
-            // Calculo lo que va a ser la salida
-            const cantidadSalida = segundoSaldo.saldo_cantidad - cantidadActual;
-            const totalSalida =
-              cantidadSalida * segundoSaldo.saldo_valorUnitario;
+            // verifico si la cantidad que me queda por sacar es menor a la cantidad del segundo saldo
+            if (restante < segundoSaldo.saldo_cantidad) {
+              // Calculo lo que va a ser la salida
+              const cantidadSalida =
+                segundoSaldo.saldo_cantidad - cantidadActual;
+              const totalSalida =
+                cantidadSalida * segundoSaldo.saldo_valorUnitario;
 
-            // Actualizo el saldo_activo del primer saldo para que no se tome en cuenta
-            const actualizarSaldo = await queryAsync(
-              "UPDATE tbl_peps SET saldo_activo = 0 WHERE id_peps = ?",
-              [primerSaldo.id_peps]
-            );
-
-            if (actualizarSaldo.affectedRows > 0) {
-              // Ingreso la salida, el saldo y actualizo el saldo anterior para que no se tome en cuenta
-              const nuevaSalida = await queryAsync(
-                "INSERT INTO tbl_peps (id_peps, salida_cantidad, salida_valorUnitario, salida_valorTotal, id_ingrediente, id_restaurante) VALUES (?, ?, ?, ?, ?, ?)",
-                [
-                  uuidv4(),
-                  cantidadSalida,
-                  segundoSaldo.saldo_valorUnitario,
-                  totalSalida,
-                  id_ingredient,
-                  id_restaurant,
-                ]
+              // Actualizo el saldo_activo del primer saldo para que no se tome en cuenta
+              const actualizarSaldo = await queryAsync(
+                "UPDATE tbl_peps SET saldo_activo = 0 WHERE id_peps = ?",
+                [primerSaldo.id_peps]
               );
 
-              if (nuevaSalida.affectedRows > 0) {
-                // Ingreso el nuevo saldo
-                const nuevoSaldo = await queryAsync(
-                  "INSERT INTO tbl_peps (id_peps, saldo_cantidad, saldo_valorUnitario, saldo_valorTotal, saldo_activo, id_ingrediente, id_restaurante) VALUES (?, ?, ?, ?, ?, ?, ?)",
+              if (actualizarSaldo.affectedRows > 0) {
+                // Ingreso la salida, el saldo y actualizo el saldo anterior para que no se tome en cuenta
+                const nuevaSalida = await queryAsync(
+                  "INSERT INTO tbl_peps (id_peps, salida_cantidad, salida_valorUnitario, salida_valorTotal, id_ingrediente, id_restaurante) VALUES (?, ?, ?, ?, ?, ?)",
                   [
                     uuidv4(),
-                    cantidadActual,
+                    cantidadSalida,
                     segundoSaldo.saldo_valorUnitario,
-                    totalActual,
-                    1,
+                    totalSalida,
                     id_ingredient,
                     id_restaurant,
                   ]
                 );
 
-                if (nuevoSaldo.affectedRows > 0) {
-                  // Acutalizo el costo_unitario del ingrediente
-                  await queryAsync(
-                    "UPDATE tbl_ingredientes SET costo_unitario = ?, refresh = 1 WHERE id_ingrediente = ? && id_restaurant = ?",
-                    [
-                      segundoSaldo.saldo_valorUnitario,
-                      id_ingredient,
-                      id_restaurant,
-                    ]
-                  );
-                  // Actualizo el estado del segundo saldo
-                  await queryAsync(
-                    "UPDATE tbl_peps SET saldo_activo = 0 WHERE id_peps = ?",
-                    [segundoSaldo.id_peps]
-                  );
+                if (nuevaSalida.affectedRows > 0) {
+                  // Ingreso el nuevo saldo
+                  setTimeout(async () => {
+                    const nuevoSaldo = await queryAsync(
+                      "INSERT INTO tbl_peps (id_peps, saldo_cantidad, saldo_valorUnitario, saldo_valorTotal, saldo_activo, id_ingrediente, id_restaurante) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                      [
+                        uuidv4(),
+                        cantidadActual,
+                        segundoSaldo.saldo_valorUnitario,
+                        totalActual,
+                        1,
+                        id_ingredient,
+                        id_restaurant,
+                      ]
+                    );
 
-                  // Verifico si hay mas saldos para insertarlos en la tabla de saldos
-                  if (saldos.length > 2) {
-                    const saldosRestantes = saldos.slice(2);
-                    // Actualizo el estado de los saldos restantes y despues los inserto en la tabla de saldos
-                    for (const saldo of saldosRestantes) {
-                      const acutalizarSaldoRestante = await queryAsync(
+                    if (nuevoSaldo.affectedRows > 0) {
+                      // Acutalizo el costo_unitario del ingrediente
+                      await queryAsync(
+                        "UPDATE tbl_ingredientes SET costo_unitario = ?, refresh = 1 WHERE id_ingrediente = ? && id_restaurant = ?",
+                        [
+                          segundoSaldo.saldo_valorUnitario,
+                          id_ingredient,
+                          id_restaurant,
+                        ]
+                      );
+                      // Actualizo el estado del segundo saldo
+                      await queryAsync(
                         "UPDATE tbl_peps SET saldo_activo = 0 WHERE id_peps = ?",
-                        [saldo.id_peps]
+                        [segundoSaldo.id_peps]
                       );
 
-                      if (acutalizarSaldoRestante.affectedRows > 0) {
-                        await queryAsync(
+                      // Verifico si hay mas saldos para insertarlos en la tabla de saldos
+                      if (saldos.length > 2) {
+                        const saldosRestantes = saldos.slice(2);
+                        // Actualizo el estado de los saldos restantes y despues los inserto en la tabla de saldos
+                        const result = await agregarSaldosRestantes(
+                          saldosRestantes,
+                          id_ingredient,
+                          id_restaurant
+                        );
+
+                        console.log(result);
+                      }
+                    }
+                  }, 1000);
+                }
+              }
+            } else if (restante > segundoSaldo.saldo_cantidad) {
+              // Si la cantidad que me queda por sacar es mayor a la cantidad del segundo saldo, entonces ingreso la salida con la cantidad del segundo saldo
+              const salida = await queryAsync(
+                "INSERT INTO tbl_peps (id_peps, salida_cantidad, salida_valorUnitario, salida_valorTotal, id_ingrediente, id_restaurante) VALUES (?, ?, ?, ?, ?, ?)",
+                [
+                  uuidv4(),
+                  segundoSaldo.saldo_cantidad,
+                  segundoSaldo.saldo_valorUnitario,
+                  segundoSaldo.saldo_valorTotal,
+                  id_ingredient,
+                  id_restaurant,
+                ]
+              );
+
+              if (salida.affectedRows > 0) {
+                const segundoSaldoActivo = await queryAsync(
+                  "UPDATE tbl_peps SET saldo_activo = 0 WHERE id_peps = ?",
+                  [segundoSaldo.id_peps]
+                );
+
+                if (segundoSaldoActivo.affectedRows > 0) {
+                  if (saldos[2]) {
+                    const restante =
+                      cantidad_convertida -
+                      primerSaldo.saldo_cantidad -
+                      segundoSaldo.saldo_cantidad;
+                    // Resto la cantidad de salida con la cantidad del segundo saldo para saber cuanto me queda por sacar,
+                    // despues verifico si hay mas saldos para seguir sacando, actualizo el saldo_activo del segundo saldo
+                    // y despues itero sobre los demas saldos para sacarlos por orden de fecha de ingreso
+
+                    const cantidadActual = saldos[2].saldo_cantidad - restante;
+                    const totalActual =
+                      cantidadActual * saldos[2].saldo_valorUnitario;
+
+                    const cantidadSalida =
+                      saldos[2].saldo_cantidad - cantidadActual;
+                    const totalSalida =
+                      cantidadSalida * saldos[2].saldo_valorUnitario;
+
+                    const actualizarSalida = await queryAsync(
+                      "INSERT INTO tbl_peps (id_peps, salida_cantidad, salida_valorUnitario, salida_valorTotal, id_ingrediente, id_restaurante) VALUES (?, ?, ?, ?, ?, ?)",
+                      [
+                        uuidv4(),
+                        cantidadSalida,
+                        saldos[2].saldo_valorUnitario,
+                        totalSalida,
+                        id_ingredient,
+                        id_restaurant,
+                      ]
+                    );
+
+                    if (actualizarSalida.affectedRows > 0) {
+                      setTimeout(async () => {
+                        const nuevoSaldo = await queryAsync(
                           "INSERT INTO tbl_peps (id_peps, saldo_cantidad, saldo_valorUnitario, saldo_valorTotal, saldo_activo, id_ingrediente, id_restaurante) VALUES (?, ?, ?, ?, ?, ?, ?)",
                           [
                             uuidv4(),
-                            saldo.saldo_cantidad,
-                            saldo.saldo_valorUnitario,
-                            saldo.saldo_valorTotal,
+                            cantidadActual,
+                            saldos[2].saldo_valorUnitario,
+                            totalActual,
                             1,
                             id_ingredient,
                             id_restaurant,
                           ]
                         );
-                      }
+
+                        if (nuevoSaldo.affectedRows > 0) {
+                          // Acutalizo el costo_unitario del ingrediente
+                          await queryAsync(
+                            "UPDATE tbl_ingredientes SET costo_unitario = ?, refresh = 1 WHERE id_ingrediente = ? && id_restaurant = ?",
+                            [
+                              saldos[2].saldo_valorUnitario,
+                              id_ingredient,
+                              id_restaurant,
+                            ]
+                          );
+                          // Actualizo el estado del segundo saldo
+                          await queryAsync(
+                            "UPDATE tbl_peps SET saldo_activo = 0 WHERE id_peps = ?",
+                            [saldos[2].id_peps]
+                          );
+
+                          // Verifico si hay mas saldos para insertarlos en la tabla de saldos
+                          if (saldos.length > 3) {
+                            const saldosRestantes = saldos.slice(3);
+                            // Actualizo el estado de los saldos restantes y despues los inserto en la tabla de saldos
+                            const result = await agregarSaldosRestantes(
+                              saldosRestantes,
+                              id_ingredient,
+                              id_restaurant
+                            );
+
+                            console.log(result);
+                          }
+                        }
+                      }, 1000);
                     }
+                  } else {
+                    return res
+                      .status(200)
+                      .json({
+                        message: "No hay saldo suficiente para el cálculo",
+                      });
                   }
                 }
               }
@@ -347,53 +446,55 @@ const salidas = async (req, res) => {
             // Inserto el nuevo saldo
 
             if (cantidadActual > 0) {
-              const nuevoSaldo = await queryAsync(
-                "INSERT INTO tbl_peps (id_peps, saldo_cantidad, saldo_valorUnitario, saldo_valorTotal, saldo_activo, id_ingrediente, id_restaurante) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                [
-                  uuidv4(),
-                  cantidadActual,
-                  primerSaldo.saldo_valorUnitario,
-                  totalActual,
-                  1,
-                  id_ingredient,
-                  id_restaurant,
-                ]
-              );
-              if (nuevoSaldo.affectedRows > 0) {
-                // Actualizo el estado del primer saldo
-                const actualizarSaldo = await queryAsync(
-                  "UPDATE tbl_peps SET saldo_activo = 0 WHERE id_peps = ?",
-                  [primerSaldo.id_peps]
+              setTimeout(async () => {
+                const nuevoSaldo = await queryAsync(
+                  "INSERT INTO tbl_peps (id_peps, saldo_cantidad, saldo_valorUnitario, saldo_valorTotal, saldo_activo, id_ingrediente, id_restaurante) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                  [
+                    uuidv4(),
+                    cantidadActual,
+                    primerSaldo.saldo_valorUnitario,
+                    totalActual,
+                    1,
+                    id_ingredient,
+                    id_restaurant,
+                  ]
                 );
-                if (actualizarSaldo.affectedRows > 0) {
-                  // Verifico si hay mas saldos para insertarlos en la tabla de saldos
-                  if (saldos.length > 1) {
-                    const saldosRestantes = saldos.slice(1);
-                    // Actualizo el estado de los saldos restantes y despues los inserto en la tabla de saldos
-                    for (const saldo of saldosRestantes) {
-                      const acutalizarSaldoRestante = await queryAsync(
-                        "UPDATE tbl_peps SET saldo_activo = 0 WHERE id_peps = ?",
-                        [saldo.id_peps]
+                if (nuevoSaldo.affectedRows > 0) {
+                  // Actualizo el estado del primer saldo
+                  const actualizarSaldo = await queryAsync(
+                    "UPDATE tbl_peps SET saldo_activo = 0 WHERE id_peps = ?",
+                    [primerSaldo.id_peps]
+                  );
+                  if (actualizarSaldo.affectedRows > 0) {
+                    // Verifico si hay mas saldos para insertarlos en la tabla de saldos
+                    if (saldos.length > 1) {
+                      const saldosRestantes = saldos.slice(1);
+                      // Actualizo el estado de los saldos restantes y despues los inserto en la tabla de saldos
+                      const result = await agregarSaldosRestantes(
+                        saldosRestantes,
+                        id_ingredient,
+                        id_restaurant
                       );
 
-                      if (acutalizarSaldoRestante.affectedRows > 0) {
-                        await queryAsync(
-                          "INSERT INTO tbl_peps (id_peps, saldo_cantidad, saldo_valorUnitario, saldo_valorTotal, saldo_activo, id_ingrediente, id_restaurante) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                          [
-                            uuidv4(),
-                            saldo.saldo_cantidad,
-                            saldo.saldo_valorUnitario,
-                            saldo.saldo_valorTotal,
-                            1,
-                            id_ingredient,
-                            id_restaurant,
-                          ]
-                        );
+                      if (
+                        result ===
+                        "Error en la insercion de los saldos restantes"
+                      ) {
+                        return res.status(200).json({ message: result });
+                      } else if (
+                        result ===
+                        "Error en la actualizacion de los saldos restantes"
+                      ) {
+                        return res.status(200).json({ message: result });
                       }
                     }
+                  } else {
+                    console.log("Error al actualizar desactivar el saldo");
                   }
+                } else {
+                  console.log("Error al agregar el nuevo saldo");
                 }
-              }
+              }, 1000);
             } else {
               // Actualizo el estado del primer saldo
               const actualizarSaldo = await queryAsync(
@@ -404,27 +505,12 @@ const salidas = async (req, res) => {
                 // Verifico si hay mas saldos para insertarlos en la tabla de saldos
                 const saldosRestantes = saldos.slice(1);
                 // Actualizo el estado de los saldos restantes y despues los inserto en la tabla de saldos
-                for (const saldo of saldosRestantes) {
-                  const acutalizarSaldoRestante = await queryAsync(
-                    "UPDATE tbl_peps SET saldo_activo = 0 WHERE id_peps = ?",
-                    [saldo.id_peps]
-                  );
-
-                  if (acutalizarSaldoRestante.affectedRows > 0) {
-                    await queryAsync(
-                      "INSERT INTO tbl_peps (id_peps, saldo_cantidad, saldo_valorUnitario, saldo_valorTotal, saldo_activo, id_ingrediente, id_restaurante) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                      [
-                        uuidv4(),
-                        saldo.saldo_cantidad,
-                        saldo.saldo_valorUnitario,
-                        saldo.saldo_valorTotal,
-                        1,
-                        id_ingredient,
-                        id_restaurant,
-                      ]
-                    );
-                  }
-                }
+                const result = await agregarSaldosRestantes(
+                  saldosRestantes,
+                  id_ingredient,
+                  id_restaurant
+                );
+                console.log(result);
               }
             }
           }
