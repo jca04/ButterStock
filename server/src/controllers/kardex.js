@@ -400,11 +400,9 @@ const salidas = async (req, res) => {
                       }, 1000);
                     }
                   } else {
-                    return res
-                      .status(200)
-                      .json({
-                        message: "No hay saldo suficiente para el cálculo",
-                      });
+                    return res.status(200).json({
+                      message: "No hay saldo suficiente para el cálculo",
+                    });
                   }
                 }
               }
@@ -475,7 +473,6 @@ const salidas = async (req, res) => {
                         id_ingredient,
                         id_restaurant
                       );
-
                       if (
                         result ===
                         "Error en la insercion de los saldos restantes"

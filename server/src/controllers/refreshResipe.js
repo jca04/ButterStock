@@ -131,6 +131,8 @@ const refreshIngredient = async (id_ingrediente) => {
             return {message: 'OK'}
           }
         }
+      }else{
+        return {message: 'something failed'};
       }
     }
   } catch (error) {

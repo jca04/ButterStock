@@ -5,9 +5,12 @@ import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import { entradasPeps, salidasPeps } from "../api/kardex";
 import { toast } from "react-toastify";
+import {AiOutlineCloseCircle} from 'react-icons/ai';
+import {RxEnter} from 'react-icons/rx';
+
 
 export default function Comandas({ closeModal, id_restaurant }) {
-
+ 
   document.title = "Comandas"
 
   const [ingredients, setIngredients] = useState([]);
@@ -164,12 +167,11 @@ export default function Comandas({ closeModal, id_restaurant }) {
     })
   })
 
-  console.log(filterIngredients);
   
   return (
     <div className="modal_container">
       <div className="modal_content">
-        <button className="btn-close-modal" onClick={closeModal}>X</button>
+        <button className="btn-close-modal-comandas" onClick={closeModal}><AiOutlineCloseCircle/> Cerrar</button>
         <div className="btns-entradas-salidas">
           <button value="entradas" onClick={handleKardex}>Entradas</button>
           <button value="salidas" onClick={handleKardex}>Salidas</button>

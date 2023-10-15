@@ -11,18 +11,19 @@ import {GiCupcake} from 'react-icons/gi';
 import {BiImageAdd} from 'react-icons/bi';
 import { BiAddToQueue } from "react-icons/bi";
 import {FiAlertTriangle} from 'react-icons/fi'
-import {BsInboxesFill} from 'react-icons/bs'
+import {BsInboxesFill, BsFillPlusSquareFill} from 'react-icons/bs'
 import { Field, Form, Formik } from "formik";
 import Select from 'react-select';
 import { toast } from "react-toastify";
 import { FileInputButton, FileMosaic } from "@files-ui/react";
 
 let unitArr = ['kg','lb','oz','gr','mg','und'];
-let json = {}
+let json = {};
 
 function ShowRespie() {
   //localState
   const [divide, setDivide] = useState(1);
+  const [plusSubRecipe, setPlusSubRecipe] = useState({});
   const [stateResipe, setResipes] = useState([]);
   const [resipeAux, setResipeAux] = useState([]);
   const [ingredient, setIngredient] = useState([]);
@@ -39,7 +40,6 @@ function ShowRespie() {
   const [isSending, setSending] = useState(false);
   const [infoReceta , setInfoReceta] = useState({});
   const [ingredientError, setIngredientError] = useState(false);
-  const [costVent, setCostVent] = useState(0);
   const { id } = useParams();
   const dataTipoPlato = [{"label": "Plato", "value": "Plato"},{"label": "Bebida", "value": "Bebida"},{"label": "Postre", "value": "Postre"},{"label": "Otro", "value": "Otro"}];
   let contador = 0;
@@ -460,7 +460,13 @@ function ShowRespie() {
           for (let i in stateResipe){
             if (stateResipe[i].id_receta == id){
               if (stateResipe[i].costo_venta != null){
-                sumaVenta = sumaVenta + stateResipe[i].costo_venta;
+                if (infoReceta['subs'] != undefined){
+                  if (infoReceta['subs'][id] != undefined){
+                    sumaVenta = sumaVenta + parseFloat(infoReceta['subs'][id]['valor_sum']);
+                  }
+                }else{
+                  sumaVenta = sumaVenta + stateResipe[i].costo_venta;
+                } 
               }
             }
           }
@@ -471,7 +477,6 @@ function ShowRespie() {
         sumaVenta = sumaVenta + dataRespiSel[i].costo_venta;
       }
     }
-
 
     if (scontinue != undefined){
       return sumaVenta;
@@ -501,7 +506,9 @@ function ShowRespie() {
         'costo_venta' : parseFloat(costo_venta.toFixed(2))
         }
 
-        return costo_venta.toFixed(2)
+
+
+        return costo_venta.toFixed(2);
         
       }
     }else{
@@ -539,10 +546,16 @@ function ShowRespie() {
       if (recipes[i].id_receta == id_sub_receta){
         return (
           <tr key={recipes[i].id_receta}>
+            <td className="td-input-plus-recipe">
+              <input placeholder="plus" min={1} type="number" value={1} disabled={true} className="input-plus-sub-recipe"  onChange={(e) => 
+                addPlusSubRecipe(id_sub_receta,recipes[i].costo_venta, e.target.value) 
+                } 
+              />
+            </td>
             <td>{recipes[i].imagen == '' ? 'No tiene' : <img className="img-table-subRespie" src={`${recipes[i].imagen}`}/>}</td>
             <td>{recipes[i].nombre_receta}</td>
             <td>{recipes[i].tipo_receta}</td>
-            <td>${recipes[i].costo_venta}</td>
+            <td id={`td_plus_${id_sub_receta}`} >${recipes[i].costo_venta}</td>
           </tr>
         );
       }
@@ -995,6 +1008,7 @@ function ShowRespie() {
                               <table className="table-ingredient-respie">
                                 <thead>
                                   <tr>
+                                    <th>Plus</th>
                                     <th>imagen</th>
                                     <th>Nombre</th>
                                     <th>Tipo receta</th>
@@ -1094,7 +1108,8 @@ function ShowRespie() {
                   </tr>
                   <tr>
                    <td className="td-info-data-resipe">
-                   {(<p>${validateCostVent(true, activeModal.sub_recetas) }</p>)}</td>
+                   {infoReceta['subs'] != undefined ?  (<p>${validateCostVent(true, activeModal.sub_recetas) }</p>) : (<p>${validateCostVent(true, activeModal.sub_recetas) }</p>) }
+                   </td>
                   </tr>
                 </tbody>
                 </table>
