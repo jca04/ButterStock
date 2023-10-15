@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Form, Formik, Field } from "formik";
-import { createRestaurant, verifiedRestaurant } from "../api/restaurant.js";
-import { createUser } from "../api/users.js";
+import { createRestaurant} from "../api/restaurant.js";
 import "../public/css/createRestaurantStyle.css";
 import logo from "../public/resources/logo/logo_blanco.png";
 import { toast } from "react-toastify";
@@ -9,426 +8,317 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 
 function FormRestaurant() {
-    useEffect(() => {
-        document.title = "pymeStorage | Crear restaurante";
-    }, []);
+  const [isSecondForm, setSecondForm] = useState(false);
+  const [loadSecondForm, setLoadSecondForm] = useState(false);
+  const [dataRestaurant, setDataRestaurant] = useState({});
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
-    const [form, setForm] = useState(0);
-    const [titleForm, setTitleForm] = useState("Registro restaurante");
-    const [fileState, setFile] = useState(null);
-    const [saveRestarunt, setSaveRestaurant] = useState({});
-    const [isLoading, setLoafing] = useState(false);
+  useEffect(() => {
+    document.title = "ButterStock | Crear restaurante";
+  }, []);
 
-    const showToastMessageSucces = () => {
-        toast.success("El restaurante se ha creado con exito !", {
-            position: toast.POSITION.TOP_CENTER,
-            autoClose: 500,
-        });
-    };
+  const toastSuccesApi = (text) => {
+    toast.success(text,{ 
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      progress: undefined,
+      theme: "light"
+    }) 
+  }
 
-    const showToastMessageWarn = () => {
-        toast.warn("Este restaurante ya existe !", {
-            position: toast.POSITION.TOP_CENTER,
-        });
-    };
+  const validateTxt = (value) => {
+    let error = "";
+    if (value.length == 0) {
+      error = "* Este campo es requerido";
+    }
 
-    const showToastMessageA = () => {
-        toast.error("Ha ocurrido un error, por favor vuelva a intentar !", {
-            position: toast.POSITION.TOP_CENTER,
-        });
-    };
+    if (value.length > 100) {
+      error = "* La cantidad de caracteres debe ser menor que 100";
+    }
 
-    const loadingPage = () => {
-        setTimeout(() => {
-            setLoafing(false);
-        }, 1500);
+    return error;
+  };
 
-        return (
-            <div className="div-loading">
-                <div>
-                    <AiOutlineLoading3Quarters className="img-load" />{" "}
-                    Verificando
+  const validateEmail = (value) => {
+    let error = "";
+    if (value.length == 0){
+        error = "* Este campo es requerido";
+    }
+
+    if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)){
+        error = "* Dirección de correo invalida";
+    }
+
+    return error;
+  }
+
+  return (
+    <section className="father-create-restaurant">
+      <section className="body-create">
+        <div className="section-form-create">
+          <div className="form-create">
+            {!loadSecondForm ? (
+              <>
+                <div className="img-form-create">
+                  <img src={logo} />
                 </div>
-            </div>
-        );
-    };
-
-    const validateLength = (value, name) => {
-        let error = "";
-
-        if (value.length !== undefined) {
-            if (value.length == 0) {
-                return (error = "*Este campo es requerido");
-            } else if (value.length == 100) {
-                return (error = "*Este campo es demasiado grande");
-            }
-        }
-    };
-
-    const validateCorreo = (value) => {
-        let error = "";
-
-        if (value.length !== undefined) {
-            if (value.length < 0) {
-                return (error = "*Este campo es requerido");
-            } else if (
-                !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)
-            ) {
-                return (error = "*Direccion de correo invalida");
-            }
-        }
-    };
-
-    const obtener = () => {
-        //aqui el formulario esta en crear restaurante
-        if (form == 0) {
-            return (
-                <section className="child child1">
-                    <Formik
-                        initialValues={{
-                            restaurant: "",
-                            ciudad: "",
-                            direccion: "",
-                            image: fileState,
-                        }}
-                        // enableReinitialize={true}
-                        onSubmit={async (values, actions) => {
-                            // //Agregar el formData a una variable global para que este se envie al final
-
-                            try {
-                                //consultar si ya existe el restaurante
-                                const response = await verifiedRestaurant(
-                                    values.restaurant
-                                );
-                                if (response.data !== undefined) {
-                                    const resData = response.data.messgae;
-                                    //si ya existe el restaurante
-                                    if (resData === "restaurant exist yet") {
-                                        showToastMessageWarn();
-                                        //sino existe el restaurante
-                                    } else if (
-                                        resData === "restaurant doesn´t exist"
-                                    ) {
-                                        setSaveRestaurant(values);
-                                        setLoafing(true);
-                                        actions.resetForm();
-                                        setForm(1);
-                                        setTitleForm("Crear usuario Admin");
-                                    }
-                                } else {
-                                    //si ocurre algun error;
-                                    showToastMessageA();
-                                }
-
-                                actions.resetForm();
-                            } catch (err) {
-                                console.log(err);
-                            }
-                        }}
-                    >
-                        {({
-                            handleSubmit,
-                            values,
-                            touched,
-                            isSubmitting,
-                            errors,
-                        }) => (
-                            <Form
-                                onSubmit={handleSubmit}
-                                className="form"
-                                encType="multipart/form-data"
-                            >
-                                <div className="div-input">
-                                    <label htmlFor="restaurant">
-                                        Nombre restaurante
-                                    </label>
-                                    <Field
-                                        className="form-input "
-                                        placeholder="Digite el nombre del restaurante"
-                                        name="restaurant"
-                                        validate={validateLength}
-                                        style={
-                                            errors.restaurant &&
-                                            touched.restaurant && {
-                                                border: "1px solid red",
-                                            }
-                                        }
-                                    />
-                                    <div>
-                                        {errors.restaurant &&
-                                            touched.restaurant && (
-                                                <p className="error">
-                                                    {errors.restaurant}
-                                                </p>
-                                            )}
-                                    </div>
-                                </div>
-                                <div className="div-input">
-                                    <label htmlFor="ciudad">Ciudad</label>
-                                    <Field
-                                        className="form-input "
-                                        placeholder="Digite el nombre de la ciudad"
-                                        name="ciudad"
-                                        validate={validateLength}
-                                        style={
-                                            errors.ciudad &&
-                                            touched.ciudad && {
-                                                border: "1px solid red",
-                                            }
-                                        }
-                                    />
-                                    <div>
-                                        {errors.ciudad && touched.ciudad && (
-                                            <p className="error">
-                                                {errors.ciudad}
-                                            </p>
-                                        )}
-                                    </div>
-                                </div>
-                                <div className="div-input">
-                                    <label htmlFor="direccion">Direccion</label>
-                                    <Field
-                                        className="form-input "
-                                        placeholder="Digite la direccion del restaurante"
-                                        name="direccion"
-                                        validate={validateLength}
-                                        style={
-                                            errors.direccion &&
-                                            touched.direccion && {
-                                                border: "1px solid red",
-                                            }
-                                        }
-                                    />
-                                    <div>
-                                        {errors.direccion &&
-                                            touched.direccion && (
-                                                <p className="error">
-                                                    {errors.direccion}
-                                                </p>
-                                            )}
-                                    </div>
-                                </div>
-                                <div className="div-input">
-                                    <label htmlFor="image">
-                                        Icono restaurante
-                                    </label>
-                                    <input
-                                        type="file"
-                                        name="image"
-                                        accept="image/*"
-                                        onChange={(e) =>
-                                            setFile(e.target.files[0])
-                                        }
-                                    />
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    className="btn-save-login"
-                                    disabled={isSubmitting}
-                                >
-                                    {isSubmitting ? (
-                                        <AiOutlineLoading3Quarters />
-                                    ) : (
-                                        "Enviar"
-                                    )}
-                                </button>
-                            </Form>
-                        )}
-                    </Formik>
-                </section>
-            );
-        } else {
-            //aqui esta en crear usuario por el restaurante
-            return (
-                <section className="child child1">
-                    <Formik
-                        enableReinitialize
-                        initialValues={{
-                            nombreUser: "",
-                            apellidoUser: "",
-                            correoUser: "",
-                            contraseña: "",
-                        }}
-                        onSubmit={async (values, actions) => {
-                            // enviar todos los datos
-                            const FormRestaurant = new FormData();
-                            FormRestaurant.append(
-                                "restaurant",
-                                saveRestarunt.restaurant
-                            );
-                            FormRestaurant.append(
-                                "ciudad",
-                                saveRestarunt.ciudad
-                            );
-                            FormRestaurant.append( 
-                                "direccion",
-                                saveRestarunt.direccion
-                            );
-
-                            try {
-                                const response = await createRestaurant(
-                                    FormRestaurant
-                                );
-                                if (response.data !== undefined) {
-                                    //obtenemos el id para poder crear el usuario segun este id
-                                    let idResponse = response.data.messgae;
-                                    values.idRestaurant = idResponse;
-                                    const responseUser = await createUser(
-                                        values
-                                    );
-                                    if (responseUser.data !== undefined) {
-                                        showToastMessageSucces();
-
-                                        setTimeout(() => {
-                                            navigate("/login");
-                                        }, 1000);
-                                    } else {
-                                        showToastMessageA();
-                                    }
-                                }
-                            } catch (err) {
-                                showToastMessageA();
-                            }
-                        }}
-                    >
-                        {({
-                            handleSubmit,
-                            values,
-                            touched,
-                            isSubmitting,
-                            errors,
-                        }) => (
-                            <Form onSubmit={handleSubmit} className="form">
-                                <div className="div-input">
-                                    <label htmlFor="nombreUser">Nombre</label>
-                                    <Field
-                                        className="form-input "
-                                        placeholder="Digite el nombre"
-                                        name="nombreUser"
-                                        validate={validateLength}
-                                        style={
-                                            errors.nombreUser &&
-                                            touched.nombreUser && {
-                                                border: "1px solid red",
-                                            }
-                                        }
-                                    />
-                                    <div>
-                                        {errors.nombreUser &&
-                                            touched.nombreUser && (
-                                                <p className="error">
-                                                    {errors.nombreUser}
-                                                </p>
-                                            )}
-                                    </div>
-                                </div>
-                                <div className="div-input">
-                                    <label htmlFor="apellidoUser">
-                                        apellido
-                                    </label>
-                                    <Field
-                                        className="form-input "
-                                        placeholder="Digite el apellido"
-                                        name="apellidoUser"
-                                        validate={validateLength}
-                                        style={
-                                            errors.apellidoUser &&
-                                            touched.apellidoUser && {
-                                                border: "1px solid red",
-                                            }
-                                        }
-                                    />
-                                    <div>
-                                        {errors.apellidoUser &&
-                                            touched.apellidoUser && (
-                                                <p className="error">
-                                                    {errors.apellidoUser}
-                                                </p>
-                                            )}
-                                    </div>
-                                </div>
-                                <div className="div-input">
-                                    <label htmlFor="correoUser">Correo</label>
-                                    <Field
-                                        className="form-input "
-                                        placeholder="Digite el correo"
-                                        name="correoUser"
-                                        validate={validateCorreo}
-                                        style={
-                                            errors.correoUser &&
-                                            touched.correoUser && {
-                                                border: "1px solid red",
-                                            }
-                                        }
-                                    />
-                                    <div>
-                                        {errors.correoUser &&
-                                            touched.correoUser && (
-                                                <p className="error">
-                                                    {errors.correoUser}
-                                                </p>
-                                            )}
-                                    </div>
-                                </div>
-                                <div className="div-input">
-                                    <label htmlFor="Contraseña">
-                                        Contraseña
-                                    </label>
-                                    <Field
-                                        className="form-input "
-                                        placeholder="Digite la contraseña"
-                                        name="contraseña"
-                                        type="password"
-                                        validate={validateLength}
-                                        style={
-                                            errors.contraseña &&
-                                            touched.contraseña && {
-                                                border: "1px solid red",
-                                            }
-                                        }
-                                    />
-                                    <div>
-                                        {errors.contraseña &&
-                                            touched.contraseña && (
-                                                <p className="error">
-                                                    {errors.contraseña}
-                                                </p>
-                                            )}
-                                    </div>
-                                </div>
-                                <button
-                                    type="submit"
-                                    className="btn-save-login"
-                                    disabled={isSubmitting}
-                                >
-                                    {isSubmitting ? (
-                                        <AiOutlineLoading3Quarters />
-                                    ) : (
-                                        "Enviar"
-                                    )}
-                                </button>
-                            </Form>
-                        )}
-                    </Formik>
-                </section>
-            );
-        }
-    };
-
-    return (
-        <div className="parent">
-            <section className="child child2">
-                {isLoading ? loadingPage() : null}
-                <div className="header">
-                    <img className="img-logo" src={logo} />
-                    <h2>{titleForm}</h2>
+                <div className="footer-projecters">powered by projecters</div>
+                <div className="title-create">
+                  <h4>
+                    {isSecondForm ? "Crear usuario" : "Crear restaurante"}
+                  </h4>
                 </div>
-                <div className="body">{obtener()}</div>
-            </section>
+                <div className="form-create-data">
+                  <Formik
+                    initialValues={{
+                      nameRestaurant: "",
+                      city: "",
+                      address: "",
+                      nameUser: "",
+                      lastName: "",
+                      email: "",
+                      pass: "",
+                    }}
+                    onSubmit={async (values) => {
+                      //activar segundo formulario
+                      if (!isSecondForm) {
+                        setLoadSecondForm(true);
+                        setSecondForm(true);
+                        setDataRestaurant(values)
+                        setTimeout(() => {
+                          setLoadSecondForm(false);
+                        }, 1000);
+
+                        return;
+                      }
+                      const dataSend = {
+                        nameRestaurant: dataRestaurant.nameRestaurant,
+                        city: dataRestaurant.city,
+                        address: dataRestaurant.address,
+                        nameUser: values.nameUser,
+                        lastName: values.lastName,
+                        email: values.email,
+                        pass: values.pass                        
+                      }
+
+                      //crear restaurante y usuario
+                      try{
+                        const response = await createRestaurant(dataSend);
+                        if (response.message != undefined){
+                            if (response.message == '!Restaurante creado'){
+                                toastSuccesApi(response.message);
+
+                                setTimeout(() => {
+                                    navigate("/login");
+                                },1000);
+                            }else{
+                                toastSuccesApi('Ha ocurrido un error inesperado');
+                            }
+                        }
+                      }catch(error){
+                        console.log(error)
+                        toastSuccesApi('Ha ocurrido un error inesperado');
+                      }
+
+                    }}
+                  >
+                    {({
+                      handleSubmit,
+                      touched,
+                      isSubmitting,
+                      errors,
+                    }) => (
+                      <Form onSubmit={handleSubmit}>
+                        {!isSecondForm ? (
+                          <>
+                            {/* Parte del formulario que es para el restaurante  */}
+                            <div className="section-input-create">
+                              <label>Nombre restaurante:</label>
+                              <Field
+                                className="input-create"
+                                validate={validateTxt}
+                                type="text"
+                                name="nameRestaurant"
+                                placeholder="Ingrese el nombre del restaurante"
+                                style={
+                                  errors.nameRestaurant &&
+                                  touched.nameRestaurant && {
+                                    border: "1px solid red",
+                                  }
+                                }
+                              />
+                              <div className="error-create-input">
+                                {errors.nameRestaurant &&
+                                  touched.nameRestaurant && (
+                                    <p className="error">
+                                      {errors.nameRestaurant}
+                                    </p>
+                                  )}
+                              </div>
+                            </div>
+                            <div className="section-input-create">
+                              <label>Ciudad:</label>
+                              <Field
+                                className="input-create"
+                                validate={validateTxt}
+                                type="text"
+                                name="city"
+                                placeholder="Ingrese la ciudad"
+                                style={
+                                  errors.city &&
+                                  touched.city && {
+                                    border: "1px solid red",
+                                  }
+                                }
+                              />
+                              <div className="error-create-input">
+                                {errors.city && touched.city && (
+                                  <p className="error">{errors.city}</p>
+                                )}
+                              </div>
+                            </div>
+                            <div className="section-input-create">
+                              <label>Dirección:</label>
+                              <Field
+                                className="input-create"
+                                validate={validateTxt}
+                                type="text"
+                                name="address"
+                                placeholder="Dirección"
+                                style={
+                                  errors.address &&
+                                  touched.address && {
+                                    border: "1px solid red",
+                                  }
+                                }
+                              />
+                              <div className="error-create-input">
+                                {errors.address && touched.address && (
+                                  <p className="error">{errors.address}</p>
+                                )}
+                              </div>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="section-input-create">
+                              {/* parte del formulario que es para el usuario */}
+                              <label>Nombre:</label>
+                              <Field
+                                className="input-create"
+                                validate={validateTxt}
+                                type="text"
+                                name="nameUser"
+                                placeholder="Ingrese el nombre del usuario"
+                                style={
+                                  errors.nameUser &&
+                                  touched.nameUser && {
+                                    border: "1px solid red",
+                                  }
+                                }
+                              />
+                              <div className="error-create-input">
+                                {errors.nameUser && touched.nameUser && (
+                                  <p className="error">{errors.nameUser}</p>
+                                )}
+                              </div>
+                            </div>
+                            <div className="section-input-create">
+                              <label>Apellido:</label>
+                              <Field
+                                className="input-create"
+                                validate={validateTxt}
+                                type="text"
+                                name="lastName"
+                                placeholder="Ingrese el apellido"
+                                style={
+                                  errors.lastName &&
+                                  touched.lastName && {
+                                    border: "1px solid red",
+                                  }
+                                }
+                              />
+                              <div className="error-create-input">
+                                {errors.lastName && touched.lastName && (
+                                  <p className="error">{errors.lastName}</p>
+                                )}
+                              </div>
+                            </div>
+                            <div className="section-input-create">
+                              <label>Correo electrónico:</label>
+                              <Field
+                                className="input-create"
+                                validate={validateEmail}
+                                type="text"
+                                name="email"
+                                placeholder="Ingrese el apellido"
+                                style={
+                                  errors.email &&
+                                  touched.email && {
+                                    border: "1px solid red",
+                                  }
+                                }
+                              />
+                              <div className="error-create-input">
+                                {errors.email && touched.email && (
+                                  <p className="error">{errors.email}</p>
+                                )}
+                              </div>
+                            </div>
+                            <div className="section-input-create">
+                              <label>Contraseña:</label>
+                              <Field
+                                className="input-create"
+                                validate={validateTxt}
+                                type="password"
+                                name="pass"
+                                placeholder="Ingrese el apellido"
+                                style={
+                                  errors.pass &&
+                                  touched.pass && {
+                                    border: "1px solid red",
+                                  }
+                                }
+                              />
+                              <div className="error-create-input">
+                                {errors.pass && touched.pass && (
+                                  <p className="error">{errors.pass}</p>
+                                )}
+                              </div>
+                            </div>
+                          </>
+                        )}
+                        <div className="section-input-create">
+                          <button
+                            type="submit"
+                            className="btn-send-create"
+                            disabled={isSubmitting}
+                          >
+                            {isSubmitting ? (
+                              <AiOutlineLoading3Quarters className="load-respie-send" />
+                            ) : (
+                              "Enviar"
+                            )}
+                          </button>
+                        </div>
+                      </Form>
+                    )}
+                  </Formik>
+                </div>
+              </>
+            ) : (
+              <div className="load-second-form">
+                <AiOutlineLoading3Quarters className="load-respie-send" />
+              </div>
+            )}
+          </div>
         </div>
-    );
+      </section>
+    </section>
+  );
 }
 
 export default FormRestaurant;

@@ -66,6 +66,7 @@ function LogginUser() {
         <section className="separate-m separate-2">
           <div className="header">
             <img className="img-logo" src={logo} />
+            <p className="projecters-span">powered by projecters</p>
             <h2>Inicie sesion con la cuenta de ButterStock</h2>
           </div>
           <div className="body">
@@ -109,7 +110,7 @@ function LogginUser() {
                         }
                       }
                     />
-                    <div>
+                    <div className="error-login">
                       {errors.user && touched.user && (
                         <p className="error">{errors.user}</p>
                       )}
@@ -130,7 +131,7 @@ function LogginUser() {
                         }
                       }
                     />
-                    <div>
+                    <div className="error-login">
                       {errors.pass && touched.pass && (
                         <p className="error">{errors.pass}</p>
                       )}

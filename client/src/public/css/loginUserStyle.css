@@ -13,6 +13,11 @@
   position: relative;
   width: 100%;
   height: 100vh;
+  background: linear-gradient(
+    356deg,
+    rgba(255, 255, 255, 1) 38%,
+    rgba(255, 234, 150, 1) 90%
+  );
 }
 
 .div-container{
@@ -37,7 +42,7 @@
   width: 100%;
   height: 100%;
   position: absolute;
-  opacity: 0.5;
+  opacity: 0.7;
 }
 .separate-1{
   width: 65%;
@@ -46,7 +51,7 @@
 .separate-2{
   flex-direction: column;
   border: 1px solid #C7BE7E;
-  /* box-shadow: 11px 1px 22px -3px #C7BE7E; */
+  background-color: white;
 }
 
 .header{
@@ -93,14 +98,16 @@
   padding: 15px;
   outline: none;
   border-radius: 5px;
-  border: none;
-  border-bottom: 1px solid #C7BE7E;
+  border: 1px solid silver;
 }
 
 .div-input > input:focus{
-  border-bottom: 3px solid #C7BE7E;
+  border: 1px solid #F5B702;
 }
 
+.error-login{
+  height: 10px;
+}
 .div-input-btn{
   display: flex;
   margin: auto;
@@ -115,15 +122,15 @@
   border-radius: 5px;
     outline: none;
     border: none;
-    background: #EFF9C6;
+    background: #ffea96;
     cursor: pointer;
     font-size: 1em;
 }
 
 .div-input-btn > button:hover{
-  padding: 15px;
-  box-shadow: 11px 1px 22px -3px #C7BE7E;
+
   transition: all 500ms;
+  transform: scale(1.1);
 }
 
 .error{
@@ -161,6 +168,10 @@
 
 .a-new-user{
   font-size: 0.8em;
+}
+
+.projecters-span{
+  font-size: 0.6em;
 }
 
 @media screen and (max-width:1000px) {
