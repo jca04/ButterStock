@@ -1,0 +1,57 @@
+.kardex_table {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  position: relative;
+  width: 90%;
+  margin-top: 20px;
+}
+
+.name_ingredient{ 
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.container_table {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    position: relative;
+    width: 100%;
+    margin-top: 20px;
+    overflow-x: auto;
+}
+
+.peps_table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+}
+
+.peps_table th {
+    background-color: #f2f2f2;
+    border: 1px solid #dddddd;
+    text-align: center;
+    padding: 8px;
+    font-weight: bold;
+}
+
+.peps_table th.small_th {
+    text-align: center;
+}
+
+.peps_table td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+.peps_tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.peps_table tr:hover {
+    background-color: #ddd;
+}

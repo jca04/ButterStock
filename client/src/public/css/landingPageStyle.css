@@ -1,0 +1,94 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family:'Work Sans', sans-serif;
+  }
+
+.landingPage-background {
+    background-image: url("../resources/img/landing_background.png");
+    background-attachment: fixed;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center; 
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+.landingPage-titles {
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+    margin: auto;
+    
+
+}
+.landingPage-byProjectersTitle {
+    display: flex;
+    justify-content: end;
+    font-weight: bold;
+    font-style: italic;
+}
+.landingPage-butterstockTitle {
+    display: flex;
+    justify-content: center;
+    font-size: 3em;
+    font-style: italic;
+    color: #565949;
+}
+.landingPage-divLogo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.landingPage-logo {
+    width: 150px;
+}
+
+.landingPage-mainbutton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.landingPage-stylebutton {
+    display: flex;
+    border: none;
+    background-color: #EFF9C6;
+    margin: 20px;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 10px
+
+}
+
+.landingPage-stylebutton:hover {
+    background-color: #c9d2a0
+}
+
+.landingPage-navbar {
+    display: flex;
+    justify-content: end;
+    width: 100%;
+}
+
+.landingPage-iniciarSesion {
+    border: none;
+    outline: none;
+    margin-top: 2%;
+    margin-right: 2%;
+    padding: 7px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 0.9em;
+    color: black;
+    background-color: #EFF9C6;
+}
+
+.landingPage-iniciarSesion:hover {
+    background-color: #2d2f25;
+    color: #EFF9C6;
+}

@@ -1,7 +1,6 @@
 const config = require("./src/config");
 const express = require("express");
 const morgan = require("morgan");
-const cors = require("cors");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 
@@ -20,16 +19,18 @@ app.use((_req, res, next) => {
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
   );
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method"
+  );
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Allow", "GET, POST, OPTIONS, PUT, DELETE");
+
   next();
 });
+
 app.use(morgan("dev"));
-
 app.use("/api", require("./src/routes"));
-
-app.get("/", (req, res) => {
-  res.send("Welcome to VersaStock!");
-});
 
 app.listen(config.PORT, () => {
   console.log(`Server is running on port ${config.PORT}`);
