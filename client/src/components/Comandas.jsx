@@ -7,7 +7,7 @@ import { entradasPeps, salidasPeps } from "../api/kardex";
 import { toast } from "react-toastify";
 import {AiOutlineCloseCircle} from 'react-icons/ai';
 import {RxEnter} from 'react-icons/rx';
-
+import Salidas from "./component/salidas"; 
 
 export default function Comandas({ closeModal, id_restaurant }) {
  
@@ -254,69 +254,10 @@ export default function Comandas({ closeModal, id_restaurant }) {
             selectedOption === "salidas" ?
               <div className="comandas_container">
                 <h3>Salidas</h3>
-                <div className="select-container">
-                  <Select 
-                    closeMenuOnSelect = {false} 
-                    components={animatedComponents} 
-                    options={options} 
-                    isMulti
-                    className="select-ingredients"
-                    onChange={handleSelect}
-                    value={selectedIngredients}
-                  />
-                </div>
-                <div className="table_container">
-                  {
-                    selectedIngredients.length > 0 ?
-                     <table>
-                        <thead>
-                          <tr>
-                            <th>Ingrediente</th>
-                            <th>Cantidad</th>
-                            <th>Unidad de Medida</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {
-                            selectedIngredients.map((ingredient, index) => {
-                              return (
-                                <tr key={index}>
-                                  <td>{ingredient.label}</td>
-                                  <td>
-                                    <input type="number" min= "1" 
-                                      onChange={(e) => {
-                                        handleEntradas(ingredient.value, "cantidad", e.target.value, ingredient.kardex)
-                                      }}
-                                    />
-                                  </td>
-                                  <td>
-                                    <select onChange={(e) => handleEntradas(ingredient.value, "unidad_medida", e.target.value, ingredient.kardex)}>
-                                      <option value="" disabled>Unidad</option>
-                                      <option value="und">und</option>
-                                      <option value="kg">kg</option>
-                                      <option value="lb">lb</option>
-                                      <option value="gr">gr</option>
-                                      <option value="oz">oz</option>
-                                    </select>
-                                  </td>
-                                </tr>
-                              )
-                            })
-                          }
-                        </tbody>
-                     </table>
-                     : null
-                  }
-
-                  {
-                    selectedIngredients.length > 0 ?
-                    <button className="btn-ingresar-entrada" onClick={handleSubmitSalidas}>Ingresar Salida</button>
-                    : null
-                  }
-                </div>
+                  <Salidas id_restaurant={id_restaurant} />
               </div>
-              : null
-        }
+            : null
+          }
       </div>
     </div>
   )

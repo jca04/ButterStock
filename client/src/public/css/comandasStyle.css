@@ -151,3 +151,93 @@
     box-shadow: 1px 1px 5px #86761e;
     margin-top: 60px;
 }
+
+.selects-salidas{
+    width: 100%;
+    margin-top: 30px;
+}
+
+.select-salidas{
+    width: 54%;
+}
+.selects-salidas > div{
+    width: 100%;
+    display: flex;
+    cursor: pointer;
+
+    justify-content: center;
+}
+
+.table-salida {
+    width: 100%;
+    margin-top: 10px;
+}
+.table-salida > form > table{
+    border-collapse: collapse;
+    width: 100%;
+    background-color: #fce795;
+    font-size: 0.9em;
+}
+
+.table-salida > form > table > thead > tr > th{
+    border: 1px solid #f2c22d;
+    color: #743913;
+    padding: 5px;
+}
+
+.table-salida > form > table > tbody > tr{
+    border-bottom: 1px solid #f2c22d;
+}
+.table-salida > form > table > tbody > tr > td{
+    padding: 7px;
+    background: #fefcec;
+}
+
+.input-salida{
+    width: 60%;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #f2c22d;
+    height: 100%;
+    outline: none;
+}
+
+.input-salida:focus{
+    border: 1px solid #743913;
+}
+
+.salida-button{
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #743913;
+    background-color: #ffefad;
+    cursor: pointer;
+    margin-top: 5%;
+}
+
+.salida-button:hover{
+    transform: scale(1.1);
+    transition: all 200ms ease-in-out;
+}
+
+.btn-salida{
+    color: black !important;
+}
+
+.MuiPaper-root{
+    background-color: #fefae8 !important;
+    
+}
+
+#alert-dialog-title{
+    color: #feb411 !important;
+}
+
+#alert-dialog-description{
+    color: #743913;
+}
+
+.btn-acept-salida{
+    background-color: #feb411 !important;
+    color: white !important;
+}
