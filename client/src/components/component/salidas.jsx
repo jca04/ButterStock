@@ -10,6 +10,7 @@ import Select from "react-select";
 import { toast } from "react-toastify";
 import { getDataSelectsSalida } from "../../api/salidas";
 import { saveSales } from "../../api/sales";
+import { salidasPeps } from "../../api/kardex";
 
 function Salidas({ id_restaurant }) {
   const [dataSelect, setDataSelect] = useState([]);
@@ -133,6 +134,16 @@ function Salidas({ id_restaurant }) {
         //Aqui estan los ingredientes listo,
         //cabe recalcar que la unidad de medida puede ser la que tiene en la receta 
         //por lo tanto toca hacer la conversion de unidades para guradarlo en peps
+        for(const i in response) {
+          const res = await salidasPeps(
+            response[i].id_ingrediente,
+            response[i].cantidad,
+            response[i].unidad_medida,
+            id_restaurant
+          )
+
+          console.log(res);
+        }
         showToastMessage();
       }else{
         showToastMessageErr();
