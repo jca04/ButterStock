@@ -20,7 +20,7 @@ function HomePage() {
     });
   };
 
-  document.title = "HomePage";
+  document.title = "ButterStock | Inicio";
 
   const [id_restaurant, setIdRestaurant] = useState(null);
   const [isLoading, setLoading] = useState(true);

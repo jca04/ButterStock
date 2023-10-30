@@ -11,7 +11,7 @@ import Salidas from "./component/salidas";
 
 export default function Comandas({ closeModal, id_restaurant }) {
  
-  document.title = "Comandas"
+  document.title = "ButterStock | Comandas";
 
   const [ingredients, setIngredients] = useState([]);
   const [selectedOption, setSelectedOption] = useState("");
