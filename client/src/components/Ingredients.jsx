@@ -36,7 +36,7 @@ export default function Ingredients() {
   const { id } = useParams();
 
   useEffect(() => {
-    document.title = "Ingredientes";
+    document.title = "ButterStock | Ingredientes";
     res();
   }, []);
 
