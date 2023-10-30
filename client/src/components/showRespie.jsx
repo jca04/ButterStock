@@ -61,7 +61,7 @@ function ShowRespie() {
 
 
   useEffect(() => {
-    document.title = "Recetas";
+    document.title = "ButterStock | Recetas";
     getResipesPerRestaurant();
   }, []);
 
