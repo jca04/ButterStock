@@ -59,4 +59,59 @@ const agregarSaldosRestantes = async (
   }
 };
 
-module.exports = { agregarSaldosRestantes };
+const procesarSaldos = async (
+  saldos,
+  cantidadRestante,
+  id_ingredient,
+  id_restaurant
+) => {
+  if (cantidadRestante <= 0 || !saldos.length) {
+    return cantidadRestante;
+  }
+
+  const saldo = saldos[0];
+  const cantidadSalida = Math.min(cantidadRestante, saldo.saldo_cantidad);
+  const totalSalida = cantidadSalida * saldo.saldo_valorUnitario;
+
+  // Inserta la salida
+  const salida = await queryAsync(
+    "INSERT INTO tbl_peps (id_peps, salida_cantidad, salida_valorUnitario, salida_valorTotal, id_ingrediente, id_restaurante) VALUES (?, ?, ?, ?, ?, ?)",
+    [
+      uuidv4(),
+      cantidadSalida,
+      saldo.saldo_valorUnitario,
+      totalSalida,
+      id_ingredient,
+      id_restaurant,
+    ]
+  );
+
+  if (salida.affectedRows > 0) {
+    const cantidadActual = saldo.saldo_cantidad - cantidadSalida;
+    const totalActual = cantidadActual * saldo.saldo_valorUnitario;
+
+    // Actualiza el saldo actual
+    await queryAsync(
+      "UPDATE tbl_peps SET saldo_cantidad = ?, saldo_valorTotal = ? WHERE id_peps = ?",
+      [cantidadActual, totalActual, saldo.id_peps]
+    );
+
+    // Actualiza el costo unitario del ingrediente
+    await queryAsync(
+      "UPDATE tbl_ingredientes SET cost_unitario = ? WHERE id_ingrediente = ?",
+      [saldo.saldo_valorUnitario, id_ingredient]
+    );
+
+    cantidadRestante -= cantidadSalida;
+
+    // Llama recursivamente a la función para procesar el resto de los saldos
+    return procesarSaldos(
+      saldos.slice(1),
+      cantidadRestante,
+      id_ingredient,
+      id_restaurant
+    );
+  }
+};
+
+module.exports = { agregarSaldosRestantes, procesarSaldos };
