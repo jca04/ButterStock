@@ -67,7 +67,7 @@ const entradas = (req, res) => {
           // Traigo los saldos de la tabla peps para actualizar el costo unitario con el primer saldo que entre
 
           const saldos = await queryAsync(
-            "SELECT saldo_cantidad, saldo_valorUnitario, saldo_valorTotal FROM tbl_peps WHERE id_ingrediente = ? && id_restaurante = ? && saldo_activo = 1 ORDER BY time_stamp ASC",
+            "SELECT saldo_cantidad, saldo_valorUnitario, saldo_valorTotal FROM tbl_peps WHERE id_ingrediente = ? && id_restaurante = ? && saldo_activo = 1 ORDER BY time_stamp ASC, id_orden ASC",
             [id_ingredient, id_restaurant]
           );
 
@@ -397,11 +397,9 @@ const salidas = async (req, res) => {
                     }
                   }
                 } else {
-                  return res
-                    .status(200)
-                    .json({
-                      message: "Error al actualizar desactivar el saldo",
-                    });
+                  return res.status(200).json({
+                    message: "Error al actualizar desactivar el saldo",
+                  });
                 }
               } else {
                 return res
@@ -418,12 +416,11 @@ const salidas = async (req, res) => {
                 // Verifico si hay mas saldos para insertarlos en la tabla de saldos
                 const saldosRestantes = saldos.slice(1);
                 // Actualizo el estado de los saldos restantes y despues los inserto en la tabla de saldos
-                const result = await agregarSaldosRestantes(
+                await agregarSaldosRestantes(
                   saldosRestantes,
                   id_ingredient,
                   id_restaurant
                 );
-                console.log(result);
               }
             }
           }
@@ -449,7 +446,7 @@ const kardexPeps = async (req, res) => {
 
     if (!id_ingredient && id_receta) {
       const ingredientes = await queryAsync(
-        "SELECT id_ingrediente FROM tbl_ingredientes_receta WHERE id_receta = ?",
+        "SELECT id_ingrediente, kardex FROM tbl_ingredientes_receta WHERE id_receta = ?",
         [id_receta]
       );
 
@@ -462,8 +459,13 @@ const kardexPeps = async (req, res) => {
         );
         // Traigo todo el kardex de cada ingrediente de la receta y lo guardo en un array de objetos con el nombre del ingrediente y el kardex
 
+        const tipoKardex =
+          ingrediente.kardex.toLowerCase() === "peps"
+            ? "tbl_peps"
+            : "tbl_promedio_ponderado";
+
         const kardex = await queryAsync(
-          "SELECT * FROM tbl_peps WHERE id_ingrediente = ? ORDER BY time_stamp ASC, id_orden ASC",
+          `SELECT * FROM ${tipoKardex} WHERE id_ingrediente = ? ORDER BY time_stamp ASC, id_orden ASC`,
           [ingrediente.id_ingrediente]
         );
 
@@ -477,12 +479,17 @@ const kardexPeps = async (req, res) => {
       res.status(200).json(kardex_receta);
     } else if (id_ingredient && !id_receta) {
       const nombreIngrediente = await queryAsync(
-        "SELECT nombre_ingrediente FROM tbl_ingredientes WHERE id_ingrediente = ?",
+        "SELECT nombre_ingrediente, kardex FROM tbl_ingredientes WHERE id_ingrediente = ?",
         [id_ingredient]
       );
 
+      const tipoKardex =
+        nombreIngrediente[0].kardex.toLowerCase() === "peps"
+          ? "tbl_peps"
+          : "tbl_promedio_ponderado";
+
       const kardex = await queryAsync(
-        "SELECT * FROM tbl_peps WHERE id_ingrediente = ? ORDER BY time_stamp ASC, id_orden ASC",
+        `SELECT * FROM ${tipoKardex} WHERE id_ingrediente = ? ORDER BY time_stamp ASC, id_orden ASC`,
         [id_ingredient]
       );
 
@@ -498,4 +505,195 @@ const kardexPeps = async (req, res) => {
   }
 };
 
-module.exports = { entradas, kardexPeps, obtenerSaldo, salidas };
+const entradasPromPonderado = async (req, res) => {
+  try {
+    const { id_ingredient } = req.params;
+    const { cantidad, costo_unitario, unidad_medida, detalle, id_restaurant } =
+      req.body.data;
+
+    const ingredientes_data = await queryAsync(
+      "SELECT unidad_medida, costo_unitario, costo_total, cantidad_total_ingrediente, cantidad_editable_ingrediente FROM tbl_ingredientes WHERE id_ingrediente = ? && id_restaurant = ? && activo = 1",
+      [id_ingredient, id_restaurant]
+    );
+
+    const saldo = await queryAsync(
+      "SELECT id_promedio_ponderado, saldo_cantidad, saldo_valorUnitario, saldo_valorTotal FROM tbl_promedio_ponderado WHERE id_ingrediente = ? && id_restaurante = ? && saldo_activo = 1 ORDER BY time_stamp ASC, id_orden ASC",
+      [id_ingredient, id_restaurant]
+    );
+
+    // Datos ingrediente
+
+    const unidad_medida_ingrediente = ingredientes_data[0].unidad_medida;
+
+    ////-----------------------------------------------------------------////////////////////
+
+    // Datos de la entrada
+    const cantidad_convertida = convertion(
+      unidad_medida,
+      cantidad,
+      unidad_medida_ingrediente
+    );
+    const costo_unitario_por_unidad_medida = convertionPrice(
+      unidad_medida,
+      costo_unitario,
+      unidad_medida_ingrediente
+    );
+
+    ////-----------------------------------------------------------------////////////////////
+
+    // Datos del saldo
+    const valor_total = cantidad_convertida * costo_unitario_por_unidad_medida;
+
+    ///---------------------------------------------------------------------////
+
+    // Datos promedio ponderado
+    const nueva_cantidad_saldo = cantidad_convertida + saldo[0].saldo_cantidad;
+    const nuevo_valor_total_saldo = valor_total + saldo[0].saldo_valorTotal;
+    const nuevo_costo_unitario_saldo =
+      nuevo_valor_total_saldo / nueva_cantidad_saldo;
+
+    // Actualizo el ingrediente
+    const actualizacionIngre = await queryAsync(
+      "UPDATE tbl_ingredientes SET costo_unitario = ?, costo_total = ?, cantidad_total_ingrediente = ?, cantidad_editable_ingrediente = ?, refresh = 1 WHERE id_ingrediente = ? && id_restaurant = ?",
+      [
+        nuevo_costo_unitario_saldo,
+        nuevo_valor_total_saldo,
+        nueva_cantidad_saldo,
+        nueva_cantidad_saldo,
+        id_ingredient,
+        id_restaurant,
+      ]
+    );
+
+    if (actualizacionIngre.affectedRows > 0) {
+      // Desactivo el saldo anterior
+      const updateSaldo = await queryAsync(
+        "UPDATE tbl_promedio_ponderado SET saldo_activo = 0 WHERE id_promedio_ponderado = ?",
+        [saldo[0].id_promedio_ponderado]
+      );
+
+      if (updateSaldo.affectedRows > 0) {
+        // Inserto la entrada
+        const entrada = await queryAsync(
+          "INSERT INTO tbl_promedio_ponderado (id_promedio_ponderado, entrada_cantidad, entrada_valorUnitario, entrada_valorTotal, saldo_cantidad, saldo_valorUnitario, saldo_valorTotal, saldo_activo, detalle, id_ingrediente, id_restaurante) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+          [
+            uuidv4(),
+            cantidad_convertida,
+            costo_unitario_por_unidad_medida,
+            valor_total,
+            nueva_cantidad_saldo,
+            nuevo_costo_unitario_saldo,
+            nuevo_valor_total_saldo,
+            1,
+            detalle,
+            id_ingredient,
+            id_restaurant,
+          ]
+        );
+
+        if (entrada.affectedRows > 0) {
+          res.status(200).json({ message: "Entrada registrada" });
+        } else {
+          res.status(400).json({ message: "Error al ingresar la entrada" });
+        }
+      }
+    }
+  } catch (error) {
+    res.status(400).json({ message: error });
+  }
+};
+
+const salidasPromPonderado = async (req, res) => {
+  try {
+    const { cantidad, unidad_medida, id_restaurant } = req.body.data;
+    const { id_ingredient } = req.params;
+
+    const ingredienteData = await queryAsync(
+      "SELECT unidad_medida FROM tbl_ingredientes WHERE id_ingrediente = ? && id_restaurant = ? && activo = 1",
+      [id_ingredient, id_restaurant]
+    );
+
+    const cantidadConvertida = convertion(
+      unidad_medida,
+      cantidad,
+      ingredienteData[0].unidad_medida
+    );
+
+    const saldo = await queryAsync(
+      "SELECT id_promedio_ponderado, saldo_cantidad, saldo_valorUnitario, saldo_valorTotal FROM tbl_promedio_ponderado WHERE id_ingrediente = ? && id_restaurante = ? && saldo_activo = 1 ORDER BY time_stamp ASC, id_orden ASC",
+      [id_ingredient, id_restaurant]
+    );
+
+    if (cantidadConvertida > saldo[0].saldo_cantidad) {
+      return res.status(400).json({ message: "No hay saldo suficiente" });
+    } else if (cantidadConvertida <= saldo[0].saldo_cantidad) {
+      const cantidadActual = saldo[0].saldo_cantidad - cantidadConvertida;
+      const valorTotalActual = cantidadActual * saldo[0].saldo_valorUnitario;
+
+      if (cantidadActual == 0) {
+        return res.status(200).json({
+          message: "Sin inventario",
+        });
+      }
+
+      // Actualizo el ingrediente
+      const actualizarIngrediente = await queryAsync(
+        "UPDATE tbl_ingredientes SET costo_unitario = ?, costo_total = ?, cantidad_total_ingrediente = ?, cantidad_editable_ingrediente = ?, refresh = 1 WHERE id_ingrediente = ? && id_restaurant = ?",
+        [
+          saldo[0].saldo_valorUnitario,
+          valorTotalActual,
+          cantidadActual,
+          cantidadActual,
+          id_ingredient,
+          id_restaurant,
+        ]
+      );
+
+      if (actualizarIngrediente.affectedRows > 0) {
+        // Desactivo el saldo anterior
+        const updateSaldo = await queryAsync(
+          "UPDATE tbl_promedio_ponderado SET saldo_activo = 0 WHERE id_promedio_ponderado = ?",
+          [saldo[0].id_promedio_ponderado]
+        );
+
+        if (updateSaldo.affectedRows > 0) {
+          // Inserto la salida y el nuevo saldo
+          const nuevoSaldo = await queryAsync(
+            "INSERT INTO tbl_promedio_ponderado (id_promedio_ponderado, salida_cantidad, salida_valorUnitario, salida_valorTotal, saldo_cantidad, saldo_valorUnitario, saldo_valorTotal, saldo_activo, id_ingrediente, id_restaurante) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            [
+              uuidv4(),
+              cantidadConvertida,
+              saldo[0].saldo_valorUnitario,
+              cantidadConvertida * saldo[0].saldo_valorUnitario,
+              cantidadActual,
+              saldo[0].saldo_valorUnitario,
+              valorTotalActual,
+              1,
+              id_ingredient,
+              id_restaurant,
+            ]
+          );
+
+          if (nuevoSaldo.affectedRows > 0) {
+            return res.status(200).json({ message: "Salida registrada" });
+          } else {
+            return res
+              .status(400)
+              .json({ message: "Error al ingresar la salida" });
+          }
+        }
+      }
+    }
+  } catch (error) {
+    res.status(400).json({ message: error });
+  }
+};
+
+module.exports = {
+  entradas,
+  kardexPeps,
+  obtenerSaldo,
+  salidas,
+  entradasPromPonderado,
+  salidasPromPonderado,
+};

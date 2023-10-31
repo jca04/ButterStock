@@ -4,7 +4,7 @@ import { getToken } from "../auth/auth";
 let token = getToken();
 
 export const getKardex = async (id) => {
-  const response = await axios.post("/kardex/peps", {
+  const response = await axios.post("/kardex/", {
     headers: { Authorization: `Bearer ${token}` },
     data: {
       id_ingredient: id,
@@ -35,6 +35,33 @@ export const entradasPeps = async (
     return response;
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const entradasPromPonderado = async (
+  id_ingredient,
+  cantidad,
+  costo_unitario,
+  unidad_medida,
+  id_restaurant
+) => {
+  try {
+    const response = await axios.post(
+      `/kardex/promedio/entradas/${id_ingredient}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+        data: {
+          id_resturant: id_restaurant,
+          cantidad: cantidad,
+          costo_unitario: costo_unitario,
+          unidad_medida: unidad_medida,
+        },
+      }
+    );
+
+    return response;
+  } catch (error) {
+    return error;
   }
 };
 

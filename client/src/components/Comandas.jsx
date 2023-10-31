@@ -3,7 +3,7 @@ import "../public/css/comandasStyle.css";
 import { getIngredients } from "../api/ingredients";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
-import { entradasPeps, salidasPeps } from "../api/kardex";
+import { entradasPeps, entradasPromPonderado, salidasPeps } from "../api/kardex";
 import { toast } from "react-toastify";
 import {AiOutlineCloseCircle} from 'react-icons/ai';
 import {RxEnter} from 'react-icons/rx';
@@ -102,6 +102,17 @@ export default function Comandas({ closeModal, id_restaurant }) {
             filterIngredients[i].cantidad, 
             filterIngredients[i].costo_unitario, 
             filterIngredients[i].unidad_medida, 
+            id_restaurant
+          );
+          if (response.data.message === "Entrada registrada") {
+            entradaRegistrada = true
+          }
+        } else {
+          const response = await entradasPromPonderado(
+            filterIngredients[i].id_ingrediente,
+            filterIngredients[i].cantidad,
+            filterIngredients[i].costo_unitario,
+            filterIngredients[i].unidad_medida,
             id_restaurant
           );
           if (response.data.message === "Entrada registrada") {
