@@ -92,3 +92,13 @@
     background-color: #2d2f25;
     color: #EFF9C6;
 }
+
+@media screen and (max-width:500px) {
+    .landingPage-titles{
+      width: 65%;
+    }
+
+    .landingPage-butterstockTitle{
+        font-size: 2em;
+    }
+  }
