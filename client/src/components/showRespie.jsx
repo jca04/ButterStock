@@ -16,6 +16,7 @@ import { Field, Form, Formik } from "formik";
 import Select from 'react-select';
 import { toast } from "react-toastify";
 import { FileInputButton, FileMosaic } from "@files-ui/react";
+import Load from "./reuseComponents/loadRender";
 
 let unitArr = ['kg','lb','oz','gr','mg','und'];
 let json = {};
@@ -100,7 +101,7 @@ function ShowRespie() {
         setIngredient(response);
         setTimeout(() => {
           setContinue(true);
-        }, 100)
+        }, 500)
       }
     } catch (error) {
       console.log(error)
@@ -565,7 +566,7 @@ function ShowRespie() {
   // Renderizado del html
   return (
     <>
-      <Navbar />
+      <Navbar restaurant = {id} />
       {isContinue ? (
         <>
         <div className="body-respie-all">
@@ -611,9 +612,7 @@ function ShowRespie() {
       </div>
       </>
       ) : ( 
-        <div className="loading-first-resipe">
-          <AiOutlineLoading3Quarters className="loading-first-resipe-svg"/>
-        </div>
+        <Load/>
         )}
       {/* modal para editar y crear  */}
       {/* ------------------------------ */}

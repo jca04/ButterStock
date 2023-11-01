@@ -2,6 +2,8 @@ import axios from "axios";
 import { getToken } from "../auth/auth";
 
 //se verifica si el restaurante existe o no
+let tokenStr = getToken();
+
 export const verifiedRestaurant = async (data) => {
   try {
     const response = await axios.post("/restaurant/verifiedRestaurant", {
@@ -32,7 +34,7 @@ export const createRestaurant = async (data) => {
 
 //va en el homepage
 export const getRestaurant = async () => {
-  let tokenStr = getToken();
+
   try {
     const res = await axios.get("/restaurant/getRestaurant", {
       headers: { Authorization: `Bearer ${tokenStr}` },
@@ -55,7 +57,6 @@ export const getRestaurant = async () => {
 //obtener todos los restaurantes superAdmin
 export const getAllRestaurants = async () => {
   try {
-    let tokenStr = getToken();
     const res = await axios.get("/restaurant/getAllRestaurant", {
       headers: { Authorization: `Bearer ${tokenStr}` },
     });
@@ -71,7 +72,6 @@ export const getAllRestaurants = async () => {
 //desactivar un restaurante
 export const toggleRestaurante = async (id, value) => {
   try {
-    let tokenStr = getToken();
     const res = await axios.put("/restaurant/deactivateRestaurant", {
       headers: { Authorization: `Bearer ${tokenStr}` },
       data: {
@@ -91,3 +91,20 @@ export const toggleRestaurante = async (id, value) => {
     return { message: error };
   }
 };
+
+
+export const loadRestaurant = async(id) => {
+  try {
+    const res = await axios.post("/restaurant/getRestaurantConfig", {
+      headers: { Authorization: `Bearer ${tokenStr}` },
+      data: {
+        id: id
+      },
+    });
+
+  return {message: res.data.message}
+    
+  } catch (error) {
+    return { message: error };
+  }
+}

@@ -39,7 +39,7 @@ function App() {
         <Route exact path="/" element={<LandingPage />} />
         <Route
           exact
-          path="/configurations"
+          path="/configurations/:id"
           element={
             isAuthenticated() ? <MyRestaurante /> : <Navigate to="/login" />
           }
@@ -79,7 +79,7 @@ function App() {
         />
         <Route exact path="/comandas/:id" element= {isAuthenticated() ? <Comandas /> : <Navigate to="/login" />} />
         <Route exact path="/inventario/:id" element= {isAuthenticated() ? <Inventory /> : <Navigate to="/login" />} />
-        <Route exact path="/kardex/:id_ingrediente" element = {isAuthenticated() ? <Kardex /> : <Navigate to="/login" />} />
+        <Route exact path="/kardex/:id_ingrediente/:id" element = {isAuthenticated() ? <Kardex /> : <Navigate to="/login" />} />
       </Routes>
     </>
   );

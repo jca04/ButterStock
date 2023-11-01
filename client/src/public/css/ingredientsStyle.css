@@ -424,3 +424,21 @@ body {
   margin-top: 17px;
   font-size: 3em;
 }
+
+@media screen and (max-width:1200px) {
+    .search-bar-ingredient{
+      width: 35%;
+    }
+}
+
+@media screen and (max-width:700px) {
+  .search-bar-ingredient{
+    width: 50%;
+  }
+}
+
+@media screen and (max-width:500px) {
+  .search-bar-ingredient{
+    width: 80%;
+  }
+}

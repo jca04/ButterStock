@@ -80,3 +80,16 @@
   border-radius: 5px;
   background-color:  rgba(255, 234, 150, 1);
 }
+
+@media screen and (max-width:800px) {
+  .div-input-search{
+    width: 50%;
+  }
+}
+
+@media screen and (max-width:500px) {
+  .div-input-search{
+    width: 100%;
+  }
+
+}
