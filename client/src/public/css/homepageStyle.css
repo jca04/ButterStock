@@ -220,4 +220,12 @@
   }
 } 
 
+@media screen and (max-width:600px) {
+  .grafh{
+    display: none;
+  }
+  .comanda{
+    margin-bottom: 20px;
+  }
+}
 
