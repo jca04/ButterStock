@@ -121,3 +121,35 @@
   text-align: center;
   font-size: 0.6em;
 }
+
+
+@media screen and (max-width:1500px) {
+  .form-create{
+    height: 95%;
+  }
+}
+
+
+@media screen and (max-width:1206px) {
+    .form-create{
+      width: 40%;
+    }
+}
+
+@media screen and (max-width:900px) {
+  .form-create{
+    width: 50%;
+  }
+}
+
+@media screen and (max-width:715px) {
+  .form-create{
+    width: 80%;
+  }
+}
+
+@media screen and (max-width:500px) {
+  .form-create{
+    width: 95%;
+  }
+}
