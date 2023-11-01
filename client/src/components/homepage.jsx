@@ -6,7 +6,7 @@ import { getRestaurant } from "../api/restaurant";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { removeToken } from "../auth/auth";
-import { MdFastfood } from "react-icons/md";
+import { MdFastfood, MdOutlineRealEstateAgent } from "react-icons/md";
 import Plot from "react-plotly.js";
 import { AiOutlineSearch, AiOutlineLoading3Quarters } from "react-icons/ai";
 import Comandas from "./Comandas";
@@ -83,6 +83,17 @@ function HomePage() {
                   <Comandas closeModal={closeModal} id_restaurant = {id_restaurant} />
                 )
               }
+            </div>
+            <div className="comanda">
+              <div className="txt-comanda">
+                <h4>Estado</h4>
+              </div>
+                <div className="init-comanda">
+                  <div className="init-comanda-txt">Estado de resultado</div>
+                  <div className="icon-comanda">
+                    <MdOutlineRealEstateAgent />
+                  </div>
+                </div>
             </div>
             <div className="grafh">
               <Plot
