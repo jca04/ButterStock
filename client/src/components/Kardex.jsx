@@ -5,7 +5,7 @@ import Navbar from "./reuseComponents/navbar";
 import "../public/css/kardexStyle.css";
 
 export default function Kardex() {
-  const { id_ingrediente } = useParams();
+  const { id_ingrediente, id } = useParams();
   const [kardex, setKardex] = useState([]);
   const [ingredient, setIngredient] = useState("");
 
@@ -41,7 +41,7 @@ export default function Kardex() {
 
   return (
     <>
-      <Navbar />
+      <Navbar restaurant = {id}/>
       <section className="kardex_table">
         <div className="name_ingredient">{ingredient}</div>
         <div className="container_table">

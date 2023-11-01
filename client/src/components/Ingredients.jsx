@@ -18,6 +18,7 @@ import { AiOutlineAppstoreAdd, AiOutlineSearch } from "react-icons/ai";
 import { MdImageNotSupported } from "react-icons/md";
 import { Field, Form, Formik } from "formik";
 import Select from "react-select";
+import Load from "./reuseComponents/loadRender";
 
 let valueCostoTotal = 0;
 
@@ -41,7 +42,10 @@ export default function Ingredients() {
   }, []);
 
   const res = async () => {
-    const response = await getIngredients(id).then(setLoading(false));
+    const response = await getIngredients(id);
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
     setIngredients(response.ingredientes);
   };
 
@@ -309,7 +313,7 @@ export default function Ingredients() {
 
   return (
     <>
-      <Navbar />
+      <Navbar restaurant = {id} />
       {isForm ? (
         <div className="form-all-ingredients">
           <div className="body-form-all-ingredients">
@@ -588,9 +592,7 @@ export default function Ingredients() {
         </div>
       ) : null}
       {loading ? (
-        <div className="loding-resipe-homepage">
-          <AiOutlineLoading3Quarters />
-        </div>
+        <Load/>
       ) : (
         <section className="body-all-ingredients">
           <section className="header-all-ingredients">

@@ -10,13 +10,14 @@ import { MdFastfood, MdOutlineRealEstateAgent } from "react-icons/md";
 import Plot from "react-plotly.js";
 import { AiOutlineSearch, AiOutlineLoading3Quarters } from "react-icons/ai";
 import Comandas from "./Comandas";
+import Load from "./reuseComponents/loadRender";
 
 // import {useDispatch, useSelector} from 'react-redux'
 
 function HomePage() {
   const showToastMessageNo = () => {
     toast.error("Ha ocurrido un error", {
-      position: toast.POSITION.TOP_CENTER,
+      position: toast.POSITION.TOP_RIGHT,
     });
   };
 
@@ -33,7 +34,9 @@ function HomePage() {
         if (Array.isArray(response)) {
           if (response.length > 0) {
             setIdRestaurant(response[0].id_restaurant);
-            setLoading(false);
+            setTimeout(() => {
+              setLoading(false);
+            }, 500);
             return;
           }
         }
@@ -59,12 +62,9 @@ function HomePage() {
 
   return (
     <>
-      <Navbar />
+      <Navbar restaurant = {id_restaurant}/>
       {isLoading ? (
-        <div className="loding-resipe-homepage">
-          <AiOutlineLoading3Quarters />
-          <p>Cargando</p>
-        </div>
+        <Load/>
       ) : (
         <section className="father-homepage">
           <section className="info-graf">

@@ -6,15 +6,20 @@ import DataTable from "react-data-table-component";
 import { MdOutlineInventory } from "react-icons/md";
 import {AiOutlineSearch} from 'react-icons/ai';
 import "../public/css/inventoryStyle.css";
+import Load from "./reuseComponents/loadRender";
 
 export default function Inventory() {
   const { id } = useParams();
   const [data, setData] = useState([]);
+  const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
     document.title = 'ButterStock | inventario';
     const res = async () => {
       const response = await getIngredients(id);
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
       setData(response.ingredientes);
     };
     res();
@@ -41,7 +46,7 @@ export default function Inventory() {
       name: "Ver kardex",
       cell: (row) => (
         <button className="btn-send-kardex">
-           <Link to={`/kardex/${row.id_ingrediente}`} target="_blank" className="btn-kardex">
+           <Link to={`/kardex/${row.id_ingrediente}/${id}`} target="_blank" className="btn-kardex">
             Ver kardex
           </Link>
         </button>
@@ -67,7 +72,10 @@ export default function Inventory() {
 
   return (
     <>
-      <Navbar />
+      <Navbar restaurant = {id} />
+      {isLoading ? (
+        <Load/>
+      ): (
       <section className="body-inventory-father">
         <section className="father_inventario">
           <div className="header-inventory">
@@ -95,6 +103,7 @@ export default function Inventory() {
           </div>
         </section>
       </section>
+      )}
     </>
   );
 }
