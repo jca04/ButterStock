@@ -86,3 +86,28 @@ export const salidasPeps = async (
     console.log(error);
   }
 };
+
+export const salidasPromPonderado = async (
+  id_ingredient,
+  cantidad,
+  unidad_medida,
+  id_restaurant
+) => {
+  try {
+    const response = await axios.post(
+      `/kardex/promedio/salidas/${id_ingredient}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+        data: {
+          cantidad: cantidad,
+          unidad_medida: unidad_medida,
+          id_restaurant: id_restaurant,
+        },
+      }
+    );
+
+    return response;
+  } catch (error) {
+    return error;
+  }
+};

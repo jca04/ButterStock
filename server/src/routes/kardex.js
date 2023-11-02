@@ -21,6 +21,10 @@ kardexRouter.post(
   checkJwt,
   entradasPromPonderado
 );
-kardexRouter.post("/promedio/salidas/:id_ingredient", salidasPromPonderado);
+kardexRouter.post(
+  "/promedio/salidas/:id_ingredient",
+  checkJwt,
+  salidasPromPonderado
+);
 
 module.exports = kardexRouter;
