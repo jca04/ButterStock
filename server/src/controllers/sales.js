@@ -35,7 +35,8 @@ const saveSales = async (req, res) => {
                 unidad_medida: ingredients[ing]['unidad_medida_r'],
                 cantidad: ingredients[ing]['cantidad_por_receta'],
                 id_ingrediente: ingredients[ing]['id_ingrediente'],
-                kardex: ingredients[ing]['kardex']
+                kardex: ingredients[ing]['kardex'],
+                cantidad_receta: quantity_recipe
               });
             }
           }
@@ -54,7 +55,7 @@ const saveSales = async (req, res) => {
           if (insert_ingredients.affectedRows > 0){
             const selectIngredient = await conn.query('SELECT kardex FROM tbl_ingredientes WHERE id_ingrediente = ?',[id]);
             const kardexIngredient = selectIngredient[0].kardex; 
-            
+
             ingredientsResponse.push({
               unidad_medida: unity,
               cantidad: quantity_ingredient,

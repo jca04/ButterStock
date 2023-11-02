@@ -99,9 +99,6 @@
 }
 
 .table_container {
-    display: flex;
-    justify-content: space-evenly;
-    flex-wrap: wrap;
     margin-top: 25px;
     width: 100%;
     font-size: 0.8em;
@@ -132,13 +129,6 @@
     cursor: pointer;
 }
 
-.table_container table tr td input {
-    width: 50%;
-    padding: 5px;
-    border-radius: 5px;
-    border: 1px solid #9b9b9a;
-    cursor: pointer;
-}
 
 .btn-ingresar-entrada {
     border-radius: 5px;
@@ -240,4 +230,40 @@
 .btn-acept-salida{
     background-color: #feb411 !important;
     color: white !important;
+}
+
+
+.table-entradas-form{
+    width: 100%;
+}
+
+.table-entradas-form > table{
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fce795;
+    font-size: 1.1em;
+}
+
+.table-entradas-form > table > thead > tr > th{
+    border: 1px solid #f2c22d;
+    color: #743913;
+    padding: 5px;
+}
+
+.table-entradas-form > table > tbody > tr{
+    border-bottom: 1px solid #f2c22d;
+}
+
+.table-entradas-form > table > tbody > tr > td{
+    padding: 7px;
+    background: #fefcec;
+}
+
+.input-entrada{
+    width: 60%;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #f2c22d;
+    height: 100%;
+    outline: none;
 }
