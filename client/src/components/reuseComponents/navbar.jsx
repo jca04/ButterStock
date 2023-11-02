@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { AxioInterceptor } from "../../auth/auth";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "../../public/css/navbarStyle.css";
 import { getUser } from "../../api/navbar.js";
 import { Fade } from "react-awesome-reveal";
@@ -9,15 +9,11 @@ import {RxHamburgerMenu} from "react-icons/rx";
 import {addHome, deleteHome} from "../../features/homepage/homepageSlice";
 import logo from "../../public/resources/logo/logo_blanco.png";
 
-
-
-
 AxioInterceptor();
 
-function Navbar() {
+function Navbar({restaurant}) {
   //se utiliza para editar el estdao glboal del usuario
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   //estado global trayendo los datos
   let homeSlice = useSelector(state => state.home);
   const [dataUser, setDataUser] = useState({});
@@ -52,11 +48,6 @@ function Navbar() {
       //solo pasa cuando se loguea que consulta los datos del usuairo por primera vez
       fecthData();
     }
-
-
-    
-
-    
   }, []);
 
   const renderSuperAdmin = () => {
@@ -64,8 +55,8 @@ function Navbar() {
       if (dataUser.superAdmin == 0){
         return(
           <li>
-            <Link className="link-navbar configurations" to="../configurations">
-              Mi restaurante
+            <Link className="link-navbar configurations" to={`../configurations/${restaurant}`} >
+              Mi negocio
             </Link>
           </li>
         )
@@ -73,7 +64,7 @@ function Navbar() {
         return (
           <li>
             <Link className="link-navbar allRestaurant" to="../allRestaurant">
-              Restaurantes
+              Negocios
             </Link>
           </li>
         )
@@ -83,15 +74,6 @@ function Navbar() {
 
   const renderUser = () => {
     if (dataUser.admin !== undefined){
-      // if (dataUser.admin == 1 && dataUser.superAdmin == 0){
-      //   return (
-      //     <li>
-      //       <Link className="link-navbar" to="../users">
-      //         Usuarios
-      //       </Link>
-      //     </li>
-      //   )
-      // }else{
         if (dataUser.admin == 1 && dataUser.superAdmin == 1 ){
           return (
             <li>
@@ -103,22 +85,21 @@ function Navbar() {
         }else{
           return (null);
         }
-      // }
     }
   }
 
-  const selectStyle = () => {
-    let localtion = window.location.href.split("/").pop();
-    let classConsult = "."+localtion;
-    if (localtion != "homepage" || localtion != "allRestaurant"){
-    }
+  const logout = () => {
+    localStorage.clear();
+    dispatch(deleteHome([]));
 
-    // let interval = setInterval(() => {
-    //   if (document.querySelector(classConsult)){
-    //     document.querySelector(classConsult).classList.add('btn-location');
-    //     clearInterval(interval)
-    //   }
-    // },800);
+    try {
+      const url = window.location.href;
+      const arrayUrl = url.split('/');
+      const urlLogOut = arrayUrl[0] + '//' + arrayUrl[2] + '/login';
+      window.location.href = urlLogOut;
+    } catch (error) {
+        window.location.href = "../login";
+    }
   }
 
   return (
@@ -144,7 +125,6 @@ function Navbar() {
               </li>
               {renderUser()}      
               {renderSuperAdmin()}     
-              {selectStyle()}
             </ul>
           </Fade>
         </div>
@@ -152,11 +132,7 @@ function Navbar() {
           <button
             className="btn-log-out"
             type="button"
-            onClick={() => {
-              localStorage.clear();
-              dispatch(deleteHome([]));
-              window.location.href = "../login";
-            }}
+            onClick={logout}
           >
             Cerrar sesion
           </button>

@@ -99,9 +99,28 @@ const getRestaurant = async (req, res) => {
 
 }
 
+const getRestaurantConfig = async(req, res) => {
+    try {
+        const {data} = req.body;
+        const id = data.id;
+
+        const getConfigRestaurant = await conn.query('SELECT * FROM tbl_restaurant WHERE id_restaurant = ?', [id]);
+
+        if (getConfigRestaurant.length > 0){
+            res.status(200).json({message: getConfigRestaurant});
+        }else{
+            res.status(500).json({message: 'Ha ocurrido un error, por favor vuelva a intentar'});
+        }
+
+    } catch (error) {
+        res.status(500).json({message: 'Ha ocurrido un error, por favor vuelva a intentar'});
+    }
+}
+
 module.exports = {
     create,
     getRestaurants,
     toggleRestaurant,
-    getRestaurant
+    getRestaurant,
+    getRestaurantConfig
 };

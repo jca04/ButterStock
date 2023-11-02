@@ -147,7 +147,7 @@
 }
 
 @keyframes giro {
-  0% {
+  0% { 
     transform: rotate(0deg);
   }
 
@@ -220,4 +220,12 @@
   }
 } 
 
+@media screen and (max-width:600px) {
+  .grafh{
+    display: none;
+  }
+  .comanda{
+    margin-bottom: 20px;
+  }
+}
 
