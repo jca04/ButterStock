@@ -24,8 +24,10 @@ const saveSales = async (req, res) => {
         if (insert_recipe.affectedRows > 0){
           //encontrar los ingredientes de esta receta o adicion
           const ingredients = await conn.query('SELECT'+
-          ' unidad_medida_r, cantidad_por_receta, id_ingrediente, id_receta FROM tbl_ingredientes_receta'+
-          ' WHERE activo = 1 && id_receta = ?', [id]);
+          ' ingR.unidad_medida_r, ingR.cantidad_por_receta, ingR.id_ingrediente, ingR.id_receta, ing.kardex FROM tbl_ingredientes_receta AS ingR'+
+          ' INNER JOIN tbl_ingredientes AS ing ON'+
+          ' ing.id_ingrediente = ingR.id_ingrediente'+
+          ' WHERE ingR.activo = 1 && ingR.id_receta = ?', [id]);
 
           if (ingredients.length > 0){
             for (const ing in ingredients){
@@ -33,6 +35,7 @@ const saveSales = async (req, res) => {
                 unidad_medida: ingredients[ing]['unidad_medida_r'],
                 cantidad: ingredients[ing]['cantidad_por_receta'],
                 id_ingrediente: ingredients[ing]['id_ingrediente'],
+                kardex: ingredients[ing]['kardex']
               });
             }
           }
@@ -49,10 +52,14 @@ const saveSales = async (req, res) => {
           ' VALUES(?,?,?,?,?)', [uid, quantity_ingredient, 'ingrediente', unity, id]);
 
           if (insert_ingredients.affectedRows > 0){
+            const selectIngredient = await conn.query('SELECT kardex FROM tbl_ingredientes WHERE id_ingrediente = ?',[id]);
+            const kardexIngredient = selectIngredient[0].kardex; 
+            
             ingredientsResponse.push({
               unidad_medida: unity,
               cantidad: quantity_ingredient,
               id_ingrediente: id,
+              kardex: kardexIngredient
             });
           }
         }
