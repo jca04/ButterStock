@@ -507,6 +507,14 @@ const kardexPeps = async (req, res) => {
 
 const entradasPromPonderado = async (req, res) => {
   try {
+    if (
+      !req.body ||
+      !req.body.data ||
+      Object.keys(req.body.data).length === 0
+    ) {
+      return res.status(400).json({ message: "No se ingresaron datos" });
+    }
+
     const { id_ingredient } = req.params;
     const { cantidad, costo_unitario, unidad_medida, detalle, id_restaurant } =
       req.body.data;
@@ -530,12 +538,12 @@ const entradasPromPonderado = async (req, res) => {
     // Datos de la entrada
     const cantidad_convertida = convertion(
       unidad_medida,
-      cantidad,
+      parseFloat(cantidad),
       unidad_medida_ingrediente
     );
     const costo_unitario_por_unidad_medida = convertionPrice(
       unidad_medida,
-      costo_unitario,
+      parseFloat(costo_unitario),
       unidad_medida_ingrediente
     );
 
@@ -600,6 +608,7 @@ const entradasPromPonderado = async (req, res) => {
     }
   } catch (error) {
     res.status(400).json({ message: error });
+    console.log(error);
   }
 };
 
