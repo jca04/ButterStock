@@ -3,7 +3,7 @@ import "../public/css/comandasStyle.css";
 import { getIngredients } from "../api/ingredients";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
-import { entradasPeps } from "../api/kardex";
+import { entradasPeps, entradasPromPonderado, salidasPeps } from "../api/kardex";
 import { toast } from "react-toastify";
 import {AiOutlineCloseCircle} from 'react-icons/ai';
 import Salidas from "./component/salidas"; 
@@ -94,6 +94,7 @@ export default function Comandas({ closeModal, id_restaurant }) {
     for (let i = 0; i < filterIngredients.length; i++) {
       const cantidad = parseFloat(filterIngredients[i].cantidad);
       const costo_unitario = parseFloat(filterIngredients[i].costo_unitario);
+      console.log(filterIngredients[i].unidad_medida);
 
       if (!isNaN(cantidad) && !isNaN(costo_unitario)) {
         if (filterIngredients[i].kardex === "PEPS") {
@@ -104,6 +105,18 @@ export default function Comandas({ closeModal, id_restaurant }) {
             filterIngredients[i].unidad_medida, 
             id_restaurant
           );
+          if (response.data.message === "Entrada registrada") {
+            entradaRegistrada = true
+          }
+        } else if(filterIngredients[i].kardex === "Promedio ponderado") {
+          const response = await entradasPromPonderado(
+            filterIngredients[i].id_ingrediente,
+            filterIngredients[i].cantidad,
+            filterIngredients[i].costo_unitario,
+            filterIngredients[i].unidad_medida,
+            id_restaurant
+          );
+          console.log(response);
           if (response.data.message === "Entrada registrada") {
             entradaRegistrada = true
           }
