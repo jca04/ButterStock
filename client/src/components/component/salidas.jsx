@@ -130,7 +130,8 @@ function Salidas({ id_restaurant }) {
     try {
       const response = await saveSales(dataSend);
 
-      if (Array.isArray(response)){
+      if (Array.isArray(response)){ 
+        console.log(response)
         //Aqui estan los ingredientes listo,
         //cabe recalcar que la unidad de medida puede ser la que tiene en la receta 
         //por lo tanto toca hacer la conversion de unidades para guradarlo en peps
