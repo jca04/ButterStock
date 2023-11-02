@@ -51,10 +51,10 @@ export const entradasPromPonderado = async (
       {
         headers: { Authorization: `Bearer ${token}` },
         data: {
-          id_resturant: id_restaurant,
           cantidad: cantidad,
           costo_unitario: costo_unitario,
           unidad_medida: unidad_medida,
+          id_restaurant: id_restaurant,
         },
       }
     );
