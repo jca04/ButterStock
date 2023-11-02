@@ -74,6 +74,10 @@ const saveSales = async (req, res) => {
             );
             const kardexIngredient = selectIngredient[0].kardex;
 
+          if (insert_ingredients.affectedRows > 0){
+            const selectIngredient = await conn.query('SELECT kardex FROM tbl_ingredientes WHERE id_ingrediente = ?',[id]);
+            const kardexIngredient = selectIngredient[0].kardex; 
+
             ingredientsResponse.push({
               unidad_medida: unity,
               cantidad: quantity_ingredient,

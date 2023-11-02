@@ -198,7 +198,7 @@ const getAllResipePerUser =  (req, res) => {
 
             //Consulta de todos los ingredientes para guardarlos en result y entregar ingrediente por recetas
             conn.query(
-              'SELECT Ir.*, i.nombre_ingrediente, i.unidad_medida AS unidad_original  FROM tbl_ingredientes_receta AS Ir INNER JOIN tbl_ingredientes AS i ON Ir.id_ingrediente = i.id_ingrediente WHERE Ir.id_receta  IN ("' +
+              'SELECT Ir.*, i.nombre_ingrediente, i.unidad_medida AS unidad_original, i.cantidad_editable_ingrediente  FROM tbl_ingredientes_receta AS Ir INNER JOIN tbl_ingredientes AS i ON Ir.id_ingrediente = i.id_ingrediente WHERE Ir.id_receta  IN ("' +
                 parseData +
                 '") && Ir.activo = 1;',
 
@@ -331,28 +331,31 @@ const getResipeEdit = async (req, res) => {
 const editQuantity = async (req, res) => {
 
   try {
-    let {data} = req.body; 
-    let ingredients = data.ingredient;
-    let id_restaurant = data.id;
+    const {data} = req.body; 
+    const ingredients = data.ingredient;
+    const id_restaurant = data.id;
+
 
     if (ingredients.length > 0){
-      if (ingredients[0] !== null && ingredients[0] != NaN){
-        conn.query('UPDATE tbl_ingredientes SET cantidad_editable_ingrediente = ? WHERE id_restaurant = ? && id_ingrediente = ?', [ingredients[0], id_restaurant ,ingredients[1]], 
-        (err, result) => {
-          if (err){
-            return res.status(500).json({message: err});
-          }
+      for (const i in ingredients){
+        const restQuantity = ingredients[i][0];
+        const idIngredient = ingredients[i][2];
 
-          if (result.protocol41){
-             res.status(200).json({message: 'ok'});
-          }else res.status(500).json({message:'erro'});
-        });
-      }else{
-        res.status(200).json({message: 'ok'});
+        const quantity_in_bd_stable = await conn.query('SELECT cantidad_total_ingrediente FROM tbl_ingredientes WHERE id_ingrediente = ?', [idIngredient]);
+
+        if (quantity_in_bd_stable.length > 0){
+          const quantity_original = quantity_in_bd_stable[0]['cantidad_total_ingrediente'];
+          const rest = quantity_original - restQuantity;
+
+          const updateQuantityIngredients = await conn.query('UPDATE tbl_ingredientes SET cantidad_editable_ingrediente = ? WHERE  id_restaurant = ? && id_ingrediente = ?', [rest, id_restaurant, idIngredient]);
+        }
       }
     }
+
+    res.status(200).json({message: 'ok'});
+    
   } catch (error) {
-    console.log(error)
+    res.status(500).json({message: error});
   }
 }
 
