@@ -88,7 +88,7 @@ const saveSales = async (req, res) => {
         }
       }
     }
-
+  }
     res.status(200).json({ message: ingredientsResponse });
   } catch (error) {
     res.status(500).json({ message: error });
