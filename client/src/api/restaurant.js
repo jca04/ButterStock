@@ -108,3 +108,19 @@ export const loadRestaurant = async(id) => {
     return { message: error };
   }
 }
+
+export const editRestaurant = async(data) => {
+  try {
+    const res = await axios.post("/restaurant/editRestaurant", {
+      headers: { Authorization: `Bearer ${tokenStr}` },
+      data: {
+        data: data
+      },
+    });
+
+  return {message: res.data.message}
+    
+  } catch (error) {
+    return { message: error };
+  }
+}

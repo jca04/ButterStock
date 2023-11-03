@@ -1,5 +1,8 @@
 import axios from "axios";
 import { setToken } from "../auth/auth";
+import { getToken } from "../auth/auth";
+
+const tokenStr = getToken();
 
 export const validateUser = async (data) => {
   try {
@@ -29,3 +32,19 @@ export const createUser = async (data) => {
 
   return res;
 };
+
+export const getuserPerRest = async (id) => {
+  try{
+    const response = await axios.post('/users/getUser',{
+      headers: { Authorization: `Bearer ${tokenStr}` },
+      data: {
+        id: id,
+      },
+    });
+
+    return response.data.message;
+  }catch(error){
+    console.log(error)
+    return {message: '!Ha ocurrido un error inesperado'};
+  }
+}
