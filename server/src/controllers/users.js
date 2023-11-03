@@ -95,7 +95,6 @@ const loginUser = async (req, res) => {
 const getUser = async (req, res) => {
   try {
     let { id } = req.user;
-    console.log(res.cookie);
     conn.query(
       "SELECT nombre, apellido, correo, admin, superAdmin, activo,  id_restaurant  FROM tbl_users WHERE id_users = ? && activo = 1",
       [id],
@@ -119,9 +118,22 @@ const getUser = async (req, res) => {
   }
 };
 
+
+const getUsersPerRestaurant = async (req, res) => {
+  try {
+    const { data } = req.body;
+    const id = data.id;
+    const getUser = await conn.query('SELECT nombre, apellido, correo FROM tbl_users WHERE id_restaurant = ?', [id]);
+    res.status(200).json({message: getUser});
+  } catch (error) {
+      res.status(500).json({message: error});
+  }
+}
+
 module.exports = {
   getUsers,
   registerUser,
   loginUser,
   getUser,
+  getUsersPerRestaurant
 };

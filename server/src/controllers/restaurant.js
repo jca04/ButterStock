@@ -117,10 +117,28 @@ const getRestaurantConfig = async(req, res) => {
     }
 }
 
+const editRestaurant = async (req, res) => {
+    try {
+        const { data } = req.body;
+        const infoSave = data.data;
+        const updateRestaurant = await conn.query('UPDATE tbl_restaurant SET nombre = ?, ciudad = ?, direccion = ? WHERE id_restaurant = ?',
+        [infoSave.nombre, infoSave.ciudad, infoSave.direccion, infoSave.id_restaurant]);
+
+        if (updateRestaurant.affectedRows > 0){
+            res.status(200).json({message: 'Se actualizo correctamente'});
+        }else{
+            res.status(500).json({message: '¡Ha ocurrido un error'});
+        }
+    } catch (error) {
+        res.status(500).json({message: '¡Ha ocurrido un error'});
+    }
+}
+
 module.exports = {
     create,
     getRestaurants,
     toggleRestaurant,
     getRestaurant,
-    getRestaurantConfig
+    getRestaurantConfig,
+    editRestaurant
 };
