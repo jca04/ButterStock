@@ -10,10 +10,10 @@ const getDataSalidas = async (req, res) => {
     ' FROM tbl_recetas WHERE id_restaurant = ? && activo = 1',
     [restaurant]);
 
-    const getIngredients = await conn.query('SELECT id_ingrediente, nombre_ingrediente, unidad_medida, kardex FROM tbl_ingredientes '+
+    const getIngredients = await conn.query('SELECT id_ingrediente, nombre_ingrediente, unidad_medida, kardex, cantidad_editable_ingrediente AS cantidad_max FROM tbl_ingredientes '+
     ' WHERE id_restaurant = ? && activo = 1',
     [restaurant]);
-
+    
     const dataResponse = getRecipes.concat(getIngredients)
 
     const dataOutput = dataResponse.map((row) => {

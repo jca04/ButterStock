@@ -10,7 +10,7 @@ import Select from "react-select";
 import { toast } from "react-toastify";
 import { getDataSelectsSalida } from "../../api/salidas";
 import { saveSales } from "../../api/sales";
-import { salidasPeps } from "../../api/kardex";
+import { salidasPeps, salidasPromPonderado } from "../../api/kardex";
 
 function Salidas({ id_restaurant }) {
   const [dataSelect, setDataSelect] = useState([]);
@@ -19,15 +19,16 @@ function Salidas({ id_restaurant }) {
   const [open, setOpen] = useState(false);
   const [sending, setSending] = useState(false);
   const [errosTable, setErrorsTable] = useState({});
+  const unitArr = ['kg','lb','oz','gr','mg','und'];
 
   useEffect(() => {
     const getData = async () => {
       try {
         const response = await getDataSelectsSalida(id_restaurant);
         if (Array.isArray(response.message)) {
+          console.log(response.message)
           setDataSelect(response.message);
-        } else {
-        }
+        } 
       } catch (error) {
         console.log(error);
       }
@@ -130,19 +131,34 @@ function Salidas({ id_restaurant }) {
     try {
       const response = await saveSales(dataSend);
 
-      if (Array.isArray(response)){
+      if (Array.isArray(response)){ 
         //Aqui estan los ingredientes listo,
         //cabe recalcar que la unidad de medida puede ser la que tiene en la receta 
         //por lo tanto toca hacer la conversion de unidades para guradarlo en peps
         for(const i in response) {
-          const res = await salidasPeps(
-            response[i].id_ingrediente,
-            response[i].cantidad,
-            response[i].unidad_medida,
-            id_restaurant
-          )
+          if (response[i].kardex == "PEPS" ){
+            const cantidadReceta = response[i].cantidad_receta ? response[i].cantidad_receta : 1;
+            const cantidad = parseFloat(response[i].cantidad) * cantidadReceta;
+            const res = await salidasPeps(
+              response[i].id_ingrediente,
+              cantidad,
+              response[i].unidad_medida,
+              id_restaurant
+            )
+            console.log(res);
+          } else {
+            const cantidadReceta = response[i].cantidad_receta ? response[i].cantidad_receta : 1;
+            const cantidad = parseFloat(response[i].cantidad) * cantidadReceta;
+            const resProm = await salidasPromPonderado(
+              response[i].id_ingrediente,
+              cantidad,
+              response[i].unidad_medida,
+              id_restaurant
+            )
+            console.log(resProm);
+          }
 
-          console.log(res);
+          
         }
         showToastMessage();
       }else{
@@ -201,21 +217,30 @@ function Salidas({ id_restaurant }) {
                             <input className="input-salida" onChange={(e) => handleSend(row.id_receta, e, 'cantidad')} placeholder="Cantidad" type="number" step={1} min={1} required/>
                           </td>
                         ) : (
-                          <td><input className="input-salida" onChange={(e) => handleSend(row.id_ingrediente, e, 'cantidad')} placeholder="Cantidad" type="number" step={'any'} min={1} required/></td>
+                          <td>
+                            <input className="input-salida" onChange={(e) => handleSend(row.id_ingrediente, e, 'cantidad')} placeholder={`Cantidad total: ${row.cantidad_max}`} type="number" step={'any'} min={1} max={row.cantidad_max}  required/>
+                          </td>
                         )}
                     
                         {row.id_receta != undefined ? (<td></td>) : (
                           <td>
                             <select onChange={(e) => handleSend(row.id_ingrediente,e, 'unidad')} className="input-salida" required>
                               <option value="">Ninguno</option>
-                              <option value="und">und</option>
-                              <option value="gr">gr</option>
-                              <option value="lb">lb</option>
-                              <option value="kg">kg</option>
-                              <option value="oz">oz</option>
-                              <option value="lt">lt</option>
-                              <option value="cm3">cm3</option>
-                              <option value="ml">ml</option>
+                              {unitArr.includes(row.unidad_medida) ? (
+                                <>
+                                  <option value="und">und</option>
+                                  <option value="gr">gr</option>
+                                  <option value="lb">lb</option>
+                                  <option value="kg">kg</option>
+                                  <option value="oz">oz</option>
+                                </>
+                              ): (
+                                <>
+                                  <option value="lt">lt</option>
+                                  <option value="cm3">cm3</option>
+                                  <option value="ml">ml</option>
+                                </>
+                              )}
                             </select>
                           </td>
                           )}

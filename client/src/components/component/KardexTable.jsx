@@ -1,31 +1,28 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { getKardex } from "../api/kardex";
-import Navbar from "./reuseComponents/navbar";
-import KardexTable from "./component/KardexTable";
+import React from "react";
+import "../../public/css/kardexStyle.css";
 
-export default function Kardex() {
-  const { id_ingrediente, id } = useParams();
-  const [kardex, setKardex] = useState([]);
-  const [ingredient, setIngredient] = useState("");
+export default function KardexTable({ kardex, ingredient }) {
+  const fechaLocal = (fecha) => {
+    const fechaLocal = new Date(fecha);
+    return fechaLocal.toLocaleString();
+  };
 
-  useEffect(() => {
-    document.title = "Kardex";
-    const res = async () => {
-      const response = await getKardex(id_ingrediente);
-      setKardex(response.data.kardex);
-      setIngredient(response.data.ingrediente);
-    };
-    res();
-  }, []);
-
+  const rows = kardex.map((item, index) => (
+    <tr key={index}>
+      <td>{fechaLocal(item.time_stamp)}</td>
+      <td>{item.entrada_cantidad}</td>
+      <td>{item.entrada_valorUnitario}</td>
+      <td>{item.entrada_valorTotal}</td>
+      <td>{item.salida_cantidad}</td>
+      <td>{item.salida_valorUnitario}</td>
+      <td>{item.salida_valorTotal}</td>
+      <td>{item.saldo_cantidad}</td>
+      <td>{item.saldo_valorUnitario}</td>
+      <td>{item.saldo_valorTotal}</td>
+    </tr>
+  ));
   return (
     <>
-
-      <Navbar restaurant = {id}/>
-      <KardexTable kardex={kardex} ingredient={ingredient} />
-
-      {/* <Navbar restaurant = {id}/>
       <section className="kardex_table">
         <div className="name_ingredient">{ingredient}</div>
         <div className="container_table">
@@ -53,8 +50,7 @@ export default function Kardex() {
             <tbody className="peps_tbody">{rows}</tbody>
           </table>
         </div>
-      </section> */}
-
+      </section>
     </>
   );
 }

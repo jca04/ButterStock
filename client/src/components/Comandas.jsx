@@ -3,10 +3,9 @@ import "../public/css/comandasStyle.css";
 import { getIngredients } from "../api/ingredients";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
-import { entradasPeps, salidasPeps } from "../api/kardex";
+import { entradasPeps, entradasPromPonderado, salidasPeps } from "../api/kardex";
 import { toast } from "react-toastify";
 import {AiOutlineCloseCircle} from 'react-icons/ai';
-import {RxEnter} from 'react-icons/rx';
 import Salidas from "./component/salidas"; 
 
 export default function Comandas({ closeModal, id_restaurant }) {
@@ -87,13 +86,15 @@ export default function Comandas({ closeModal, id_restaurant }) {
     return selectedIngredients.some((selectedIngredient) => entrada.id_ingrediente === selectedIngredient.value)
   })
 
-  const handleSubmitEntradas = async () => {
+  const handleSubmitEntradas = async (e) => {
+    e.preventDefault();
 
     let entradaRegistrada = false
 
     for (let i = 0; i < filterIngredients.length; i++) {
       const cantidad = parseFloat(filterIngredients[i].cantidad);
       const costo_unitario = parseFloat(filterIngredients[i].costo_unitario);
+      console.log(filterIngredients[i].unidad_medida);
 
       if (!isNaN(cantidad) && !isNaN(costo_unitario)) {
         if (filterIngredients[i].kardex === "PEPS") {
@@ -107,6 +108,18 @@ export default function Comandas({ closeModal, id_restaurant }) {
           if (response.data.message === "Entrada registrada") {
             entradaRegistrada = true
           }
+        } else if(filterIngredients[i].kardex === "Promedio ponderado") {
+          const response = await entradasPromPonderado(
+            filterIngredients[i].id_ingrediente,
+            filterIngredients[i].cantidad,
+            filterIngredients[i].costo_unitario,
+            filterIngredients[i].unidad_medida,
+            id_restaurant
+          );
+          console.log(response);
+          if (response.data.message === "Entrada registrada") {
+            entradaRegistrada = true
+          }
         }
       }
     }
@@ -117,41 +130,7 @@ export default function Comandas({ closeModal, id_restaurant }) {
     }
   }
 
-
-  /////////////////////////////// ----------------------------------------- ///////////////////////////////
-
-  //Salidas
-
-  const handleSubmitSalidas = async () => {
-    let salidaRegistrada = false
-
-    for (let i = 0; i < filterIngredients.length; i++) {
-      const cantidad = parseFloat(filterIngredients[i].cantidad);
-
-      if (!isNaN(cantidad)) {
-        if (filterIngredients[i].kardex === "PEPS") {
-          const response = await salidasPeps(
-            filterIngredients[i].id_ingrediente,
-            filterIngredients[i].cantidad,
-            filterIngredients[i].unidad_medida,
-            id_restaurant
-          );
-          if (response.data.message === "Salida registrada") {
-            salidaRegistrada = true
-          }
-        }
-      }
-    }
-
-    if (salidaRegistrada) {
-      toastSalidaIngresada();
-      setSelectedIngredients([]);
-    }
-  }
-
-
   const options = [];
-
   const animatedComponents = makeAnimated();
 
   ingredients.map((ingredient) => {
@@ -193,62 +172,62 @@ export default function Comandas({ closeModal, id_restaurant }) {
               </div>
               <div className="table_container">
                 {
-                  selectedIngredients.length > 0 ?
+                selectedIngredients.length > 0 ?
+                <form onSubmit={(e) => handleSubmitEntradas(e)} className="table-entradas-form">
                   <table>
-                  <thead>
-                    <tr>
-                      <th>Ingrediente</th>
-                      <th>Cantidad</th>
-                      <th>Costo Unitario</th>
-                      <th>Unidad de medida</th>
-                    </tr>
-                  </thead>
-                  <tbody>
+                    <thead>
+                      <tr>
+                        <th>Ingrediente</th>
+                        <th>Cantidad</th>
+                        <th>Costo Unitario</th>
+                        <th>Unidad de medida</th>
+                      </tr>
+                    </thead>
+                    <tbody>
                     {
                       selectedIngredients.map((ingredient, index) => {
                         return (
                           <tr key={index}>
                             <td>{ingredient.label}</td>
                             <td>
-                              <input type="number" min= "1" 
+                              <input type="number" min= "1" className="input-entrada" placeholder="Ingrese la cantidad" required
                                 onChange={(e) => {
                                   handleEntradas(ingredient.value, "cantidad", e.target.value, ingredient.kardex)
                                 }}
                               />
                             </td>
-                            <td>
-                              <input type="number" min="1" 
+                            <td> 
+                              <input type="number" min="1" className="input-entrada" placeholder="Ingrese el costo unitario" required
                                 onChange={(e) => {
                                   handleEntradas(ingredient.value, "costo_unitario", e.target.value, ingredient.kardex)
                                 }}
                               />
                             </td>
                             <td>
-                              <select onChange={(e) => handleEntradas(ingredient.value, "unidad_medida", e.target.value, ingredient.kardex)}>
-                                <option value="" disabled>Unidad</option>
+                              <select onChange={(e) => handleEntradas(ingredient.value, "unidad_medida", e.target.value, ingredient.kardex)} required>
+                                <option value="" >Ninguno</option>
                                 <option value="und">und</option>
                                 <option value="kg">kg</option>
                                 <option value="lb">lb</option>
                                 <option value="gr">gr</option>
                                 <option value="oz">oz</option>
+                                <option value="lt">lt</option>
+                                <option value="cm3">cm3</option>
+                                <option value="ml">ml</option>
                               </select>
                             </td>
                           </tr>
                         )
                       })
                     }
-                  </tbody>
-                </table>
+                    </tbody>
+                  </table>
+                  <button type="submit" className="btn-ingresar-entrada">Ingresar Entrada</button>
+                </form>
                 :
                 null
                 }
               </div>
-
-              {
-                selectedIngredients.length > 0 ?
-                <button className="btn-ingresar-entrada" onClick={handleSubmitEntradas}>Ingresar Entrada</button>
-                : null
-              }
             </div>
             :
             selectedOption === "salidas" ?
