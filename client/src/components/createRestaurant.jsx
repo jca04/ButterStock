@@ -29,6 +29,12 @@ function FormRestaurant() {
     }) 
   }
 
+  const toasError = () => {
+    toast.error('Ha ocurrido un error inesperado', {
+      position: toast.POSITION.TOP_RIGHT,
+    })
+  }
+
   const validateTxt = (value) => {
     let error = "";
     if (value.length == 0) {
@@ -115,12 +121,12 @@ function FormRestaurant() {
                                     navigate("/login");
                                 },1000);
                             }else{
-                                toastSuccesApi('Ha ocurrido un error inesperado');
+                                toasError();
                             }
                         }
                       }catch(error){
                         console.log(error)
-                        toastSuccesApi('Ha ocurrido un error inesperado');
+                        toasError();
                       }
 
                     }}

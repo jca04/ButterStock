@@ -54,13 +54,13 @@ function ShowRespie() {
 
   const showToastMessage = () => {
     toast.success("Guardado con exito", {
-      position: toast.POSITION.TOP_CENTER,
+      position: toast.POSITION.TOP_RIGHT,
     });
   };
 
   const showToastMessageErr = () => {
     toast.error("Ha ocurrido un error", {
-      position: toast.POSITION.TOP_CENTER,
+      position: toast.POSITION.TOP_RIGHT,
     });
   };
 
@@ -272,12 +272,6 @@ function ShowRespie() {
     }
   };
 
-  const activeDesactieToggle = () => {
-    let element = document.getElementById('switchResipe');
-    element.classList.remove('circle-respie-desactivate');
-    element.classList.remove('circle-respie-active');
-  }
-
   //validar los ingredientes
   const validateIngredient = (row, index, type, e) => {
 
@@ -328,8 +322,7 @@ function ShowRespie() {
 
     setErrosIngredients(errors);
     setInfoIngredients(infoNew);
-
-    onchangeForm()
+    onchangeForm();
   }
 
   const updateFiles = (incommingFiles) => {
@@ -382,9 +375,7 @@ function ShowRespie() {
 
     const margenContribucion = infoReceta.margenContribucion != undefined ? infoReceta.margenContribucion : 0.3;
     const valueMargenContribucion = valueMargenError + (valueMargenError * margenContribucion);
-
     const costoPotencialVenta = (valueMargenError + valueMargenContribucion)
-
     const iva = infoReceta.iva != undefined ? infoReceta.iva : 0.19;
     const costoVenta = costoPotencialVenta + (costoPotencialVenta * iva);
 
@@ -678,17 +669,12 @@ function ShowRespie() {
 
                       let imagen = activeModal.imagen != undefined ? activeModal.imagen : '';
                       if (valueImage != undefined){
-                        if (valueImage.file != undefined){
-                          imagen = await fileUpload(valueImage.file);
-                       }
+                        if (valueImage.file != undefined) imagen = await fileUpload(valueImage.file);
                       }
 
-
                       try{
-                        if (JSON.stringify(tipoPlato) ==  '{}'){
-                          tipoPlato.value = activeModal.tipo_receta;
-                        }
-
+                        if (JSON.stringify(tipoPlato) ==  '{}') tipoPlato.value = activeModal.tipo_receta;
+                        
                         let dataTable = [];
                         let ingredientEditColumn = [];
 
@@ -705,9 +691,7 @@ function ShowRespie() {
 
                         let infoRecetaSum = infoReceta;
                         if (infoRecetaSum != undefined){
-                          if (JSON.stringify(json) != '{}'){
-                            infoRecetaSum.costo_venta_final = json.costo_venta;
-                          }
+                          if (JSON.stringify(json) != '{}') infoRecetaSum.costo_venta_final = json.costo_venta;
                         }
 
                         values.ingredientes = dataTable;
@@ -722,16 +706,14 @@ function ShowRespie() {
                         let idResipeSend = values.id_receta;
                         const response = await saveEditRespie(values);
 
-
                         if (response){
                             //Editar los valores de la receta
                             if (ingredientEditColumn.length > 0){
                               const responseIngredients = await editIngredientsResipe(id, ingredientEditColumn);
 
                               try{
-                                if (responseIngredients){
-                                  console.log('edit succesfully');
-                                }else console.log('error');
+                                if (responseIngredients) console.log('edit succesfully')
+                                else console.log('error');
                               }catch(err){
                                 console.log(err)
                               }
@@ -793,7 +775,6 @@ function ShowRespie() {
                           showToastMessage();
                           setModal(null);
                           setInSelect([]);
-                          activeDesactieToggle();
                           setSending(false);
                         }, 500);
 
@@ -818,7 +799,7 @@ function ShowRespie() {
                         <div className="section-form-respie">
                           <div className="input-rows-respie">
                           <label className="label-form-respie" htmlFor="nombre_receta">Nombre de la {isSubRespie ? 'sub receta' : 'receta'}</label>
-                            <Field type="text" name="nombre_receta" id="nombre_receta" placeholder="Digite el nombre de la receta" validate={validateTxt}
+                            <Field type="text" name="nombre_receta" id="nombre_receta" placeholder="Digite el nombre de la receta" validate={validateTxt} required
                               style={
                                 errors.nombre_receta &&
                                 touched.nombre_receta && {
@@ -829,7 +810,7 @@ function ShowRespie() {
                           </div>
                           <div className="input-rows-respie">
                             <label className="label-form-respie" htmlFor="cantidad_plato">Cantidad del plato</label>
-                            <Field type="number" name="cantidad_plato" id="cantidad_plato" step="1"  min="1" placeholder="Digite la cantidad del plato" onInput={(e) => {
+                            <Field type="number" name="cantidad_plato" id="cantidad_plato" step="1"  min="1" placeholder="Digite la cantidad del plato" required onInput={(e) => {
                               if (e.target.value != ''){
                                 setDivide(parseFloat(e.target.value))
                               }else{
@@ -841,7 +822,7 @@ function ShowRespie() {
                         </div>
                         <div className="section-form-colum">
                           <label className="label-form-respie" htmlFor="descripcion">Descripcion de la {isSubRespie ? 'sub receta' : 'receta'}</label>
-                          <Field component="textarea" rows="2" validate={validateTxtarea} placeholder={`Descripcion de la ${isSubRespie ? 'sub receta' : 'receta'}`} className="textarea-respie" type="textarea" id="descripcion" name="descripcion"
+                          <Field component="textarea" rows="2" validate={validateTxtarea} placeholder={`Descripcion de la ${isSubRespie ? 'sub receta' : 'receta'}`} required className="textarea-respie" type="textarea" id="descripcion" name="descripcion"
                             style={
                                 errors.descripcion &&
                                 touched.descripcion && {
@@ -866,7 +847,7 @@ function ShowRespie() {
                           </div>
                           <div className="input-rows-respie">
                             <label className="label-form-respie" htmlFor="margenContribucion">Margen de contribucion %</label>
-                            <Field type="number" name="margenContribucion" id="margenContribucion"  validate={validateNumber}  min={'0'} placeholder="Digite el margen de contribucion" onInput={(e) => setInfoRespie('margenContribucion', e.target.value)}
+                            <Field type="number" name="margenContribucion" id="margenContribucion"  validate={validateNumber} min={'0'} placeholder="Digite el margen de contribucion" onInput={(e) => setInfoRespie('margenContribucion', e.target.value)}
                               style={
                                 errors.margenContribucion &&
                                 touched.margenContribucion && {
