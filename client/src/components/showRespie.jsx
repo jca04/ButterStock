@@ -358,13 +358,11 @@ function ShowRespie() {
         const idIngredientArr = arrayReal[i].value;
         if (ingredientData[idIngredientArr] != undefined){
           ingredientData[idIngredientArr]['exist'] = true;
-
           const cost_unit = arrayReal[i].costo_unitario;
           const quantity_in_input = ingredientData[idIngredientArr]['input'];
           const unityOriginal = ingredientData[idIngredientArr]['original'];
           const unityToConvert = ingredientData[idIngredientArr]['select'] != undefined ? ingredientData[idIngredientArr]['select'] : unityOriginal;
           const convertionI = convertion(unityToConvert, quantity_in_input, unityOriginal);
-
           sumatoriaIngredients = sumatoriaIngredients + (convertionI *  cost_unit);
         }
       }
