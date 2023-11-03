@@ -323,7 +323,6 @@ function ShowRespie() {
     setErrosIngredients(errors);
     setInfoIngredients(infoNew);
     onchangeForm();
-
   }
 
   const updateFiles = (incommingFiles) => {
@@ -376,9 +375,7 @@ function ShowRespie() {
 
     const margenContribucion = infoReceta.margenContribucion != undefined ? infoReceta.margenContribucion : 0.3;
     const valueMargenContribucion = valueMargenError + (valueMargenError * margenContribucion);
-
     const costoPotencialVenta = (valueMargenError + valueMargenContribucion)
-
     const iva = infoReceta.iva != undefined ? infoReceta.iva : 0.19;
     const costoVenta = costoPotencialVenta + (costoPotencialVenta * iva);
 
