@@ -41,10 +41,8 @@ function ShowRespie() {
   const [valueImage, setImage] = useState(undefined);
   const [isSending, setSending] = useState(false);
   const [infoReceta , setInfoReceta] = useState({});
-  const [ingredientError, setIngredientError] = useState(false);
   //new
   const [infoIngredients, setInfoIngredients] = useState({});
-  const [errorsIngredients, setErrosIngredients] = useState({});
 
   const { id } = useParams();
   const dataTipoPlato = [{"label": "Plato", "value": "Plato"},{"label": "Bebida", "value": "Bebida"},{"label": "Postre", "value": "Postre"},{"label": "Otro", "value": "Otro"}];
@@ -122,17 +120,6 @@ function ShowRespie() {
     }
     return error;
   }
-
-  const validateTxtarea = (values) => {
-    let error = "";
-    if (values.length == 0 ){
-      error = "*El campo debe ser llenado";
-    }else if (values.length > 499){
-      error = "*El campo debe tener minimo 400 caracteres";
-    }
-    return error;
-  }
-
 
   const editIngredients = (row) => {
     //llenar los valores de la infoReceta
@@ -240,7 +227,7 @@ function ShowRespie() {
           //recetas
           if (row.sub_receta == 0 && contadorReceta > 0){
             return (
-             <div className={`box-respie ${contador > 3 ? "" : "" }`} key={row.id_receta} onClick={() => {setCostSell(row.sub_recetas); setErrosIngredients({}); setInfoIngredients({}); editIngredients(row); editSubRecetas(row), setIsSubRespie(isSubReceta), setRespiSelet(row.sub_recetas); setImagenShow(row); setDivide(row.cantidad_plato); setModal(row);}}>
+             <div className={`box-respie ${contador > 3 ? "" : "" }`} key={row.id_receta} onClick={() => {setCostSell(row.sub_recetas); setInfoIngredients({}); editIngredients(row); editSubRecetas(row), setIsSubRespie(isSubReceta), setRespiSelet(row.sub_recetas); setImagenShow(row); setDivide(row.cantidad_plato); setModal(row);}}>
                <div className="title-box">
                  {row.nombre_receta ? row.nombre_receta : "N/A"}
                </div>
@@ -255,7 +242,7 @@ function ShowRespie() {
           //sub-recetas
           if (row.sub_receta == 1 && contadorSubReceta > 0){
             return (
-             <div className={`box-respie ${contador > 3 ? "" : "" }`} key={row.id_receta} onClick={() => {setCostSell(row.sub_recetas); setErrosIngredients({}); setInfoIngredients({});  setModal(row); editIngredients(row); editSubRecetas(row), setIsSubRespie(isSubReceta), setRespiSelet(row.sub_recetas); setImagenShow(row); setDivide(row.cantidad_plato); setModal(row);}}>
+             <div className={`box-respie ${contador > 3 ? "" : "" }`} key={row.id_receta} onClick={() => {setCostSell(row.sub_recetas);setInfoIngredients({});  setModal(row); editIngredients(row); editSubRecetas(row), setIsSubRespie(isSubReceta), setRespiSelet(row.sub_recetas); setImagenShow(row); setDivide(row.cantidad_plato); setModal(row);}}>
                <div className="title-box">
                  {row.nombre_receta ? row.nombre_receta : "N/A"}
                </div>
@@ -299,28 +286,6 @@ function ShowRespie() {
     infoNew[idIngredient]['original'] = unityOriginal;
     infoNew[idIngredient]['quantity_in'] = quantityBD;
 
-
-    const valueInput = infoNew[idIngredient]['input'] == '' ? 0 : infoNew[idIngredient]['input'];
-    const valueSelect = infoNew[idIngredient]['select'];
-    const valueOriginal = infoNew[idIngredient]['original'];
-    const quantity_in_bd = infoNew[idIngredient]['quantity_in'];
-    const convertionValues = convertion(valueSelect, valueInput, valueOriginal);
-
-    //validar si lo ingresado excede el stock
-    const errors = errorsIngredients;
-    if (convertionValues > quantity_in_bd){
-      errors[idIngredient] = {
-        value_max : quantity_in_bd,
-        unity: valueOriginal,
-        error : '¡Falta stock!'
-      }
-    }else{
-      if (errors[idIngredient] != undefined){
-        delete errors[idIngredient];
-      }
-    }
-
-    setErrosIngredients(errors);
     setInfoIngredients(infoNew);
     onchangeForm();
   }
@@ -575,16 +540,16 @@ function ShowRespie() {
           </section>
           <div className="backgroun-resipe">
           <section className="search-section">
-            <button onClick={() => {setModal({}); setErrosIngredients({}); setInfoIngredients({}); setInSelect([]); setEditIngre([]); setRespiSelet([]); setImage(undefined); setInfoReceta({}); }}>
+            <button onClick={() => {setModal({});  setInfoIngredients({}); setInSelect([]); setEditIngre([]); setRespiSelet([]); setImage(undefined); setInfoReceta({}); }}>
             <BiAddToQueue /> Agregar nueva receta
             </button>
-            <div className="search-respie">
+          </section>
+          <div className="search-respie">
               <div>
                   <AiOutlineSearch  className="icon-search-recipe"/>
                 <input type="text" className="search" placeholder="Buscar" onInput={(e) => searchRespie(e.target.value)}/>
               </div>
             </div>
-          </section>
           <section className="respie-father">
           {/* Recetas  */}
           <section className="respie">
@@ -661,8 +626,6 @@ function ShowRespie() {
 
 
                     onSubmit={async (values) => {
-                      if (JSON.stringify(errorsIngredients) != '{}') return;
-
                       setSending(true);
 
                       let imagen = activeModal.imagen != undefined ? activeModal.imagen : '';
@@ -672,6 +635,7 @@ function ShowRespie() {
 
                       try{
                         if (JSON.stringify(tipoPlato) ==  '{}') tipoPlato.value = activeModal.tipo_receta;
+                        if (tipoPlato.value == undefined) tipoPlato.value = 'otro';
                         
                         let dataTable = [];
                         let ingredientEditColumn = [];
@@ -820,7 +784,8 @@ function ShowRespie() {
                         </div>
                         <div className="section-form-colum">
                           <label className="label-form-respie" htmlFor="descripcion">Descripcion de la {isSubRespie ? 'sub receta' : 'receta'}</label>
-                          <Field component="textarea" rows="2" validate={validateTxtarea} placeholder={`Descripcion de la ${isSubRespie ? 'sub receta' : 'receta'}`} required className="textarea-respie" type="textarea" id="descripcion" name="descripcion"
+                          <Field component="textarea" rows="2"  placeholder={`Descripcion de la ${isSubRespie ? 'sub receta' : 'receta'}`} 
+                           className="textarea-respie" type="textarea" id="descripcion" name="descripcion"
                             style={
                                 errors.descripcion &&
                                 touched.descripcion && {
@@ -877,14 +842,13 @@ function ShowRespie() {
                         <div className="section-form-colum">
                           <label className="label-form-respie" htmlFor="ingredient">Ingredientes</label>
                           {/* Select multiple libreria react select */}
-                            <Select onChange={(e) => {setInSelect(e); setIngredientError(false); onchangeForm(e)}}
+                            <Select onChange={(e) => {setInSelect(e); onchangeForm(e)}}
                               closeMenuOnSelect={false}
                               defaultValue={ingredientInEdit.length > 0 ? ingredientInEdit : null}
                               options={ingredient}
                               placeholder="Seleccione los ingredientes para crear la receta"
                               isMulti
                           />
-                           <div className="error-respi">{ingredientError ? (<p className="error">{'*Debe seleccionar al menos un ingrediente'}</p>) : null}</div>
                           {ingredient.length == 0 ? (<div className="not-ingredients-respie"><p><FiAlertTriangle/> No hay ingredientes disponibles, <Link to={`/ingredients/all/${id}`} target="_blank">Ir a ingredientes</Link></p></div>): (null)}
                             {
                               ingredientSelect.length > 0 ?
@@ -895,7 +859,6 @@ function ShowRespie() {
                                       <th>Nombre</th>
                                       <th>Cantidad por ingrediente</th>
                                       <th>Unidad de medida</th>
-                                      <th>Cantidad disponible</th>
                                     </tr>
                                   </thead>
                                   <tbody>
@@ -904,18 +867,9 @@ function ShowRespie() {
                                           <tr key={row.label} >
                                             <td> {row.label} </td>
                                             <td>
-                                              <input className="input-cantidad-resipe"  step="1" min="0" required  type="number" placeholder="cantidad ingrediente"
-                                                defaultValue={row.cantidad_total_ingrediente1 != undefined ? row.cantidad_total_ingrediente1 : 0}
-                                                style={errorsIngredients[row.value] != undefined ? {border: "1px solid red"} : null}
+                                              <input className="input-cantidad-resipe"  step="any" min="0" required  type="number" placeholder="cantidad ingrediente"
+                                                defaultValue={row.cantidad_total_ingrediente1 != undefined ? row.cantidad_total_ingrediente1 : ''}
                                                 onChange={(e) => {validateIngredient(row, index, 'input', e)}} />
-                                              {errorsIngredients[row.value] != undefined ? (
-                                                <p className="error-ingredients">
-                                                  Agotado
-                                                  {` ${errorsIngredients[row.value]['value_max']}`}
-                                                  {errorsIngredients[row.value]['unity']}
-                                                  </p>
-                                                ) : null
-                                              }
                                             </td>
                                             <td>
                                               <select className="select-respie-gra"  required id={`select-${index}`} defaultValue={row.unidad_medida != undefined ? row.unidad_medida : ""} onChange={(e) => {validateIngredient(row, index, 'select', e)}}>
@@ -937,10 +891,6 @@ function ShowRespie() {
                                               )}
                                               </select>
                                              </td>
-                                             <td>
-                                              {row.cantidad_editable == undefined ? row.cantidad_editable_ingrediente :row.cantidad_editable }
-                                              {row.unidad_medida_original == undefined ? row.unidad_medida : row.unidad_medida_original}
-                                             </td>
                                           </tr>
                                         )
                                       })}
@@ -951,7 +901,7 @@ function ShowRespie() {
                             }
                         </div>
                         {!isSubRespie ? (
-                        <div className="section-form-colum">
+                        <div className="section-form-colum sub-recipes">
                           <label className="label-form-respie" htmlFor="Sub-receta">Sub-recetas</label>
                           {/* Select para las sub-recetas */}
                           <Select id="Sub-receta" onChange={(e) => {setRespiSelet(e);  }}
@@ -988,17 +938,18 @@ function ShowRespie() {
                             }
                         </div>
                         ) : (null)}
-                         <div className="section-form-colum">
-                          <label className="label-form-respie" htmlFor="tipo_plato">Tipo de Receta</label>
-                          {/* Select normal para tipo de plato */}
-                          <Select id="tipo_plato" onChange={(e) => {setTipoPlato(e);}}
+                        {!isSubRespie ? (
+                          <div className="section-form-colum type-pla">
+                            <label className="label-form-respie" htmlFor="tipo_plato">Tipo de Receta</label>
+                            <Select id="tipo_plato" onChange={(e) => {setTipoPlato(e);}}
                               closeMenuOnSelect={true}
-                              defaultValue={activeModal.tipo_receta ? [{"label": activeModal.tipo_receta, "value": activeModal.tipo_receta}] : ""}
+                              defaultValue={activeModal.tipo_receta ? [{"label": activeModal.tipo_receta, "value": activeModal.tipo_receta}] : [{"label": 'Plato', "value": 'Plato'}]}
                               options={dataTipoPlato}
                               placeholder="Seleccione el tipo de plato"
-                          />
+                            />
                            <div className="error-respi">{errorselet ? (<p className="error">{errorselet}</p>)  : null}</div>
                         </div>
+                        ): null}
                         <div className="section-form-colum-btn">
                             <button type="submit" disabled={isSubmitting}>{isSubmitting ? (
                               <AiOutlineLoading3Quarters className="load-respie-send"/>
@@ -1022,50 +973,54 @@ function ShowRespie() {
                   </tr>
                 </thead>
                 <tbody>
+                  {ingredientSelect.length > 0 ? (
+                  <>
+                    <tr>
+                      <td className="td-info-resipe">Subtotal</td>
+                    </tr>
+                    <tr>
+                      <td className="td-info-data-resipe">{JSON.stringify(infoReceta) != '{}' ? (<p>${infoReceta.subTotal}</p>) : ('N/A')}</td>
+                    </tr>
+                    <tr>
+                      <td className="td-info-resipe">Margen de error</td>
+                    </tr>
+                    <tr>
+                      <td className="td-info-data-resipe">{JSON.stringify(infoReceta) != '{}' ? (<p>{((parseFloat(infoReceta.margen_error*100)).toFixed(0))}%</p>) : ('N/A')}</td>
+                    </tr>
+                    <tr>
+                      <td className="td-info-resipe">SubTotal + margen de error</td>
+                    </tr>
+                    <tr>
+                      <td className="td-info-data-resipe">{JSON.stringify(infoReceta) != '{}' ? (<p>${infoReceta.sub_total_M_E}</p>) : ('N/A')}</td>
+                    </tr>
+                    <tr>
+                      <td className="td-info-resipe">Margen contribucion</td>
+                    </tr>
+                    <tr>
+                      <td className="td-info-data-resipe">{JSON.stringify(infoReceta) != '{}' ? (<p>{(parseFloat(infoReceta.margenContribucion*100)).toFixed(0)}%</p>) : ('N/A')}</td>
+                    </tr>
+                    <tr>
+                      <td className="td-info-resipe">subTotal margen contribucion</td>
+                    </tr>
+                    <tr>
+                      <td className="td-info-data-resipe">{JSON.stringify(infoReceta) != '{}' ? (<p>${infoReceta.subTotal_margen_contribucion}</p>) : ('N/A')}</td>
+                    </tr>
+                    <tr>
+                      <td className="td-info-resipe">Costo potencial venta</td>
+                    </tr>
+                    <tr>
+                      <td className="td-info-data-resipe">{JSON.stringify(infoReceta) != '{}' ? (<p>${(parseFloat(infoReceta.costo_potencial_venta) / divide).toFixed(2)}</p>) : ('N/A')}</td>
+                    </tr>
+                    <tr>
+                      <td className="td-info-resipe">Iva</td>
+                    </tr>
+                    <tr>
+                      <td className="td-info-data-resipe">{JSON.stringify(infoReceta) != '{}' ? (<p>{(infoReceta.iva*100).toFixed(0)}%</p>) : ('N/A')}</td>
+                    </tr>
+                  </>
+                  ): null}
                   <tr>
-                    <td className="td-info-resipe">Subtotal</td>
-                  </tr>
-                  <tr>
-                    <td className="td-info-data-resipe">{JSON.stringify(infoReceta) != '{}' ? (<p>${infoReceta.subTotal}</p>) : ('N/A')}</td>
-                  </tr>
-                  <tr>
-                    <td className="td-info-resipe">Margen de error</td>
-                  </tr>
-                  <tr>
-                    <td className="td-info-data-resipe">{JSON.stringify(infoReceta) != '{}' ? (<p>{((parseFloat(infoReceta.margen_error*100)).toFixed(0))}%</p>) : ('N/A')}</td>
-                  </tr>
-                  <tr>
-                    <td className="td-info-resipe">SubTotal + margen de error</td>
-                  </tr>
-                  <tr>
-                    <td className="td-info-data-resipe">{JSON.stringify(infoReceta) != '{}' ? (<p>${infoReceta.sub_total_M_E}</p>) : ('N/A')}</td>
-                  </tr>
-                  <tr>
-                    <td className="td-info-resipe">Margen contribucion</td>
-                  </tr>
-                  <tr>
-                    <td className="td-info-data-resipe">{JSON.stringify(infoReceta) != '{}' ? (<p>{(parseFloat(infoReceta.margenContribucion*100)).toFixed(0)}%</p>) : ('N/A')}</td>
-                  </tr>
-                  <tr>
-                    <td className="td-info-resipe">subTotal margen contribucion</td>
-                  </tr>
-                  <tr>
-                    <td className="td-info-data-resipe">{JSON.stringify(infoReceta) != '{}' ? (<p>${infoReceta.subTotal_margen_contribucion}</p>) : ('N/A')}</td>
-                  </tr>
-                  <tr>
-                    <td className="td-info-resipe">Costo potencial venta</td>
-                  </tr>
-                  <tr>
-                    <td className="td-info-data-resipe">{JSON.stringify(infoReceta) != '{}' ? (<p>${(parseFloat(infoReceta.costo_potencial_venta) / divide).toFixed(2)}</p>) : ('N/A')}</td>
-                  </tr>
-                  <tr>
-                    <td className="td-info-resipe">Iva</td>
-                  </tr>
-                  <tr>
-                    <td className="td-info-data-resipe">{JSON.stringify(infoReceta) != '{}' ? (<p>{(infoReceta.iva*100).toFixed(0)}%</p>) : ('N/A')}</td>
-                  </tr>
-                  <tr>
-                    <td className="td-info-resipe">Costo venta</td>
+                    <td className="td-info-resipe">Precio venta {dataRespiSel.length > 0 ? '+ sub-recetas' : null}</td>
                   </tr>
                   <tr>
                    <td className="td-info-data-resipe">

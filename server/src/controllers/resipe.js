@@ -145,10 +145,12 @@ const createEditResipe = async (req, res) => {
         const deleteIngredients = await conn.query('DELETE FROM tbl_ingredientes_receta WHERE id_receta = ?',[id_receta]);
         if (deleteIngredients.protocol41){
           //insertar los nuevos ingredients
-          const insertIngredients = await conn.query('INSERT INTO '+
-          ' tbl_ingredientes_receta(id_ingrediente_receta, id_ingrediente, cantidad_por_receta, unidad_medida_r, id_receta, activo) '+ 
-          ' VALUES ?',
-          [mapIngredients]);
+          if (mapIngredients.length > 0){
+            const insertIngredients = await conn.query('INSERT INTO '+
+            ' tbl_ingredientes_receta(id_ingrediente_receta, id_ingrediente, cantidad_por_receta, unidad_medida_r, id_receta, activo) '+ 
+            ' VALUES ?',
+           [mapIngredients]);
+          }
         }
         
         if (JSON.stringify(infoReceta) != '{}'){
