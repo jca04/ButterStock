@@ -54,8 +54,8 @@
   display: flex;
   background-color: #ffea96;
   align-items: center;
+  justify-content: center;
   box-shadow: 1px 1px 5px #86761e;
-  margin-right: 100px;
 }
 
 .create-respie > button > svg {
@@ -110,23 +110,27 @@ body{
   display: flex;
   width: 88%;
   margin: auto;
-  justify-content: end;
+  justify-content: center;
   align-items: center;
   margin-top: 20px;
 }
 
 .search-respie {
+  display: flex;
+  justify-content: end;
   background-color: white;
-  border-radius: 5px;
-  width: 35%;
-  border: 1px solid silver;
+  width: 95%;
 }
+
 .search-respie > div,
 .sub-search-respie > div {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding-left: 10px;
+  border: 1px solid silver;
+  border-radius: 5px;
+  width: 25%;
 }
 
 .search {
@@ -156,7 +160,7 @@ body{
   max-height: 28vh;
   height: fit-content;
   min-height: 20vh;
-  border-radius: 5px;
+  border-radius: 5px; 
   box-shadow: 1px 1px 5px #848484;
   flex-basis: 30%;
   margin-right: 11px;
@@ -744,39 +748,12 @@ body::-webkit-scrollbar-thumb {
   background-color: #ffea96 !important;
 }
 
-@media screen and (max-width:700px) {
-  .search-section{
-    flex-direction: column;
-  }
-
-  .search-section > button{
-    margin-right: 0px;
-    margin-bottom: 15px;
-    width: 50%;
-    justify-content: center;
-  }
-
-  .search-respie{
-    width: 50%;
-  }
-
-  .modal-data-respie{
-    overflow-y: scroll;
-  }
+.files-ui-file-mosaic-file-name{
+  display: none !important;
 }
 
-@media screen and (max-width:450px) {
-
-  .search-section > button{
-    margin-right: 0px;
-    margin-bottom: 15px;
-    width: 90%;
-    justify-content: center;
-  }
-
-  .search-respie{
-    width: 90%;
-  }
+.sub-recipes,  .type-pla{
+  margin-top: 10px;
 }
 
 @media screen and (max-width:1030px) {
@@ -791,7 +768,49 @@ body::-webkit-scrollbar-thumb {
   .body-info-respie{
     width: 60% !important;
   }
+
+  .search-respie > div{
+    width: 50%;
+  }
 }
+
+@media screen and (max-width:700px) {
+  .search-section{
+    flex-direction: column;
+  }
+
+  .search-section > button{
+    margin-right: 0px;
+    margin-bottom: 15px;
+    width: 50%;
+    justify-content: center;
+  }
+
+  .modal-data-respie{
+    overflow-y: scroll;
+  }
+
+  .search-respie > div{
+    width: 80%;
+  }
+}
+
+@media screen and (max-width:450px) {
+
+  .search-section > button{
+    margin-right: 0px;
+    margin-bottom: 15px;
+    width: 90%;
+    justify-content: center;
+  }
+
+  .search-respie > div{
+    width: 100%;
+  }
+
+}
+
+
 
 
 

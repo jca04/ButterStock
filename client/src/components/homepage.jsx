@@ -41,7 +41,7 @@ function HomePage() {
           }
         }
 
-        removeToken();
+        removeToken(); 
         window.location.href = "/login";
         showToastMessageNo();
       } catch (error) {
