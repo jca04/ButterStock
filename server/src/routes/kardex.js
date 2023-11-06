@@ -11,6 +11,7 @@ const {
   entradasPromPonderado,
   salidasPromPonderado,
 } = require("../controllers/kardex");
+const { validateInventory } = require("../controllers/validacionInventario");
 
 kardexRouter.post("/entradas/:id_ingredient", checkJwt, entradas);
 kardexRouter.post("/obtenerSaldo/:id_ingredient", obtenerSaldo);
@@ -26,5 +27,6 @@ kardexRouter.post(
   checkJwt,
   salidasPromPonderado
 );
+kardexRouter.post("/validacion/:id_ingredient", checkJwt, validateInventory);
 
 module.exports = kardexRouter;

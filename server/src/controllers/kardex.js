@@ -83,7 +83,7 @@ const entradas = (req, res) => {
 
           const cantidad_convertida = convertion(
             unidad_medida,
-            cantidad,
+            parseFloat(cantidad),
             unidad_medida_ingrediente
           );
 
@@ -170,7 +170,7 @@ const salidas = async (req, res) => {
     const unidad_medida_ingrediente = ingredientes_data[0].unidad_medida;
     const cantidad_convertida = convertion(
       unidad_medida,
-      cantidad,
+      parseFloat(cantidad),
       unidad_medida_ingrediente
     );
     const cantidad_total_ingrediente =
@@ -184,7 +184,25 @@ const salidas = async (req, res) => {
     const nueva_cantidad_editable_ingrediente =
       cantidad_editable_ingrediente - cantidad_convertida;
 
-    const actuaalizarIngredientes = await queryAsync(
+    // Traigo los saldos disponibles ordenados por fecha de ingreso
+    const saldos = await queryAsync(
+      "SELECT id_peps, saldo_cantidad, saldo_valorUnitario, saldo_valorTotal FROM tbl_peps WHERE id_ingrediente = ? && id_restaurante = ? && saldo_activo = 1 ORDER BY time_stamp ASC, id_orden ASC",
+      [id_ingredient, id_restaurant]
+    );
+
+    // Verifico si hay inventario suficiente para el calculo
+    const saldoTotal = saldos.reduce(
+      (acc, saldo) => acc + saldo.saldo_cantidad,
+      0
+    );
+
+    if (cantidad_convertida > saldoTotal) {
+      return res
+        .status(200)
+        .json({ message: "No hay inventario suficiente para el calculo" });
+    }
+
+    const actualizarIngredientes = await queryAsync(
       "UPDATE tbl_ingredientes SET cantidad_total_ingrediente = ?, cantidad_editable_ingrediente = ?, refresh = 1 WHERE id_ingrediente = ? && id_restaurant = ?",
       [
         nueva_cantidad_total_ingrediente,
@@ -194,13 +212,7 @@ const salidas = async (req, res) => {
       ]
     );
 
-    if (actuaalizarIngredientes.affectedRows > 0) {
-      // Traigo los saldos disponibles ordenados por fecha de ingreso
-      const saldos = await queryAsync(
-        "SELECT id_peps, saldo_cantidad, saldo_valorUnitario, saldo_valorTotal FROM tbl_peps WHERE id_ingrediente = ? && id_restaurante = ? && saldo_activo = 1 ORDER BY time_stamp ASC, id_orden ASC",
-        [id_ingredient, id_restaurant]
-      );
-
+    if (actualizarIngredientes.affectedRows > 0) {
       // Obtengo el primer saldo que entro y el saldo siguiente
       const primerSaldo = saldos[0];
 
@@ -429,9 +441,7 @@ const salidas = async (req, res) => {
 
       res.status(200).json({ message: "Salida registrada" });
     } else {
-      res.status(400).json({
-        message: "No se pudo actualizar el ingrediente",
-      });
+      res.status(400).json({ message: "Error al actualizar el ingrediente" });
     }
   } catch (error) {
     res.status(400).json({ message: error });
@@ -634,12 +644,12 @@ const salidasPromPonderado = async (req, res) => {
     );
 
     if (cantidadConvertida > saldo[0].saldo_cantidad) {
-      return res.status(400).json({ message: "No hay saldo suficiente" });
+      return res.status(200).json({ message: "No hay saldo suficiente" });
     } else if (cantidadConvertida <= saldo[0].saldo_cantidad) {
       const cantidadActual = saldo[0].saldo_cantidad - cantidadConvertida;
       const valorTotalActual = cantidadActual * saldo[0].saldo_valorUnitario;
 
-      if (cantidadActual == 0) {
+      if (cantidadActual <= 0) {
         return res.status(200).json({
           message: "Sin inventario",
         });

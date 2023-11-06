@@ -12,12 +12,10 @@ import { toast } from "react-toastify";
 import { AiOutlineCloseCircle } from 'react-icons/ai';
 import { getDataSelectsSalida } from "../../api/salidas";
 import { saveSales } from "../../api/sales";
-import { salidasPeps, salidasPromPonderado } from "../../api/kardex";
+import { salidasPeps, salidasPromPonderado, validacionInventario } from "../../api/kardex";
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import Load from "../reuseComponents/loadRender";
 import '../../public/css/salidaStyle.css';
-
-const unitArr = ["kg", "lb", "oz", "gr", "mg", "und"];
 
 function Salidas({closeModal, id_restaurant }) {
   const [dataSelect, setDataSelect] = useState([]);
@@ -26,7 +24,9 @@ function Salidas({closeModal, id_restaurant }) {
   const [open, setOpen] = useState(false);
   const [sending, setSending] = useState(false);
   const [errosTable, setErrorsTable] = useState({});
+  const unitArr = ["kg", "lb", "oz", "gr", "mg", "und"];
   const [isLoading, setLoading] = useState(false);
+
 
   useEffect(() => {
     document.title = 'ButterStock | ventas';
@@ -148,34 +148,104 @@ function Salidas({closeModal, id_restaurant }) {
         //Aqui estan los ingredientes listo,
         //cabe recalcar que la unidad de medida puede ser la que tiene en la receta
         //por lo tanto toca hacer la conversion de unidades para guradarlo en peps
+
+
+        // Verifico si hay ingredientes que no tienen inventario
+        let sinInventario = []; // Array de ingredientes que no tienen inventario
+
         for (const i in response) {
-          if (response[i].kardex == "PEPS") {
-            const cantidadReceta = response[i].cantidad_receta
-              ? response[i].cantidad_receta
-              : 1;
-            const cantidad = parseFloat(response[i].cantidad) * cantidadReceta;
-            const res = await salidasPeps(
-              response[i].id_ingrediente,
-              cantidad,
-              response[i].unidad_medida,
-              id_restaurant
-            );
-            console.log(res);
-          } else {
-            const cantidadReceta = response[i].cantidad_receta
-              ? response[i].cantidad_receta
-              : 1;
-            const cantidad = parseFloat(response[i].cantidad) * cantidadReceta;
-            const resProm = await salidasPromPonderado(
-              response[i].id_ingrediente,
-              cantidad,
-              response[i].unidad_medida,
-              id_restaurant
-            );
-            console.log(resProm);
+          const cantidadReceta = response[i].cantidad_receta
+            ? response[i].cantidad_receta
+            : 1;
+          const cantidad = parseFloat(response[i].cantidad) * cantidadReceta;
+          const res = await validacionInventario(
+            id_restaurant,
+            cantidad,
+            response[i].unidad_medida,
+            response[i].kardex,
+            response[i].id_ingrediente
+          );
+
+          if (res.data.message == "No hay suficiente inventario") {
+            sinInventario.push(res.data.nombre_ingrediente);
           }
         }
-        showToastMessage();
+
+        if (sinInventario.length > 0) {
+          let mensaje = (
+            <div>
+              No hay suficiente inventario para los siguientes ingredientes:
+              <br />
+              {sinInventario.map((ingrediente, index) => {
+                return <p key={index}><strong> - {ingrediente}</strong></p>;
+              })}
+            </div>
+          )
+
+          toast.error(mensaje, {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            progress: undefined,
+            theme: "light",
+          });
+
+          setTimeout(() => {
+            setSending(false);
+            setOpen(false);
+          }, 1000);
+        } else {
+          let enviado = false;
+          for (const i in response) {
+            if (response[i].kardex == "PEPS") {
+              const cantidadReceta = response[i].cantidad_receta
+                ? response[i].cantidad_receta
+                : 1;
+              const cantidad =
+                parseFloat(response[i].cantidad) * cantidadReceta;
+              const res = await salidasPeps(
+                response[i].id_ingrediente,
+                cantidad,
+                response[i].unidad_medida,
+                id_restaurant
+              );
+              if (res.data.message == "Salida registrada") {
+                enviado = true;
+              }
+            } else {
+              const cantidadReceta = response[i].cantidad_receta
+                ? response[i].cantidad_receta
+                : 1;
+              const cantidad =
+                parseFloat(response[i].cantidad) * cantidadReceta;
+              const resProm = await salidasPromPonderado(
+                response[i].id_ingrediente,
+                cantidad,
+                response[i].unidad_medida,
+                id_restaurant
+              );
+              if (resProm.data.message == "Salida registrada") {
+                enviado = true;
+              }
+            }
+          }
+
+          if (enviado) {
+            showToastMessage();
+          } else {
+            toast.error("Ha ocurrido un error", {
+              position: "top-right",
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              progress: undefined,
+              theme: "light",
+            });
+          }
+        }
       } else {
         showToastMessageErr();
       }

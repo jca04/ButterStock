@@ -74,21 +74,24 @@ const saveSales = async (req, res) => {
             );
             const kardexIngredient = selectIngredient[0].kardex;
 
-          if (insert_ingredients.affectedRows > 0){
-            const selectIngredient = await conn.query('SELECT kardex FROM tbl_ingredientes WHERE id_ingrediente = ?',[id]);
-            const kardexIngredient = selectIngredient[0].kardex; 
+            if (insert_ingredients.affectedRows > 0) {
+              const selectIngredient = await conn.query(
+                "SELECT kardex FROM tbl_ingredientes WHERE id_ingrediente = ?",
+                [id]
+              );
+              const kardexIngredient = selectIngredient[0].kardex;
 
-            ingredientsResponse.push({
-              unidad_medida: unity,
-              cantidad: quantity_ingredient,
-              id_ingrediente: id,
-              kardex: kardexIngredient,
-            });
+              ingredientsResponse.push({
+                unidad_medida: unity,
+                cantidad: quantity_ingredient,
+                id_ingrediente: id,
+                kardex: kardexIngredient,
+              });
+            }
           }
         }
       }
     }
-  }
     res.status(200).json({ message: ingredientsResponse });
   } catch (error) {
     res.status(500).json({ message: error });
