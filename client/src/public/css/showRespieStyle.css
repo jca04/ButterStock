@@ -620,7 +620,7 @@ body{
   font-size: 3em;
 }
 
-body::-webkit-scrollbar,
+/* body::-webkit-scrollbar,
 .body-respie::-webkit-scrollbar,
 .div-info-resipe::-webkit-scrollbar {
   width: 8px;
@@ -630,12 +630,12 @@ body::-webkit-scrollbar,
 .div-info-resipe::-webkit-scrollbar-thumb {
   border-radius: 5px;
   background-color: #ffea96
-}
+} */
 
-body::-webkit-scrollbar-thumb {
+/* body::-webkit-scrollbar-thumb {
   border-radius: 5px;
   background-color: white;
-}
+} */
 
 .info-ingredients-respie {
   margin-top: 35px;
