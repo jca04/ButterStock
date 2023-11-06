@@ -6,6 +6,7 @@ import logo from "../public/resources/logo/logo_blanco.png";
 import { toast } from "react-toastify";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
+import { sendMail } from "../api/mail.js";
 
 function FormRestaurant() {
   const [isSecondForm, setSecondForm] = useState(false);
@@ -61,9 +62,16 @@ function FormRestaurant() {
     return error;
   }
 
+  const sendMailTo = async () => {
+      const response = await sendMail('layyagami9@gmail.com','initSesion');
+
+
+  }
+
   return (
     <section className="father-create-restaurant">
       <section className="body-create">
+        {/* <button onClick={sendMailTo}>sad</button> */}
         <div className="section-form-create">
           <div className="form-create">
             {!loadSecondForm ? (

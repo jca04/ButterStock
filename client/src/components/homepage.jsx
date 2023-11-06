@@ -6,13 +6,16 @@ import { getRestaurant } from "../api/restaurant";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { removeToken } from "../auth/auth";
-import { MdFastfood, MdOutlineRealEstateAgent } from "react-icons/md";
 import Plot from "react-plotly.js";
-import { AiOutlineSearch, AiOutlineLoading3Quarters } from "react-icons/ai";
+import InfoIcon from '@mui/icons-material/Info';
+import Tooltip from '@mui/material/Tooltip';
 import Comandas from "./Comandas";
 import Load from "./reuseComponents/loadRender";
+import { Avatar,List, Dialog, DialogTitle, ListItemButton, ListItem, ListItemText, ListItemAvatar } from "@mui/material";
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import Salidas from "./component/salidas"; 
 
-// import {useDispatch, useSelector} from 'react-redux'
 
 function HomePage() {
   const showToastMessageNo = () => {
@@ -26,6 +29,8 @@ function HomePage() {
   const [id_restaurant, setIdRestaurant] = useState(null);
   const [isLoading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalEntradas, setModalEntradas] = useState(false);
+  const [modalSalida, setModalSalidas] = useState(false);
 
   useEffect(() => {
     const fecthData = async () => {
@@ -60,128 +65,172 @@ function HomePage() {
     setModalOpen(false);
   }
 
+  const closeModalEntradas = () => {
+    setModalEntradas(false);
+  }
+
+  const closeModalSalidas = () => {
+    setModalSalidas(false);
+  }
+
   return (
     <>
       <Navbar restaurant = {id_restaurant}/>
       {isLoading ? (
         <Load/>
       ) : (
-        <section className="father-homepage">
-          <section className="info-graf">
-            <div className="comanda">
-              <div className="txt-comanda">
-                <h4>Comandas</h4>
-              </div>
-                <div className="init-comanda" onClick={openModal}>
-                  <div className="init-comanda-txt">Iniciar Comanda</div>
-                  <div className="icon-comanda">
-                    <MdFastfood />
+        <>
+        <section className="fa-ho-pa">
+          <section className="bod-ho-pa">
+          <section className="row-2-ho-pa">
+              <div className="col-1-ho-in">
+                <div className="body-col-ho-in">
+                  <div className="box-ho-2" onClick={() => setModalOpen(true)}>
+                    <div className="hd-ho-2">
+                      Comandas
+                    </div>
+                    <div className="bod-ho-1">
+                      <h4>Iniciar Comandas</h4>
+                      <p>Añadir ventas y compras</p>
+                      <div className="icon-info-bo">
+                        <Tooltip title={'Aqui se añadi las compras y ventas del negocio'}>
+                          <InfoIcon/>
+                        </Tooltip>
+                      </div>
+                    </div>
+                  </div>
+                  </div>
+               </div>
+               <div className="col-2-ho-in">
+                  <div className="head-info-ingre">
+                    Próximos a terminar
+                  </div>
+                  <div className="bod-info-ingre">
+                      
+                  </div>
+               </div>
+            </section>
+            <section className="row-1-ho-pa">
+                <div className="col-1-ho">
+                  <div className="head-col-ho">
+                      Tabla de Comandos
+                  </div>
+                  <div className="body-col-ho">
+                    <Link to={`/ingredients/all/${id_restaurant}`} className="box-ho">
+                      <div className="hd-ho">
+                        Ingredientes
+                      </div>
+                      <div className="bod-ho">
+                          <h4>Ver Ingredientes</h4>
+                          <p>Mira, crea y edita tus Ingredientes</p>
+                          <div className="icon-info-bo">
+                            <Tooltip title={'Aqui se gestiona los ingredientes, se crean, se editan y se eliminan'}>
+                              <InfoIcon/>
+                            </Tooltip>
+                          </div>
+                      </div>
+                    </Link>
+                    <Link to={`../respies/all/${id_restaurant}`} className="box-ho">
+                        <div className="hd-ho">
+                          Recetas
+                        </div>
+                        <div className="bod-ho">
+                          <h4>Ver recetas</h4>
+                          <p>Mira, crea y edita tus recetas</p>
+                          <div className="icon-info-bo">
+                          <Tooltip title={'Aqui se crean las recetas estandar'}>
+                            <InfoIcon/>
+                          </Tooltip>
+                         </div>
+                        </div>
+                      </Link>
+                      <Link to={`/inventario/${id_restaurant}`} className="box-ho">
+                        <div className="hd-ho">
+                          Inventario
+                        </div>
+                        <div className="bod-ho">
+                            <h4>Ver inventario</h4>
+                            <p>Registros PEPS o promedio ponderado</p>
+                            <div className="icon-info-bo">
+                            <Tooltip title={'Aqui se muestra registro de todo lo que ha sucedido con un ingrediente'}>
+                              <InfoIcon/>
+                            </Tooltip>
+                            </div>
+                        </div>
+                      </Link>
+                      <div className="box-ho">
+                        <div className="hd-ho">
+                          Estado de resultado
+                        </div>
+                        <div className="bod-ho">
+                            <h4>Estado</h4>
+                            <p>Informacíon sobre mi negocio</p>
+                            <div className="icon-info-bo">
+                              <Tooltip title={'Aqui se muestra informacion sobre el negocio, ventas etc'}>
+                                <InfoIcon/>
+                              </Tooltip>
+                            </div>
+                        </div>
+                      </div>
                   </div>
                 </div>
-              {
-                modalOpen && (
-                  <Comandas closeModal={closeModal} id_restaurant = {id_restaurant} />
-                )
-              }
-            </div>
-            <div className="comanda">
-              <div className="txt-comanda">
-                <h4>Estado</h4>
-              </div>
-                <div className="init-comanda">
-                  <div className="init-comanda-txt">Estado de resultado</div>
-                  <div className="icon-comanda">
-                    <MdOutlineRealEstateAgent />
-                  </div>
-                </div>
-            </div>
-            <div className="grafh">
-              <Plot
-                data={[
-                  {
-                    x: ["enero", "Febero", "marzo", "Abril", "Mayo"],
-                    y: [12, 34, 3, 4, 1],
-                    type: "bar",
-                    mode: "markers",
-                    marker: {
-                      color: "#FFEA96",
-                      line: {
-                        width: 2.5,
+                <div className="col-2-ho graff-d">
+                  <Plot
+                    data={[
+                      {
+                        x: ["enero", "Febero", "marzo", "Abril", "Mayo"],
+                        y: [12, 34, 3, 4, 1],
+                        type: "bar",
+                        mode: "markers",
+                        marker: {
+                          color: "#FFEA96",
+                          line: {
+                            width: 2.5,
+                          },
+                        },
                       },
-                    },
-                  },
-                ]}
-                layout={{ width: 600, height: 300, title: "Resumen del mes" }}
-                useResizeHandler
-                className="plotly"
-              />
-            </div>
-          </section>
-          <section className="info-hompage">
-            <div className="links-link-1">
-              <div className="txt-links">
-                <h4>Recetas</h4>
-              </div>
-              <Link
-                to={`../respies/all/${id_restaurant}`}
-                className="url-homepage"
-              >
-                <div className="see-link-1">
-                  <div className="txt-link1">
-                    <h4>Ver recetas</h4>
-                    <p>Mira, crea y edita tus recetas</p>
-                  </div>
-                  <div className="icon-link-1">
-                    <AiOutlineSearch />
-                  </div>
+                    ]}
+                    layout={{ width: 600, height: 300, title: "Resumen del mes" }}
+                    useResizeHandler
+                    className="plotly"
+                  />
                 </div>
-                <div className="info-3"></div>
-              </Link>
-            </div>
-            <div className="links-link-2">
-              <div className="txt-links">
-                <h4>Ingredientes</h4>
-              </div>
-              <Link
-                to={`/ingredients/all/${id_restaurant}`}
-                className="url-homepage"
-              >
-                <div className="see-link-2">
-                  <div className="txt-link2">
-                    <h4>Ver Ingredientes</h4>
-                    <p>Mira, crea y edita tus Ingredientes</p>
-                  </div>
-                  <div className="icon-link-2">
-                    <AiOutlineSearch />
-                  </div>
-                </div>
-                <div className="info-3"></div>
-              </Link>
-            </div>
-            <div className="links-link-3">
-              <div className="txt-links">
-                <h4>Inventario</h4>
-              </div>
-              <Link
-                to={`/inventario/${id_restaurant}`}
-                className="url-homepage"
-              >
-                <div className="see-link-3">
-                  <div className="txt-link3">
-                    <h4>Ver inventario</h4>
-                    <p>Mira, crea tus reportes pebs</p>
-                  </div>
-                  <div className="icon-link-3">
-                    <AiOutlineSearch />
-                  </div>
-                </div>
-              </Link>
-              <div className="info-3"></div>
-            </div>
+            </section>
           </section>
         </section>
-      )}
+        <Dialog onClose={closeModal} open={modalOpen}>
+          <DialogTitle>Seleccionar Comanda</DialogTitle>
+            <List sx={{ pt: 0 }}>
+              <ListItem disableGutters key={'comEdt'}>
+                <ListItemButton onClick={() => {setModalEntradas(true); closeModal()}}>
+                  <ListItemAvatar>
+                    <Avatar sx={{bgcolor: 'white', color: 'black' }}>
+                      <ShoppingCartIcon />
+                    </Avatar>
+                  </ListItemAvatar>
+                <ListItemText primary={'Compras'}  className="text-comand" />
+              </ListItemButton>
+            </ListItem>
+            <ListItemButton onClick={() => {setModalSalidas(true); closeModal()}}>
+                <ListItemAvatar>
+                  <Avatar sx={{bgcolor: 'white', color: 'black' }}>
+                  <ExitToAppIcon />
+                 </Avatar>
+                </ListItemAvatar>
+                <ListItemText primary={'Ventas'} className="text-comand" />
+              </ListItemButton>
+          </List>
+        </Dialog>
       <IconAside />
+        </>
+      )}
+      {modalEntradas ? (
+        <Comandas closeModal={closeModalEntradas} id_restaurant = {id_restaurant} />
+      ): null
+      }
+      {modalSalida ? (
+          <Salidas closeModal={closeModalSalidas} id_restaurant={id_restaurant} />
+      ): null}
     </>
   );
 }

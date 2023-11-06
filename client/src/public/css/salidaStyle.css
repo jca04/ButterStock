@@ -1,0 +1,20 @@
+.title-salida{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.list-salidas{
+  display: flex;
+}
+
+.list-salidas > p{
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  font-size: 0.9;
+}
+
+.btn-acept-salida{
+  color: black !important;
+}
