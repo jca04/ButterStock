@@ -3,7 +3,7 @@ import "../public/css/comandasStyle.css";
 import { getIngredients } from "../api/ingredients";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
-import { entradasPeps, entradasPromPonderado, salidasPeps } from "../api/kardex";
+import { entradasPeps, entradasPromPonderado, salidasPeps, validacionInventario } from "../api/kardex";
 import { toast } from "react-toastify";
 import {AiOutlineCloseCircle} from 'react-icons/ai';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
@@ -99,7 +99,7 @@ export default function Comandas({ closeModal, id_restaurant }) {
           );
           if (response.data.message === "Entrada registrada") {
             entradaRegistrada = true
-          }
+          } 
         } else if(filterIngredients[i].kardex === "Promedio ponderado") {
           const response = await entradasPromPonderado(
             filterIngredients[i].id_ingrediente,
@@ -110,7 +110,7 @@ export default function Comandas({ closeModal, id_restaurant }) {
           );
           if (response.data.message === "Entrada registrada") {
             entradaRegistrada = true
-          }
+          } 
         }
       }
     }
