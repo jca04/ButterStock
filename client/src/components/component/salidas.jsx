@@ -165,6 +165,7 @@ function Salidas({closeModal, id_restaurant }) {
             response[i].kardex,
             response[i].id_ingrediente
           );
+
           if (res.data.message == "No hay suficiente inventario") {
             sinInventario.push(res.data.nombre_ingrediente);
           }
@@ -210,7 +211,8 @@ function Salidas({closeModal, id_restaurant }) {
                 response[i].unidad_medida,
                 id_restaurant
               );
-  
+
+ 
               if (res.data.message == "Salida registrada") {
                 enviado = true;
               }
