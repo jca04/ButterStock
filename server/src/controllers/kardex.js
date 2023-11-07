@@ -190,18 +190,6 @@ const salidas = async (req, res) => {
       [id_ingredient, id_restaurant]
     );
 
-    // Verifico si hay inventario suficiente para el calculo
-    const saldoTotal = saldos.reduce(
-      (acc, saldo) => acc + saldo.saldo_cantidad,
-      0
-    );
-
-    if (cantidad_convertida > saldoTotal) {
-      return res
-        .status(200)
-        .json({ message: "No hay inventario suficiente para el calculo" });
-    }
-
     const actualizarIngredientes = await queryAsync(
       "UPDATE tbl_ingredientes SET cantidad_total_ingrediente = ?, cantidad_editable_ingrediente = ?, refresh = 1 WHERE id_ingrediente = ? && id_restaurant = ?",
       [
@@ -648,12 +636,6 @@ const salidasPromPonderado = async (req, res) => {
     } else if (cantidadConvertida <= saldo[0].saldo_cantidad) {
       const cantidadActual = saldo[0].saldo_cantidad - cantidadConvertida;
       const valorTotalActual = cantidadActual * saldo[0].saldo_valorUnitario;
-
-      if (cantidadActual <= 0) {
-        return res.status(200).json({
-          message: "Sin inventario",
-        });
-      }
 
       // Actualizo el ingrediente
       const actualizarIngrediente = await queryAsync(
