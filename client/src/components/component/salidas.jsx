@@ -211,6 +211,8 @@ function Salidas({closeModal, id_restaurant }) {
                 response[i].unidad_medida,
                 id_restaurant
               );
+
+ 
               if (res.data.message == "Salida registrada") {
                 enviado = true;
               }
