@@ -124,7 +124,7 @@ export default function Comandas({ closeModal, id_restaurant }) {
   const options = [];
   const animatedComponents = makeAnimated();
 
-  ingredients.map((ingredient) => {
+  ingredients?.map((ingredient) => {
     options.push({
       value: ingredient.id_ingrediente,
       label: ingredient.nombre_ingrediente,
