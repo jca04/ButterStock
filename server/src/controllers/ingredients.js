@@ -54,37 +54,68 @@ const createIngredient = async (req, res) => {
     const id_restaurant = req.body.id;
     const id_ingrediente = uuidv4();
 
-    const insertIngredient = await conn.query("INSERT INTO tbl_ingredientes "+
-    " (id_ingrediente, nombre_ingrediente, unidad_medida, costo_unitario, costo_total, cantidad_total_ingrediente, cantidad_editable_ingrediente,activo, kardex ,id_restaurant) "+
-    " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)",
-    [id_ingrediente, nombre_ingrediente, unidad_medida, costo_unitario, costo_total, cantidad_total_ingrediente, cantidad_total_ingrediente,1,kardex,id_restaurant,]);
-        
-    if (insertIngredient.affectedRows > 0){
+    const insertIngredient = await conn.query(
+      "INSERT INTO tbl_ingredientes " +
+        " (id_ingrediente, nombre_ingrediente, unidad_medida, costo_unitario, costo_total, cantidad_total_ingrediente, cantidad_editable_ingrediente,activo, kardex ,id_restaurant) " +
+        " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)",
+      [
+        id_ingrediente,
+        nombre_ingrediente,
+        unidad_medida,
+        costo_unitario,
+        costo_total,
+        cantidad_total_ingrediente,
+        cantidad_total_ingrediente,
+        1,
+        kardex,
+        id_restaurant,
+      ]
+    );
+
+    if (insertIngredient.affectedRows > 0) {
       if (kardex == "PEPS") {
         const costo_total_saldo = cantidad_total_ingrediente * costo_unitario;
-        const insertPeps = await conn.query("INSERT INTO tbl_peps "+
-        " (id_peps, saldo_cantidad, saldo_valorUnitario, saldo_valorTotal, saldo_activo, id_ingrediente, id_restaurante) "+
-        " VALUES (?, ?, ?, ?, ?, ?, ?)", 
-        [uuidv4(), cantidad_total_ingrediente, costo_unitario, costo_total_saldo, 1, id_ingrediente, id_restaurant,]);
-      }else{
+        const insertPeps = await conn.query(
+          "INSERT INTO tbl_peps " +
+            " (id_peps, saldo_cantidad, saldo_valorUnitario, saldo_valorTotal, saldo_activo, id_ingrediente, id_restaurante) " +
+            " VALUES (?, ?, ?, ?, ?, ?, ?)",
+          [
+            uuidv4(),
+            cantidad_total_ingrediente,
+            costo_unitario,
+            costo_total_saldo,
+            1,
+            id_ingrediente,
+            id_restaurant,
+          ]
+        );
+      } else {
         const costo_total_saldo = cantidad_total_ingrediente * costo_unitario;
-        const insertPromedioPond = await conn.query("INSERT INTO tbl_promedio_ponderado "+
-        " (id_promedio_ponderado, saldo_cantidad, saldo_valorUnitario, saldo_valorTotal, saldo_activo, id_ingrediente, id_restaurante) "+
-        " VALUES (?, ?, ?, ?, ?, ?, ?)",
-        [uuidv4(), cantidad_total_ingrediente, costo_unitario, costo_total_saldo, 1, id_ingrediente,id_restaurant]); 
+        const insertPromedioPond = await conn.query(
+          "INSERT INTO tbl_promedio_ponderado " +
+            " (id_promedio_ponderado, saldo_cantidad, saldo_valorUnitario, saldo_valorTotal, saldo_activo, id_ingrediente, id_restaurante) " +
+            " VALUES (?, ?, ?, ?, ?, ?, ?)",
+          [
+            uuidv4(),
+            cantidad_total_ingrediente,
+            costo_unitario,
+            costo_total_saldo,
+            1,
+            id_ingrediente,
+            id_restaurant,
+          ]
+        );
       }
 
       res.status(200).json({
         message: "Ingrediente creado",
         id_ingrediente,
       });
-
-    }else{
+    } else {
       res.status(400).json({
         message: "No se pudo crear el ingrediente",
       });
     }
-          
   } catch (error) {
     return res.status(400).json({ message: error });
   }
@@ -146,7 +177,7 @@ const getIngredientsWithRecipe = (req, res) => {
               ingredientes: Object.values(ingredientes),
             });
           } else {
-            res.status(400).json({ message: "No hay ingredientes" });
+            res.status(200).json({ message: "No hay ingredientes" });
           }
         }
       }

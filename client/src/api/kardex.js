@@ -111,3 +111,27 @@ export const salidasPromPonderado = async (
     return error;
   }
 };
+
+export const validacionInventario = async (
+  id_restaurant,
+  cantidad,
+  unidad_medida,
+  kardex,
+  id_ingredient
+) => {
+  try {
+    const response = await axios.post(`/kardex/validacion/${id_ingredient}`, {
+      headers: { Authorization: `Bearer ${token}` },
+      data: {
+        id_restaurant: id_restaurant,
+        cantidad: cantidad,
+        unidad_medida: unidad_medida,
+        kardex: kardex,
+      },
+    });
+
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
