@@ -159,18 +159,20 @@ function HomePage() {
                         </div>
                       </Link>
                       <div className="box-ho">
-                        <div className="hd-ho">
-                          Estado de resultado
-                        </div>
-                        <div className="bod-ho">
-                            <h4>Estado</h4>
-                            <p>Informacíon sobre mi negocio</p>
-                            <div className="icon-info-bo">
-                              <Tooltip title={'Aqui se muestra informacion sobre el negocio, ventas etc'}>
-                                <InfoIcon/>
-                              </Tooltip>
-                            </div>
-                        </div>
+                        <Link to={`/edr/${id_restaurant}`}>
+                          <div className="hd-ho">
+                            Estado de resultado
+                          </div>
+                          <div className="bod-ho">
+                              <h4>Estado</h4>
+                              <p>Informacíon sobre mi negocio</p>
+                              <div className="icon-info-bo">
+                                <Tooltip title={'Aqui se muestra informacion sobre el negocio, ventas etc'}>
+                                  <InfoIcon/>
+                                </Tooltip>
+                              </div>
+                          </div>
+                        </Link>
                       </div>
                   </div>
                 </div>
