@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require("uuid");
 const saveSales = async (req, res) => {
   try {
     const { data } = req.body;
-    const { info } = data;
+    const { info, restaurant } = data;
     const ingredientsResponse = [];
 
     for (const i in info) {
@@ -61,9 +61,9 @@ const saveSales = async (req, res) => {
           //gaurdar el ingrediente en tbl_ventas
           const insert_ingredients = await conn.query(
             "INSERT INTO " +
-              " tbl_ventas(id_ventas, cantidad_venta, tipo_venta, unidad_medida_venta, id_ingrediente) " +
-              " VALUES(?,?,?,?,?)",
-            [uid, quantity_ingredient, "ingrediente", unity, id]
+              " tbl_ventas(id_ventas, cantidad_venta, tipo_venta, unidad_medida_venta, id_ingrediente, id_restaurante) " +
+              " VALUES(?,?,?,?,?, ?)",
+            [uid, quantity_ingredient, "ingrediente", unity, id, restaurant]
           );
 
           if (insert_ingredients.affectedRows > 0) {

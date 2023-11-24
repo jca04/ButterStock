@@ -142,7 +142,7 @@ function Salidas({closeModal, id_restaurant }) {
     setSending(true);
 
     try {
-      const response = await saveSales(dataSend);
+      const response = await saveSales(dataSend, id_restaurant);
 
       if (Array.isArray(response)) {
         //Aqui estan los ingredientes listo,
