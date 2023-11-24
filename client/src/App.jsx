@@ -16,6 +16,7 @@ import Ingredients from "./components/Ingredients";
 import Comandas from "./components/Comandas";
 import Inventory from "./components/Inventory";
 import Kardex from "./components/Kardex";
+import EstadoDeResultado from "./components/EstadoDeResultado";
 
 function App() {
   return (
@@ -80,6 +81,7 @@ function App() {
         <Route exact path="/comandas/:id" element= {isAuthenticated() ? <Comandas /> : <Navigate to="/login" />} />
         <Route exact path="/inventario/:id" element= {isAuthenticated() ? <Inventory /> : <Navigate to="/login" />} />
         <Route exact path="/kardex/:id_ingrediente/:id" element = {isAuthenticated() ? <Kardex /> : <Navigate to="/login" />} />
+        <Route exact path="/edr/:id_restaurant" element = {isAuthenticated() ? <EstadoDeResultado /> : <Navigate to="/login" />} />
       </Routes>
     </>
   );

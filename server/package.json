@@ -17,6 +17,7 @@
     "cookie-parser": "^1.4.6",
     "coolie": "^2.7.9",
     "cors": "^2.8.5",
+    "dayjs": "^1.11.10",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "formik-file-and-image-input": "^0.0.6",
