@@ -6,8 +6,8 @@ import axios from "axios";
 import { Provider } from "react-redux";
 import { store } from "./app/store.js";
 
-// axios.defaults.baseURL = "http://localhost:3000/api";
-axios.defaults.baseURL = "https://butterstock.onrender.com/api";
+axios.defaults.baseURL = "http://localhost:3000/api";
+// axios.defaults.baseURL = "https://butterstock.onrender.com/api";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
