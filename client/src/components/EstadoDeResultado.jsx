@@ -91,7 +91,6 @@ export default function EstadoDeResultado() {
     }, [id_restaurant])
 
 
-
   return (
     <>
         <Navbar />
