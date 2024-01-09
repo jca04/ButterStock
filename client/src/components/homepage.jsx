@@ -74,7 +74,7 @@ function HomePage() {
   }
 
   return (
-    <>
+    <div>
       <Navbar restaurant = {id_restaurant}/>
       {isLoading ? (
         <Load/>
@@ -125,7 +125,7 @@ function HomePage() {
                           <p>Mira, crea y edita tus Ingredientes</p>
                           <div className="icon-info-bo">
                             <Tooltip title={'Aqui se gestiona los ingredientes, se crean, se editan y se eliminan'}>
-                              <InfoIcon/>
+                              <InfoIcon/> 
                             </Tooltip>
                           </div>
                       </div>
@@ -233,7 +233,7 @@ function HomePage() {
       {modalSalida ? (
           <Salidas closeModal={closeModalSalidas} id_restaurant={id_restaurant} />
       ): null}
-    </>
+    </div>
   );
 }
 

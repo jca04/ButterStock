@@ -1,13 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { AxioInterceptor } from "../../auth/auth";
 import { Link } from "react-router-dom";
-import "../../public/css/navbarStyle.css";
+import style from "../../public/css/navbarStyle.module.css";
 import { getUser } from "../../api/navbar.js";
-import { Fade } from "react-awesome-reveal";
 import {useDispatch, useSelector} from 'react-redux'
-import {RxHamburgerMenu} from "react-icons/rx"; 
 import {addHome, deleteHome} from "../../features/homepage/homepageSlice";
 import logo from "../../public/resources/logo/logo_blanco.png";
+
+//import components
+import Comandas from "../Comandas";
+
+//react icon
+import { CiHome } from "react-icons/ci";
+import { GrConfigure } from "react-icons/gr";
+import { TiBusinessCard } from "react-icons/ti";
+import { MdOutlineCallToAction } from "react-icons/md";
+import { IoFastFoodOutline } from "react-icons/io5";
+import { LiaClipboardListSolid } from "react-icons/lia";
+import { LuChefHat } from "react-icons/lu";
+import { CiCalendarDate } from "react-icons/ci";
+import { CiShoppingCart } from "react-icons/ci";
+import { MdOutlineSell } from "react-icons/md";
+import { CiLogout } from "react-icons/ci";
+
+
+//material ui accordion
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import Typography from '@mui/material/Typography';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
 
 AxioInterceptor();
 
@@ -17,7 +40,8 @@ function Navbar({restaurant}) {
   //estado global trayendo los datos
   let homeSlice = useSelector(state => state.home);
   const [dataUser, setDataUser] = useState({});
-  
+  const [modalEntradas, setModalEntradas] = useState(false);
+  const [modalSalidas, setModalSalidas] = useState(false);
 
   useEffect(() => {
     const fecthData = async () => {
@@ -54,19 +78,21 @@ function Navbar({restaurant}) {
     if (dataUser.superAdmin !== undefined){
       if (dataUser.superAdmin == 0){
         return(
-          <li>
-            <Link className="link-navbar configurations" to={`../configurations/${restaurant}`} >
-              Mi negocio
-            </Link>
-          </li>
+          <Link className={style.linkNavbar} to={`../configurations/${restaurant}`} >
+            <li className={style.liNavbar}>
+              <GrConfigure className={style.iconStrokeMin}/>
+              <span> Mi negocio</span>
+            </li>
+          </Link>
         )
       }else{
         return (
-          <li>
-            <Link className="link-navbar allRestaurant" to="../allRestaurant">
-              Negocios
-            </Link>
-          </li>
+          <Link className={style.linkNavbar} to="../allRestaurant">
+            <li className={style.liNavbar}>
+              <TiBusinessCard className={style.iconStrokeMin}/>
+              <span> Negocios</span>
+            </li>
+          </Link>
         )
       }
     }
@@ -76,11 +102,12 @@ function Navbar({restaurant}) {
     if (dataUser.admin !== undefined){
         if (dataUser.admin == 1 && dataUser.superAdmin == 1 ){
           return (
-            <li>
-              <Link className="link-navbar SuperAdminUser" to="../SuperAdminUser">
-                Usuarios
-              </Link>
-            </li>
+            <Link className={style.linkNavbar} to="../SuperAdminUser">
+              <li>
+                <TiBusinessCard  className={style.iconStrokeMin}/>
+                <span> Usuarios</span>
+              </li>
+            </Link>
           )
         }else{
           return (null);
@@ -102,50 +129,124 @@ function Navbar({restaurant}) {
     }
   }
 
-  return (
-    <nav className="nav-homepage">
-      <Fade className="fade-navbar">
-        <section className="section-img-user-navbar">
-          <img className="logo-navbar" src={logo}/>
-          Bienvenido, 
-           {dataUser.nombre && dataUser.apellido
-            ? " " +dataUser.nombre + " " + dataUser.apellido
-            : null}
-        </section>
-      </Fade>
-      <input type="checkbox" id="check" className="check-responsive"/>
-      <section className="section-link" >
-        <div className="link-nav-homepgae">
-          <Fade>
-            <ul>
-              <li>
-                <Link className="link-navbar homepage" to="../homepage"> 
-                  Inicio
-                </Link>
-              </li>
-              {renderUser()}      
-              {renderSuperAdmin()}     
-            </ul>
-          </Fade>
+  const loadSigl = (data) => {
+    let user = dataUser.nombre + ' ' + dataUser.apellido
+    let firstSigl = dataUser.nombre[0].toUpperCase();
+    let secondSigl = dataUser.apellido[0].toUpperCase();
+
+    return (
+      <div className={style.userInfo}>
+        <div className={style.chart}>
+          <span>{firstSigl}{secondSigl}</span>
         </div>
-        <div className="log-out-nav-homepage">
+        <div className={style.welcome}>
+          <div className={style.welcomeMin}>
+            Bienvenido
+          </div>
+          <div>{user}</div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+  <>
+    <nav className={style.navContainer}>
+        <section className={style.sectionImgUserNavbar}>
+          <img className={style.logoNavbar} src={logo}/>
+           {dataUser.nombre && dataUser.apellido
+            ?  loadSigl()
+            : 'Error'}
+        </section>
+      <section className={style.sectionLinks}>
+        <div className={style.linkNav}>
+        {/* home */}
+          <ul>
+            <Link className={style.linkNavbar} to="../homepage"> 
+              <li className={style.liNavbar}>
+                <CiHome className={` ${style.icon} ${style.iconStrokeMin} `}/>
+                <span>Inicio</span>
+              </li>
+            </Link>
+            {renderUser()}      
+            {renderSuperAdmin()}     
+          </ul>
+          {/* comandas */}
+          <ul>
+              <Accordion id={style.panel1aHeader}>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                >
+                  <Typography className={style.typography}>
+                    <MdOutlineCallToAction className={` ${style.icon} ${style.iconStrokeMin} `}/><span>Comandas</span> 
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails className={style.AccordionDetails}>
+                  <button type="button" 
+                   className={style.btnComanda} 
+                   onClick={() => setModalEntradas(true)}>
+                    <CiShoppingCart className={style.icon} /> Compras </button>
+                  <button type="button" 
+                    className={style.btnComanda}
+                    onClick={() => setModalSalidas(true)}>
+                    <MdOutlineSell className={style.iconStrokeMin}/> Ventas
+                    </button>
+                </AccordionDetails>
+              </Accordion>
+          </ul>
+          {/* ingredientes */}
+          <ul>
+            <Link className={style.linkNavbar} to={`/ingredients/all/${restaurant}`}> 
+              <li className={style.liNavbar}>
+                <IoFastFoodOutline className={` ${style.icon} ${style.iconStrokeMin} `}/>
+                <span>Ingredientes</span>
+              </li>
+            </Link>
+          </ul>
+          {/* Recetas */}
+          <ul>
+            <Link className={style.linkNavbar} to={`/respies/all/${restaurant}`}> 
+              <li className={style.liNavbar}>
+                <LuChefHat className={` ${style.icon} `}/>
+                <span>Recetas</span>
+              </li>
+            </Link>
+          </ul>
+          {/* inventario */}
+          <ul>
+            <Link className={style.linkNavbar} to={`/inventario/${restaurant}`}> 
+              <li className={style.liNavbar}>
+                <LiaClipboardListSolid className={` ${style.icon} ${style.iconStrokeMin} `}/>
+                <span>Inventario</span>
+              </li>
+            </Link>
+          </ul>
+          {/* estado de resultado */}
+          <ul>
+            <Link className={style.linkNavbar} to={`/edr/${restaurant}`}> 
+              <li className={style.liNavbar}>
+                <CiCalendarDate className={` ${style.icon} ${style.iconStrokeMin} `}/>
+                <span>Estado de resultado</span>
+              </li>
+            </Link>
+          </ul>
+        </div>
+        <div className={style.logOutNavHomepage}>
           <button
-            className="btn-log-out"
+            className={style.btnLogOut}
             type="button"
             onClick={logout}
           >
-            Cerrar sesion
+          <CiLogout className={` ${style.icon} ${style.iconStrokeMin} `}/>
+             Cerrar sesion
           </button>
         </div>
+        <span className={style.spanProjecter}>Powered by projecters</span>
       </section>
-      <div className="div-hamburguer-responsive">
-        <Fade className="fade-hamburger-responsive">
-            <label htmlFor="check">
-              <RxHamburgerMenu className="icon-hamburger-responsive"/>
-          </label>
-        </Fade>
-      </div>
     </nav>
+    {modalEntradas ? (<Comandas id_restaurant = {restaurant} />) : null}
+  </>
   );
 }
 

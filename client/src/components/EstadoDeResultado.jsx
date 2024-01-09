@@ -94,7 +94,7 @@ export default function EstadoDeResultado() {
 
   return (
     <>
-        <Navbar />
+        <Navbar  restaurant = {id_restaurant}/>
         <div className='edr-container'>
             <aside className='aside-content'>
                 <div className='btns-edr'>
