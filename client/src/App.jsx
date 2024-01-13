@@ -1,4 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+
+//components
 import NotFound from "./components/notFound";
 import LogginUser from "./components/loginUsers";
 import FormRestaurant from "./components/createRestaurant";
@@ -9,14 +11,21 @@ import AllRestaurant from "./components/superAdmin/allRestaurants";
 import Users from "./components/userAdmin/usersPerRest";
 import SuperAdminUser from "./components/superAdmin/superAdminUsers";
 import ShowRespie from "./components/showRespie";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { isAuthenticated } from "./auth/auth";
 import Ingredients from "./components/Ingredients";
 import Comandas from "./components/Comandas";
 import Inventory from "./components/Inventory";
 import Kardex from "./components/Kardex";
 import EstadoDeResultado from "./components/EstadoDeResultado";
+
+//css
+import "react-toastify/dist/ReactToastify.css";
+
+//toast
+import { ToastContainer } from "react-toastify";
+
+//js
+import { isAuthenticated } from "./auth/auth";
+
 
 function App() {
   return (

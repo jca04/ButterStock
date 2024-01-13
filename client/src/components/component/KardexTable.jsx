@@ -1,5 +1,5 @@
 import React from "react";
-import "../../public/css/kardexStyle.css";
+import style from "../../public/css/kardexStyle.module.css";
 
 export default function KardexTable({ kardex, ingredient }) {
   const fechaLocal = (fecha) => {

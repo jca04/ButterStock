@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../../public/css/edrStyle.css";
+import style from "../../public/css/edrStyle.module.css";
 import { createEdr, getDataEdr } from "../../api/edr";
 import { FaCirclePlus } from "react-icons/fa6";
 import { FaTimes } from "react-icons/fa";

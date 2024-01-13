@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { AxioInterceptor } from "../../auth/auth";
 import { Link } from "react-router-dom";
-import style from "../../public/css/navbarStyle.module.css";
 import { getUser } from "../../api/navbar.js";
 import {useDispatch, useSelector} from 'react-redux'
 import {addHome, deleteHome} from "../../features/homepage/homepageSlice";
 import logo from "../../public/resources/logo/logo_blanco.png";
+
+//styles
+import style from "../../public/css/navbarStyle.module.css";
 
 //import components
 import Comandas from "../Comandas";
@@ -23,14 +25,12 @@ import { CiShoppingCart } from "react-icons/ci";
 import { MdOutlineSell } from "react-icons/md";
 import { CiLogout } from "react-icons/ci";
 
-
 //material ui accordion
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-
 
 AxioInterceptor();
 
@@ -129,7 +129,7 @@ function Navbar({restaurant}) {
     }
   }
 
-  const loadSigl = (data) => {
+  const loadSigl = () => {
     let user = dataUser.nombre + ' ' + dataUser.apellido
     let firstSigl = dataUser.nombre[0].toUpperCase();
     let secondSigl = dataUser.apellido[0].toUpperCase();
@@ -209,7 +209,7 @@ function Navbar({restaurant}) {
             <Link className={style.linkNavbar} to={`/respies/all/${restaurant}`}> 
               <li className={style.liNavbar}>
                 <LuChefHat className={` ${style.icon} `}/>
-                <span>Recetas</span>
+                <span>Recetario</span>
               </li>
             </Link>
           </ul>

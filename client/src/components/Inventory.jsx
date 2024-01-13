@@ -5,7 +5,7 @@ import Navbar from "./reuseComponents/navbar";
 import DataTable from "react-data-table-component";
 import { MdOutlineInventory } from "react-icons/md";
 import {AiOutlineSearch} from 'react-icons/ai';
-import "../public/css/inventoryStyle.css";
+import style from  "../public/css/inventoryStyle.module.css";
 import Load from "./reuseComponents/loadRender";
 
 export default function Inventory() {

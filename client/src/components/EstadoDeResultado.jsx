@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import Navbar from './reuseComponents/navbar'
-import "../public/css/estadoDeResultadoStyle.css"
+import style from "../public/css/estadoDeResultadoStyle.module.css"
 import { useParams } from 'react-router-dom'
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Form, Formik, Field } from "formik";
 import { createRestaurant} from "../api/restaurant.js";
-import "../public/css/createRestaurantStyle.css";
+import style from "../public/css/createRestaurantStyle.module.css";
 import logo from "../public/resources/logo/logo_blanco.png";
 import { toast } from "react-toastify";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";

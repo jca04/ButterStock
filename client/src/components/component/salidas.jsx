@@ -15,7 +15,7 @@ import { saveSales } from "../../api/sales";
 import { salidasPeps, salidasPromPonderado, validacionInventario } from "../../api/kardex";
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import Load from "../reuseComponents/loadRender";
-import '../../public/css/salidaStyle.css';
+import  style from '../../public/css/salidaStyle.module.css';
 
 const unitArr = ["kg", "lb", "oz", "gr", "mg", "und"];
 

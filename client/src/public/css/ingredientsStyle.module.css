@@ -1,0 +1,228 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Work Sans", sans-serif;
+}
+
+.globalIngredients {
+  display: flex;
+  background-color: white;
+}
+
+.bodyIngredients {
+  width: 80%;
+  background-color: #dedede61;
+  padding-left: 45px;
+  padding-top: 30px;
+  height: 100vh;
+  overflow: auto;
+}
+
+.header {
+  font-size: 1.5em;
+}
+
+.bodyBox {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  margin-top: 30px;
+  background: white;
+  border-radius: 6px;
+  padding: 10px;
+  margin-right: 35px;
+  min-height: 45vh;
+}
+
+.addNewIngredient {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+}
+
+.addNewIngredient > button {
+  border-radius: 6px;
+  padding: 10px;
+  border: none;
+  font-size: 0.9em;
+  background-color: #f5b702;
+  cursor: pointer;
+  box-shadow: 0px 7px 4px -5px rgba(0, 0, 0, 0.4);
+}
+
+.addNewIngredient > button:hover {
+  transition: all 200ms ease-in-out;
+  background-color: #dedede61;
+}
+
+.searchDiv {
+  border: 1px solid silver;
+  border-radius: 6px;
+  width: 25%;
+  display: flex;
+  align-items: center;
+}
+
+.searchDiv > input {
+  padding: 8px;
+  border: none;
+  outline: none;
+}
+
+.searchDiv > svg {
+  margin-left: 10px;
+}
+
+.actionButton {
+}
+
+.btnInfo {
+  background-color: #20db4557;
+  border: none;
+  padding: 5px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.btnDanger {
+  background-color: red;
+  border: none;
+  padding: 5px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btnInfo > svg,
+.btnDanger > svg {
+  font-size: 22px;
+}
+
+.btnInfo:hover {
+  transition: all 200ms ease-in-out;
+  fill: #f5b702;
+}
+
+.loadDataTable {
+  height: 100%;
+  margin: auto;
+}
+
+.expandDataTable {
+  width: 80%;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  background-color: #dedede61;
+}
+
+.fatherDialog > div > div {
+  overflow-y: visible !important;
+  width: 30%;
+  border-radius: 6px !important;
+}
+
+.dialogIngredient {
+  background-color: white;
+  border-radius: 6px;
+  height: auto;
+}
+
+.headerIngredient {
+  background-color: white;
+  border-bottom: 1px solid silver;
+  padding: 10px !important;
+  border-radius: 6px;
+}
+
+.labelForm {
+  display: flex;
+  font-size: 15px;
+}
+
+form > div {
+  margin-top: 12px;
+}
+
+form > div > input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid silver;
+  outline: none;
+}
+
+form > div > input:focus {
+  border-color: #f5b702;
+}
+
+.messageError {
+  margin-bottom: 10px;
+}
+
+.selectForm {
+  margin-bottom: 15px;
+}
+
+.btnSendIngredient {
+  display: flex;
+  justify-content: center;
+}
+
+.btnSendIngredient > button {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border: none;
+  outline: none;
+  border-radius: 6px;
+  background-color: #f5b702;
+  cursor: pointer;
+  box-shadow: 0px 7px 4px -5px rgba(0, 0, 0, 0.4);
+  height: 40px;
+}
+
+.iconSubmit > span{
+  padding: 12px;
+}
+
+.btnClose{
+  position: absolute;
+  right: 15px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+}
+
+.deleteIngredientD{
+  background-color: white;
+}
+
+.deleteTitle{
+  color: black;
+}
+
+.messageDelete{
+  color: red;
+}
+
+.btnAcept{
+  color: black !important;
+  background-color: #f5b702 !important;
+}
+
+.btnAcept > span{
+  padding: 10px;
+}
+
+.infoDelete{
+  color: black;
+}
+
+.btnCancelDelete{
+  color: black !important;
+}
