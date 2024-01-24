@@ -206,7 +206,7 @@ function Navbar({restaurant}) {
           </ul>
           {/* Recetas */}
           <ul>
-            <Link className={style.linkNavbar} to={`/respies/all/${restaurant}`}> 
+            <Link className={style.linkNavbar} to={`/Recipe_book/all/${restaurant}`}> 
               <li className={style.liNavbar}>
                 <LuChefHat className={` ${style.icon} `}/>
                 <span>Recetario</span>
@@ -215,7 +215,7 @@ function Navbar({restaurant}) {
           </ul>
           {/* inventario */}
           <ul>
-            <Link className={style.linkNavbar} to={`/inventario/${restaurant}`}> 
+            <Link className={style.linkNavbar} to={`/inventory/${restaurant}`}> 
               <li className={style.liNavbar}>
                 <LiaClipboardListSolid className={` ${style.icon} ${style.iconStrokeMin} `}/>
                 <span>Inventario</span>

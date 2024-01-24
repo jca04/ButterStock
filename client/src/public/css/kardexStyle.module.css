@@ -1,57 +1,45 @@
-.kardex_table {
-  display: flex;
-  flex-direction: column;
-  margin: auto;
-  position: relative;
-  width: 90%;
-  margin-top: 20px;
+.modalKardex > div > div{
+    max-width: inherit !important;
+    width: 70%;
 }
 
-.name_ingredient{ 
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 10px;
-    text-align: center;
+.KardexTable{
+
 }
 
-.container_table {
-    display: flex;
-    flex-direction: column;
-    margin: auto;
-    position: relative;
-    width: 100%;
-    margin-top: 20px;
-    overflow-x: auto;
+.headerKardex{
+    font-size: 2em;
+    background-color: #f5b702;
+    margin-left: -25px;
+    margin-right: -24px;
+    margin-top: -20px;
+    padding: 10px;
+    margin-bottom: 20px;
 }
 
-.peps_table {
-    width: 100%;
+.table{
     border-collapse: collapse;
-    margin-bottom: 30px;
+    table-layout: fixed;
+    width: 100%;
 }
 
-.peps_table th {
-    background-color: #f2f2f2;
-    border: 1px solid #dddddd;
+.thFa{
+    background-color: #dedede;
+    padding: 10px;
+    border: 1px solid silver;
+}
+
+.table > tbody > tr{
+    border:  1px solid silver;
+}
+
+.table > tbody > tr > td{
+    border: 1px solid silver;
     text-align: center;
-    padding: 8px;
-    font-weight: bold;
+    font-weight: 500;
 }
 
-.peps_table th.small_th {
-    text-align: center;
-}
-
-.peps_table td {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
-}
-
-.peps_tbody tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-.peps_table tr:hover {
-    background-color: #ddd;
+.samllTh{
+    padding: 7px;
+    border: 1px solid silver
 }
