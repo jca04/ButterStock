@@ -15,7 +15,9 @@ import { saveSales } from "../../api/sales";
 import { salidasPeps, salidasPromPonderado, validacionInventario } from "../../api/kardex";
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import Load from "../reuseComponents/loadRender";
-import '../../public/css/salidaStyle.css';
+import  style from '../../public/css/salidaStyle.module.css';
+
+const unitArr = ["kg", "lb", "oz", "gr", "mg", "und"];
 
 function Salidas({closeModal, id_restaurant }) {
   const [dataSelect, setDataSelect] = useState([]);
@@ -24,9 +26,7 @@ function Salidas({closeModal, id_restaurant }) {
   const [open, setOpen] = useState(false);
   const [sending, setSending] = useState(false);
   const [errosTable, setErrorsTable] = useState({});
-  const unitArr = ["kg", "lb", "oz", "gr", "mg", "und"];
   const [isLoading, setLoading] = useState(false);
-
 
   useEffect(() => {
     document.title = 'ButterStock | ventas';
@@ -255,7 +255,7 @@ function Salidas({closeModal, id_restaurant }) {
       setTimeout(() => {
         setSending(false);
         setOpen(false);
-      }, 1000);
+      }, 100);
     } catch (error) {
       console.error(error);
       showToastMessageErr();
@@ -427,6 +427,7 @@ function Salidas({closeModal, id_restaurant }) {
           </Button>
           <Button
             className="btn-acept-salida btn-salida"
+            id = "btn-salida-id"
             onClick={handleLoadSend}
             autoFocus
           >

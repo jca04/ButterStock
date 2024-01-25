@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../public/css/comandasStyle.css";
+import style from "../public/css/comandasStyle.module.css";
 import { getIngredients } from "../api/ingredients";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";

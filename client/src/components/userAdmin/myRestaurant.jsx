@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 import { Form, Formik, Field } from "formik";
 import DataTable from "react-data-table-component";
 import Load from "../reuseComponents/loadRender";
-import '../../public/css/myRestaurantStyle.css';
+import style from '../../public/css/myRestaurantStyle.module.css';
 
 function MyRestaurante(){
   const { id } = useParams();

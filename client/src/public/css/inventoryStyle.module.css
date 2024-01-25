@@ -1,0 +1,65 @@
+
+
+.globalFather{
+  display: flex;
+  background-color: white;
+}
+
+.bodyInventory{
+  width: 80%;
+  background-color: #dedede61;
+  padding-left: 45px;
+  padding-top: 30px;
+}
+
+.headerInventory{
+  font-size: 1.5em;
+}
+
+.bodyPartInventory{
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  margin-top: 30px;
+  background-color: white;
+  margin-right: 30px;
+  border-radius: 6px;
+  padding: 10px;
+}
+
+.searchInventory{
+  display: flex;
+  justify-content: end;
+  margin-bottom: 20px;
+}
+
+.boxInput{
+  width: 25%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid silver;
+  border-radius: 6px;
+  padding: 5px;
+}
+
+.boxInput > input{
+  height: 100%;
+  padding: 5px;
+  outline: none;
+  width: 100%;
+  border:none
+}
+
+.btnShowKardex{
+  background-color: #f5b702;
+  border-radius: 6px;
+  outline: none;
+  border: none;
+  padding: 6px;
+}
+
+.btnShowKardex > a{
+  text-decoration: none;
+  color: black;
+}

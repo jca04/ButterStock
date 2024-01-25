@@ -1,0 +1,45 @@
+.modalKardex > div > div{
+    max-width: inherit !important;
+    width: 70%;
+}
+
+.KardexTable{
+
+}
+
+.headerKardex{
+    font-size: 2em;
+    background-color: #f5b702;
+    margin-left: -25px;
+    margin-right: -24px;
+    margin-top: -20px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.table{
+    border-collapse: collapse;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.thFa{
+    background-color: #dedede;
+    padding: 10px;
+    border: 1px solid silver;
+}
+
+.table > tbody > tr{
+    border:  1px solid silver;
+}
+
+.table > tbody > tr > td{
+    border: 1px solid silver;
+    text-align: center;
+    font-weight: 500;
+}
+
+.samllTh{
+    padding: 7px;
+    border: 1px solid silver
+}

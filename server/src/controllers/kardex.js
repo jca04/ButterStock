@@ -190,9 +190,13 @@ const salidas = async (req, res) => {
       [id_ingredient, id_restaurant]
     );
 
+
+
+
     const actualizarIngredientes = await queryAsync(
-      "UPDATE tbl_ingredientes SET cantidad_total_ingrediente = ?, cantidad_editable_ingrediente = ?, refresh = 1 WHERE id_ingrediente = ? && id_restaurant = ?",
+      "UPDATE tbl_ingredientes SET costo_unitario = ?, cantidad_total_ingrediente = ?, cantidad_editable_ingrediente = ?, refresh = 1 WHERE id_ingrediente = ? && id_restaurant = ?",
       [
+        saldos[0].saldo_valorUnitario,
         nueva_cantidad_total_ingrediente,
         nueva_cantidad_editable_ingrediente,
         id_ingredient,

@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
-import "../public/css/landingPageStyle.css";
+import style from "../public/css/landingPageStyle.module.css";
 import logo from "../public/resources/logo/logotoai_smooth.svg"
 import { Fade, Slide } from "react-awesome-reveal";
 
