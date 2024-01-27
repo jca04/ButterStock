@@ -18,10 +18,8 @@ const transporter = nodemailer.createTransport({
     pass: config.MAIL_PASS,
   },
 });
-
-const sendMail = async(req, res) => {
-  console.log(req.body)
-
+ 
+const sendMail = async () => {
   const info = await transporter.sendMail({
     from: config.MAIL_USER, // sender address
     to: "layyagami9@gmail.com", // list of receivers
@@ -31,6 +29,18 @@ const sendMail = async(req, res) => {
   });
 }
 
+
+const sendMailErrorToDevelopment = async (error) => {
+  const info = await transporter.sendMail({
+    from: config.MAIL_USER, // sender address
+    to: "layyagami9@gmail.com", // list of receivers
+    subject: "Errores en ButterStock", // Subject line
+    text: JSON.stringify(error) , // plain text body
+    html: html, // html body
+  });
+}
+
 module.exports = {
-  sendMail
+  sendMail,
+  sendMailErrorToDevelopment
 }

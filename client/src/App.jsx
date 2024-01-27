@@ -12,7 +12,7 @@ import Users from "./components/userAdmin/usersPerRest";
 import SuperAdminUser from "./components/superAdmin/superAdminUsers";
 import ShowRespie from "./components/showRespie";
 import Ingredients from "./components/Ingredients";
-import Comandas from "./components/Comandas";
+import Comandas from "./components/Entradas";
 import Inventory from "./components/Inventory";
 import Kardex from "./components/Kardex";
 import EstadoDeResultado from "./components/EstadoDeResultado";

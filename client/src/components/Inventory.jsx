@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { getIngredients } from "../api/ingredients";
-import DataTable from "react-data-table-component";
-import { AiOutlineSearch } from "react-icons/ai";
 import style from "../public/css/inventoryStyle.module.css";
 
 //import components
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DataTable from "react-data-table-component";
 import Navbar from "./reuseComponents/navbar";
 import Kardex from "./Kardex";
+import CircularProgress from "@mui/material/CircularProgress";
+
+//icons
+import { AiOutlineCloseCircle } from 'react-icons/ai';
+import { AiOutlineSearch } from "react-icons/ai";
+
 
 
 export default function Inventory() {
@@ -16,6 +23,7 @@ export default function Inventory() {
   const [data_search, setDataSearch] = useState([]);
   const [loadKardexComponent, setKardex] = useState([]);
   const [isLoading, setLoading] = useState(true);
+  const [modalTable, setModalTable] = useState(false);
 
   useEffect(() => {
     document.title = "ButterStock | inventario";
@@ -84,7 +92,8 @@ export default function Inventory() {
 
 
   const loadKardex = (id_ingrediente, id_restaurante) => {
-    setKardex([id_ingrediente, id_restaurante])
+    setKardex([id_ingrediente, id_restaurante]);
+    setModalTable(true)
   }
 
   const paginationComponentOptions = {
@@ -110,6 +119,7 @@ export default function Inventory() {
               />
             </div>
           </div>
+         {!isLoading ? (
           <DataTable
             columns={columns}
             data={data_search.length == 0  ? data : data_search}
@@ -119,12 +129,21 @@ export default function Inventory() {
             striped
             paginationComponentOptions={paginationComponentOptions}
           />
+        ):  <div className={style.loadingInventory}><CircularProgress color="inherit" /></div>}
         </div>
       </section>
-      {loadKardexComponent.length > 0 ? (
-        <div>
+      {modalTable ? (
+        <>
+        <Dialog
+        open={modalTable}
+        className={style.modalKardex}
+      >
+        <button className={style.btnCloseKardex} onClick={() => {setKardex([]); setModalTable(false)}}><AiOutlineCloseCircle/></button>
+        <DialogContent>
           <Kardex id_ingrediente = {loadKardexComponent[0]} />
-        </div>
+        </DialogContent>
+      </Dialog>
+      </>
       ) : (null)}
     </div>
   );

@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import style from "../public/css/homepageStyle.module.css";
-import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import CircularProgress from '@mui/material/CircularProgress';
 
 //components
 import Navbar from "./reuseComponents/navbar";
-import Comandas from "./Comandas";
+import Entradas from "./Entradas";
 import Salidas from "./component/salidas";
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
 
 //Apis
 import { getRestaurant } from "../api/restaurant";
@@ -16,6 +17,7 @@ import { removeToken } from "../auth/auth";
 //icons
 import { MdOutlineSell } from "react-icons/md";
 import { CiShoppingCart } from "react-icons/ci";
+import { AiOutlineCloseCircle } from 'react-icons/ai';
 
 function HomePage() {
   const [id_restaurant, setIdRestaurant] = useState(null);
@@ -85,8 +87,8 @@ function HomePage() {
             </div>
             <div className={style.bodyComandas}>
               <div>
-                <button className={style.btnCompras}><CiShoppingCart className={style.icons}/> Compras</button>
-                <button className={style.btnVentas}><MdOutlineSell className={style.icons}/> Ventas</button>
+                <button className={style.btnCompras} onClick={() => setModalEntradas(true)}><CiShoppingCart className={style.icons}/> Compras</button>
+                <button className={style.btnVentas} onClick={() => setModalSalidas(true)}><MdOutlineSell className={style.icons}/> Ventas</button>
               </div>
               <span className={style.spanComandas}>Ingresa tus compras y tus ventas</span>
             </div>
@@ -105,14 +107,29 @@ function HomePage() {
         </div>
       </section>
       {modalEntradas ? (
-        <Comandas
-          closeModal={closeModalEntradas}
-          id_restaurant={id_restaurant}
-        />
+        <Dialog
+         open={modalEntradas}
+         className={style.modalEntradas}
+        >
+        <button className={style.btnModalEntradas} onClick={() => setModalEntradas(false)}><AiOutlineCloseCircle/></button>
+          <DialogContent>
+            <Entradas id_restaurant = {id_restaurant} />
+          </DialogContent>
+        </Dialog>
       ) : null}
-      {modalSalida ? (
-        <Salidas closeModal={closeModalSalidas} id_restaurant={id_restaurant} />
-      ) : null}
+
+
+      {modalSalida ? ( 
+        <Dialog
+          open={modalSalida}
+          className={style.modalEntradas}
+        >
+          <button className={style.btnModalEntradas} onClick={() => setModalSalidas(false)}><AiOutlineCloseCircle/></button>
+          <DialogContent>
+            <Salidas id_restaurant = {id_restaurant} />
+          </DialogContent>
+        </Dialog>
+    ) : null}
     </div>
   );
 }

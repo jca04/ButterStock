@@ -2,6 +2,7 @@ const conn = require("../db/db");
 const { v4: uuidv4 } = require("uuid");
 const { encrypt, verified } = require("../utils/bcrypt.handle");
 const { generateToken } = require("../utils/jwt.handle");
+const { sendMailErrorToDevelopment } = require("./mail");
 
 const getUsers = async (req, res) => {
   try {
@@ -87,6 +88,7 @@ const loginUser = async (req, res) => {
       }
     );
   } catch (error) {
+    sendMailErrorToDevelopment(error)
     res.status(500).json({ error });
   }
 };
