@@ -7,7 +7,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DatePicker } from "@mui/x-date-pickers/DatePicker"
 import dayjs from 'dayjs'
 import { getEdr, getPieChartEdr } from '../api/edr'
-import Load from './reuseComponents/loadRender'
 import Edr from './component/Edr'
 import PieChartEdr from './reuseComponents/PieChartEdr'
 
@@ -130,7 +129,7 @@ export default function EstadoDeResultado() {
                     </div>
                 </div>
                 {
-                    edrLoading ? (<Load />) : ( 
+                    edrLoading ? (null ) : ( 
                     edr.length > 0 
                     ? 
                     <div className='historico-container'>

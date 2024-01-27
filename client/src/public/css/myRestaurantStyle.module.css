@@ -1,143 +1,65 @@
-.MuiContainer-root{
-  display: flex !important;
-  justify-content: center;
-  margin-top: 15px;
- }
-
- .MuiContainer-root > div{
-    display: flex !important;
-    width: 90% !important;
-    padding: 10px;
-    background: rgb(255, 255, 255);
-    background: linear-gradient( 356deg, rgba(255, 255, 255, 1) 38%, rgba(255, 234, 150, 1) 90% );
- }
-
-.header-business{
+.globalFather{
   display: flex;
-  justify-content: space-between;
-  padding: 10px;
-  align-items: center;
-  margin-left: 19px;
-  width: 89%;
- }
-
-.business{
-  width: 40%;
-  background: white;
-  border-radius: 5px;
+  background-color: white;
 }
 
-.form-my-business{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
- }
+.containerMyBusiness{
+  display: flex;
+  width: 80%;
+  background-color: #dedede61;
+  padding-left: 45px;
+  padding-top: 30px;
+}
 
-.buss-row{
-  width: 90%;
-  padding: 10px;
+.prebodyContainer{
+  width: 100%;
+}
+
+.headerBusiness{
+  font-size: 1.5em;
+}
+
+.bodyBusiness{
   display: flex;
   flex-direction: column;
- }
-
- .buss-row > input{
-  padding: 9px;
-  border: 1px solid silver;
-  border-radius: 5px;
-  outline: none;
   background-color: white;
- }
-
- .buss-row > input:disabled{
-  background-color: #dedede;
- }
-
- .btn-edit-bus{
+  border-radius: 6px;
   padding: 10px;
-    font-size: 0.8em;
-    border-radius: 5px;
-    outline: none;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    background-color: white;
-    align-items: center;
-    box-shadow: 1px 1px 5px #86761e;
- }
-
- .btn-edit-bus:hover {
-  transform: scale(1.1)
- }
-
-
- .btn-send-buss{
-  padding: 12px;
-    width: 50%;
-    text-align: center;
- }
-
- .btn-send-buss > button{
-  padding: 10px;
-  font-size: 0.8em;
-  border-radius: 5px;
-  outline: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  background-color: #f1d975;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  box-shadow: 1px 1px 5px #86761e;
- }
-
- .hd-uss-re{
-  display: flex;
-  justify-content: space-between;
-  padding: 10px;
-  align-items: center;
-  margin-left: 19px;
- }
-
- .body-uss-re{
-  justify-content: space-between;
-  padding: 15px;
-  align-items: center;
-  margin-left: 19px;
- }
-
- .tbl-uss-re{
-  width: 59%;
- }
-
- @media screen and (max-width:830px) {
-    .body-uss-re{
-      padding: 0px;
-    }
- }
-
- @media screen and (max-width:780px) {
-  .MuiContainer-root > div{
-    flex-direction: column;
-  }
-
-  .business {
-    width: 100%;
-  }
-
-  .tbl-uss-re{
-    width: 100%;
-  }
+  margin-top: 40px;
+  box-shadow: 2px 9px 12px -5px rgba(0, 0, 0, 0.4);
+  margin-right: 40px
 }
 
-@media screen and (max-width:550px) {
-  .MuiContainer-root > div{
-    flex-direction: column;
-    width: 100% !important;
-  }
-  .css-1oqqzyl-MuiContainer-root{
-    padding: 0 !important;
-  }
+.btnEditBusinnes{
+  background-color: white;
+  border-radius: 6px;
+  border: 1px solid #dedede61;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  width: 10%;
+}
+
+.btnEditBusinnes:hover{
+  transform: scale(1.1);
+  transition: all 200ms ease-in-out;
+  background-color: #f5b702;
+}
+
+.boxBtnSave{
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.btnSaveBusiness{
+  background-color: #f5b702;
+  padding: 10px;
+  border: none;
+  outline: none;
+  border-radius: 6px;
+  box-shadow: 2px 9px 12px -5px rgba(0, 0, 0, 0.4);
+  margin: auto;
+  width: 20%;
 }

@@ -10,7 +10,10 @@ import logo from "../../public/resources/logo/logo_blanco.png";
 import style from "../../public/css/navbarStyle.module.css";
 
 //import components
-import Comandas from "../Comandas";
+import Entradas from "../Entradas.jsx";
+import Salidas from "./../component/salidas.jsx";
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
 
 //react icon
 import { CiHome } from "react-icons/ci";
@@ -20,10 +23,11 @@ import { MdOutlineCallToAction } from "react-icons/md";
 import { IoFastFoodOutline } from "react-icons/io5";
 import { LiaClipboardListSolid } from "react-icons/lia";
 import { LuChefHat } from "react-icons/lu";
-import { CiCalendarDate } from "react-icons/ci";
 import { CiShoppingCart } from "react-icons/ci";
 import { MdOutlineSell } from "react-icons/md";
 import { CiLogout } from "react-icons/ci";
+import { MdAttachMoney } from "react-icons/md";
+import { AiOutlineCloseCircle } from 'react-icons/ai';
 
 //material ui accordion
 import Accordion from '@mui/material/Accordion';
@@ -156,7 +160,7 @@ function Navbar({restaurant}) {
           <img className={style.logoNavbar} src={logo}/>
            {dataUser.nombre && dataUser.apellido
             ?  loadSigl()
-            : 'Error'}
+            : 'Cargando...'}
         </section>
       <section className={style.sectionLinks}>
         <div className={style.linkNav}>
@@ -226,7 +230,7 @@ function Navbar({restaurant}) {
           <ul>
             <Link className={style.linkNavbar} to={`/edr/${restaurant}`}> 
               <li className={style.liNavbar}>
-                <CiCalendarDate className={` ${style.icon} ${style.iconStrokeMin} `}/>
+                <MdAttachMoney className={` ${style.icon} ${style.iconStrokeMin} `}/>
                 <span>Estado de resultado</span>
               </li>
             </Link>
@@ -245,7 +249,35 @@ function Navbar({restaurant}) {
         <span className={style.spanProjecter}>Powered by projecters</span>
       </section>
     </nav>
-    {modalEntradas ? (<Comandas id_restaurant = {restaurant} />) : null}
+
+    {/* Entradas */}      
+    
+    {modalEntradas ? (
+      <Dialog
+        open={modalEntradas}
+        className={style.modalEntradas}
+      >
+        <button className={style.btnModalEntradas} onClick={() => setModalEntradas(false)}><AiOutlineCloseCircle/></button>
+        <DialogContent>
+          <Entradas id_restaurant = {restaurant} />
+        </DialogContent>
+      </Dialog>
+    ) : null}
+
+    {/*Salidas  */}
+
+    {modalSalidas ? ( 
+      <Dialog
+        open={modalSalidas}
+        className={style.modalEntradas}
+      >
+        <button className={style.btnModalEntradas} onClick={() => setModalSalidas(false)}><AiOutlineCloseCircle/></button>
+        <DialogContent>
+          <Salidas id_restaurant = {restaurant} />
+        </DialogContent>
+      </Dialog>
+    ) : null}
+
   </>
   );
 }

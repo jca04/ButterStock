@@ -1280,7 +1280,6 @@ function ShowRespie() {
 
 
                       <div>
-                      {console.log(valueImage)}
                         {valueImage && valueImage.imageUrl != '' ? (
                           <FileMosaic
                             {...valueImage}
