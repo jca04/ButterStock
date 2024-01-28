@@ -138,6 +138,15 @@
   font-size: 1em;
 }
 
+.divInputBtn > button > span{
+  height: 20px !important;
+}
+
+.divInputBtn > button > span > svg{
+  height: 100% !important;
+  display: inline !important;
+}
+
 .divInputBtn > button:hover {
   transition: all 500ms;
   transform: scale(1.1);

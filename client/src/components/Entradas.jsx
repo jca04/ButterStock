@@ -6,6 +6,7 @@ import style from "../public/css/entradasStyle.module.css";
 //Apis
 import { getIngredients } from "../api/ingredients";
 import { entradasPeps, entradasPromPonderado, salidasPeps, validacionInventario } from "../api/kardex";
+import { verifyUrl } from "../auth/verifyUrl";
 
 //components
 import Select from "react-select";
@@ -17,7 +18,9 @@ import { TbNotesOff } from "react-icons/tb";
 
 const unitArr = ['kg','lb','oz','gr','mg','und'];
 
-export default function Comandas({ closeModal, id_restaurant }) {
+export default function Comandas({id_restaurant }) {
+
+  id_restaurant = verifyUrl(id_restaurant)
  
   document.title = "ButterStock | Compras";
 
