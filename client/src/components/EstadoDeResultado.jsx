@@ -1,21 +1,30 @@
 import React, {useEffect, useState} from 'react'
-import Navbar from './reuseComponents/navbar'
-import style from "../public/css/estadoDeResultadoStyle.module.css"
 import { useParams } from 'react-router-dom'
+
+
+//apis
+import { getEdr, getPieChartEdr } from '../api/edr'
+import { verifyUrl } from '../auth/verifyUrl'
+
+//components
+import Navbar from './reuseComponents/navbar'
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DatePicker } from "@mui/x-date-pickers/DatePicker"
 import dayjs from 'dayjs'
-import { getEdr, getPieChartEdr } from '../api/edr'
 import Edr from './component/Edr'
 import PieChartEdr from './reuseComponents/PieChartEdr'
 
+//style
+import style from "../public/css/estadoDeResultadoStyle.module.css"
 
 export default function EstadoDeResultado() {
 
-    document.title = "Estado de Resultado"
+    document.title = "ButterStock | Estado de Resultado"
 
-    const { id_restaurant } = useParams();
+    let{ id_restaurant } = useParams();
+    id_restaurant = verifyUrl(id_restaurant)
+
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedMonth, setSelectedMonth] = useState(null);
     const [edr, setEdr] = useState([]);
@@ -92,14 +101,25 @@ export default function EstadoDeResultado() {
 
 
   return (
-    <>
-        <Navbar  restaurant = {id_restaurant}/>
-        <div className='edr-container'>
-            <aside className='aside-content'>
-                <div className='btns-edr'>
-                    <button onClick={handleEdrModalOpen} value="diario" >Diario</button>
-                    <button onClick={handleEdrModalOpen} value="mensual">Mensual</button>
+    <div className={style.stateOfContainer}>
+        <Navbar restaurant = {id_restaurant}/>
+        <div className={style.edrContainer}>
+            <header>Estado de Resultado</header>
+            <div className={style.boxInfoFirst}>
+                <div className={style.boxActionEdr}>
+                    <div className={style.titleBoxEdr}>Generar Estados</div>
+                    <div className={style.btnsBoxEdr}>
+                        <button type='button' value={"diario"} className={style.btnDay} onClick={handleEdrModalOpen}>Diario</button>
+                        <button type='button' value={"mensual"} className={style.btnMonth} onClick={handleEdrModalOpen} >Mensual</button>
+                    </div>
+                    <div className={style.spanEdrGenerate}>Generar un tipo de estado</div>
                 </div>
+                <div className={style.promedMonthBox}>
+                    Grafica del promedio del mes
+                </div>
+            </div>
+
+            <aside className='aside-content'>
                 <div className="calendar">
                     <h1>Estados de resultados anteriores</h1>
                     <div className="calendar-content">
@@ -179,6 +199,6 @@ export default function EstadoDeResultado() {
                 <Edr id_restaurant={id_restaurant} tipoEdr = {edrTipo} closeModal={handleEdrModalClose}/>
             ) : null
         }
-    </>
+    </div>
   )
 }

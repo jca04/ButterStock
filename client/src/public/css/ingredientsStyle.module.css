@@ -187,13 +187,26 @@ form > div > input:focus {
 }
 
 .btnClose{
+  display: flex;
+  align-items: center;
   position: absolute;
-  right: 15px;
+  right: -18px;
+  top: -18px;
   border: none;
   outline: none;
   cursor: pointer;
   padding: 6px;
+  font-size: 2em;
   border-radius: 6px;
+  border-radius: 50%;
+  background-color: #f5b702;
+  box-shadow: 0px 7px 4px -5px rgba(0, 0, 0, 0.4);
+}
+
+.btnClose:hover{
+  background-color: white;
+  transition: all 200ms ease-in-out;
+  transform: scale(1.1);
 }
 
 .deleteIngredientD{

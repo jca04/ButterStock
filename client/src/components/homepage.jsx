@@ -113,7 +113,7 @@ function HomePage() {
         >
         <button className={style.btnModalEntradas} onClick={() => setModalEntradas(false)}><AiOutlineCloseCircle/></button>
           <DialogContent>
-            <Entradas id_restaurant = {id_restaurant} />
+            <Entradas id_restaurant = {btoa(id_restaurant)} />
           </DialogContent>
         </Dialog>
       ) : null}
@@ -126,7 +126,7 @@ function HomePage() {
         >
           <button className={style.btnModalEntradas} onClick={() => setModalSalidas(false)}><AiOutlineCloseCircle/></button>
           <DialogContent>
-            <Salidas id_restaurant = {id_restaurant} />
+            <Salidas id_restaurant = {btoa(id_restaurant)} />
           </DialogContent>
         </Dialog>
     ) : null}

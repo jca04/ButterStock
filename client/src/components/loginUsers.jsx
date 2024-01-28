@@ -1,13 +1,21 @@
 import React, { useEffect } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+
+//APIS
 import { validateUser } from "../api/users.js";
+
+//components
 import { Field, Form, Formik } from "formik";
-import  styles from "../public/css/loginUserStyle.module.css";
-import wave from '../public/resources/img/wave.png';
-import logo from "../public/resources/logo/logo_blanco.png";
 import { toast } from "react-toastify";
 import { Fade } from "react-awesome-reveal";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import CircularProgress from "@mui/material/CircularProgress";
+
+//astyle
+import  styles from "../public/css/loginUserStyle.module.css";
+import wave from '../public/resources/img/wave.png';
+import logo from "../public/resources/logo/logo_blanco.png";
+
 
 function LogginUser() {
 
@@ -19,14 +27,14 @@ function LogginUser() {
   //si no coinciden
   const showToastMessageNo = () => {
     toast.error("Correo y/o contraseña incorrectos", {
-      position: toast.POSITION.TOP_CENTER,
+      position: toast.POSITION.TOP_RIGHT,
     });
   };
 
   //cuando sucede un error inesperado
   const showToastMessageA = () => {
     toast.error("Ha ocurrido un error, por favor vuelva a intentar !", {
-      position: toast.POSITION.TOP_CENTER,
+      position: toast.POSITION.TOP_RIGHT,
     });
   };
 
@@ -146,7 +154,7 @@ function LogginUser() {
                       disabled={isSubmitting}
                     >
                       {isSubmitting ? (
-                        <AiOutlineLoading3Quarters/>
+                        <CircularProgress color="inherit"/>
                       ) : (
                         
                         "Iniciar sesion"

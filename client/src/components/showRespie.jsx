@@ -14,6 +14,7 @@ import {
 } from "../api/resipe";
 import { convertion } from "../public/js/unitConversion";
 import { fileUpload } from "../app/cloudinary";
+import { verifyUrl } from "../auth/verifyUrl";
 
 //components
 import Navbar from "./reuseComponents/navbar";
@@ -47,6 +48,9 @@ let unitArr = ["kg", "lb", "oz", "gr", "mg", "und"];
 let json = {};
 
 function ShowRespie() {
+  let { id } = useParams();
+  id = verifyUrl(id);
+
   //localState
   const [divide, setDivide] = useState(1);
   const [stateResipe, setResipes] = useState([]);
@@ -66,7 +70,6 @@ function ShowRespie() {
   //new
   const [infoIngredients, setInfoIngredients] = useState({});
 
-  const { id } = useParams();
   const dataTipoPlato = [
     { label: "Plato", value: "Plato" },
     { label: "Bebida", value: "Bebida" },
