@@ -1,18 +1,26 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../reuseComponents/navbar";
 import { useParams } from "react-router-dom";
-import { loadRestaurant, editRestaurant } from "../../api/restaurant";
+
+
+//components
+import Navbar from "../reuseComponents/navbar";
+import DataTable from "react-data-table-component";
+import Box from '@mui/material/Box';
+import { toast } from "react-toastify";
+import { Form, Formik, Field } from "formik";
+import Container from '@mui/material/Container';
+
+//Apis
 import { getuserPerRest } from "../../api/users";
+import { loadRestaurant, editRestaurant } from "../../api/restaurant";
+
+//icons
 import {MdAddBusiness} from 'react-icons/md';
 import {AiOutlineEdit, AiOutlineLoading3Quarters} from 'react-icons/ai';
 import {HiUsers} from 'react-icons/hi';
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
-import { toast } from "react-toastify";
-import { Form, Formik, Field } from "formik";
-import DataTable from "react-data-table-component";
-import Load from "../reuseComponents/loadRender";
-import '../../public/css/myRestaurantStyle.css';
+
+//style
+import style from '../../public/css/myRestaurantStyle.module.css';
 
 function MyRestaurante(){
   const { id } = useParams();
@@ -54,12 +62,6 @@ function MyRestaurante(){
       const response = await loadRestaurant(id);
       if (Array.isArray(response.message)){
         setData(response.message);
-        //consultar usuarios de este restaurante
-        const responseUsers = await getuserPerRest(id);
-        if (Array.isArray(responseUsers)){
-          setUsers(responseUsers);
-        }else showToastMessageNo('!Error al cargar los usuarios');
-
       }else{
         showToastMessageNo(response.message);
       }
@@ -72,33 +74,23 @@ function MyRestaurante(){
     getData();
   }, []);
 
-  const paginationComponentOptions = {
-    rowsPerPageText: "Filas por página",
-    rangeSeparatorText: "de",
-    selectAllRowsItem: true,
-    selectAllRowsItemText: "Todos",
-  };
-
   return(
-    <>
+    <div className={style.globalFather}>
       <Navbar restaurant = {id}/>
       {!isLoading ? (
-        <Container>
-        <Box className='container-my' sx={{ bgcolor: '#cfe8fc', height: '100vh' }} >
-          <section className="business">
+        <section className={style.containerMyBusiness}>
+          <section className={style.prebodyContainer}>
           {data.length > 0 ? (
             <>
-              <section className="header-business">
-                <h2><MdAddBusiness/> Mi negocio</h2>
-                <div>
-                  <button className="btn-edit-bus" type="button" onClick={() => {
+              <header className={style.headerBusiness}>
+                Mi negocio
+              </header>
+              <section className={style.bodyBusiness}>
+              <button className={style.btnEditBusinnes} type="button" onClick={() => {
                     if (isDisabledInput) setDisabledInput(false);
                     else setDisabledInput(true);
                   }
                   }><AiOutlineEdit/>Editar</button>
-                </div>
-              </section>
-              <section className="body-business">
               <Formik
                 initialValues={{
                   id_restaurant: data.length > 0 ? data[0].id_restaurant : "",
@@ -139,9 +131,9 @@ function MyRestaurante(){
                       <label htmlFor="time_stamp">Fecha de creación</label>
                       <Field type="text" placeholder="Fecha de creacion" disabled={true}  name="time_stamp" id="time_stamp"/>
                     </div>
-                    <div className="btn-send-buss">
+                    <div className={style.boxBtnSave}>
                     {!isDisabledInput ? (
-                      <button type="submit" disabled={isSubmitting}>
+                      <button type="submit" className={style.btnSaveBusiness} disabled={isSubmitting}>
                       {isSubmitting ? (
                         <AiOutlineLoading3Quarters className="load-respie-send" />
                       ) : (
@@ -155,29 +147,10 @@ function MyRestaurante(){
             </section>
             </>
           ) : (null)}
-            
           </section>
-          <section className="tbl-uss-re">
-            <section className="hd-uss-re">
-              <h2><HiUsers/> Usuarios</h2>
-            </section>
-            <section className="body-uss-re">
-                <DataTable
-                  columns={columns}
-                  data={users}
-                  responsive={true}
-                  pagination
-                  paginationComponentOptions={paginationComponentOptions}
-                  paginationPerPage={5}
-                  striped
-                />
-            </section>
-          </section>
-        </Box>
-      </Container>
-      ) : (<Load/>)}
-      
-    </>
+      </section>
+      ) : (null)}
+    </div>
   )
 }
  

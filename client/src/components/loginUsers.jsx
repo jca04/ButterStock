@@ -2,10 +2,10 @@ import React, { useEffect } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { validateUser } from "../api/users.js";
 import { Field, Form, Formik } from "formik";
-import "../public/css/loginUserStyle.css";
+import  styles from "../public/css/loginUserStyle.module.css";
+import wave from '../public/resources/img/wave.png';
 import logo from "../public/resources/logo/logo_blanco.png";
 import { toast } from "react-toastify";
-import imgRoom from "../public/resources/img/room.jpeg";
 import { Fade } from "react-awesome-reveal";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
@@ -50,26 +50,28 @@ function LogginUser() {
   };
 
   return (
-    <section className="parent">
-      <section className="child child3 div-container">
-        <section className="separate-m separate-1">
-          <div className="div-text-img">
+    <section className={styles.parent}>
+      <aside className={styles.wave}>
+        <img src={wave} />
+      </aside>
+      <section className={styles.divContainer}>
+        <section className={`${styles.separateM} ${styles.separate1} ${styles.separtaLeft}`}>
+          <div className={styles.divTextImg}>
             <Fade delay={1e2} cascade damping={1e-1}>
               <p>BY PROJECTERS</p>
             </Fade>
             <Fade delay={1e2} cascade damping={1e-1}>
-              <h1 className="text-img">ButterStock</h1>
+              <h1 className={styles.textImg}>ButterStock</h1>
             </Fade>
           </div>
-          <img className="img-room" src={imgRoom} />
         </section>
-        <section className="separate-m separate-2">
-          <div className="header">
-            <img className="img-logo" src={logo} />
-            <p className="projecters-span">powered by projecters</p>
-            <h2>Inicie sesion con la cuenta de ButterStock</h2>
-          </div>
-          <div className="body">
+        <section className={`${styles.separateM} ${styles.separate1}`}>
+          <div className={styles.header}>
+            <img className={styles.imgLogo} src={logo} />
+            <p className={styles.projectersSpan}>powered by projecters</p>
+            <h2>Inicie sesion con tu cuenta</h2>
+          </div> 
+          <div className={styles.body}>
             <Formik
               initialValues={{
                 user: "",
@@ -96,10 +98,10 @@ function LogginUser() {
               }}
             >
               {({ handleSubmit, values, touched, isSubmitting, errors }) => (
-                <Form onSubmit={handleSubmit} className="form">
-                  <div className="div-input">
+                <Form onSubmit={handleSubmit} className={styles.form}>
+                  <div className={styles.divInput}>
                     <Field
-                      className="form-input "
+                      className={styles.formInput}
                       placeholder="Dirección de correo electrónico"
                       name="user"
                       validate={validateEmail}
@@ -110,15 +112,15 @@ function LogginUser() {
                         }
                       }
                     />
-                    <div className="error-login">
+                    <div className={styles.errorLogin}>
                       {errors.user && touched.user && (
-                        <p className="error">{errors.user}</p>
+                        <p className={styles.error}>{errors.user}</p>
                       )}
                     </div>
                   </div>
-                  <div className="div-input">
+                  <div className={styles.divInput}>
                     <Field
-                      className="form-input"
+                      className={styles.formInput}
                       type="password"
                       placeholder="Contraseña"
                       name="pass"
@@ -131,16 +133,16 @@ function LogginUser() {
                         }
                       }
                     />
-                    <div className="error-login">
+                    <div className={styles.errorLogin}>
                       {errors.pass && touched.pass && (
-                        <p className="error">{errors.pass}</p>
+                        <p className={styles.error}>{errors.pass}</p>
                       )}
                     </div>
                   </div>
-                  <div className="div-input div-input-btn">
+                  <div className={`${styles.divInput} ${styles.divInputBtn}`}>
                     <button
                       type="submit"
-                      className="btn-save-login"
+                      className={styles.btnSaveLogin}
                       disabled={isSubmitting}
                     >
                       {isSubmitting ? (
@@ -154,7 +156,7 @@ function LogginUser() {
                 </Form>
               )}
             </Formik>
-              <p className="p-new-user">¿Eres un nuevo usuario?</p><Link className="a-new-user" to="/createRestaurant">crear cuenta</Link>
+              <p className={styles.pNewUser}>¿Eres un nuevo usuario?</p><Link className={styles.anewuser} to="/createRestaurant">crear cuenta</Link>
           </div>
         </section>
       </section>

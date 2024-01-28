@@ -1,13 +1,12 @@
 import React, {useEffect, useState} from 'react'
 import Navbar from './reuseComponents/navbar'
-import "../public/css/estadoDeResultadoStyle.css"
+import style from "../public/css/estadoDeResultadoStyle.module.css"
 import { useParams } from 'react-router-dom'
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DatePicker } from "@mui/x-date-pickers/DatePicker"
 import dayjs from 'dayjs'
 import { getEdr, getPieChartEdr } from '../api/edr'
-import Load from './reuseComponents/loadRender'
 import Edr from './component/Edr'
 import PieChartEdr from './reuseComponents/PieChartEdr'
 
@@ -93,7 +92,7 @@ export default function EstadoDeResultado() {
 
   return (
     <>
-        <Navbar />
+        <Navbar  restaurant = {id_restaurant}/>
         <div className='edr-container'>
             <aside className='aside-content'>
                 <div className='btns-edr'>
@@ -129,7 +128,7 @@ export default function EstadoDeResultado() {
                     </div>
                 </div>
                 {
-                    edrLoading ? (<Load />) : ( 
+                    edrLoading ? (null ) : ( 
                     edr.length > 0 
                     ? 
                     <div className='historico-container'>

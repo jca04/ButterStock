@@ -19,9 +19,9 @@ const getDataSalidas = async (req, res) => {
     const dataOutput = dataResponse.map((row) => {
       if (row.id_receta != undefined){
         if (row.sub_receta == 1){
-          row['label'] = row.nombre_receta + ' | ' + 'Adicion';
+          row['label'] = row.nombre_receta + ' | ' + 'Preparación';
         }else{
-          row['label'] = row.nombre_receta + ' | ' + 'Receta';
+          row['label'] = row.nombre_receta + ' | ' + 'Platillo';
         }
 
         row['value'] = row.id_receta;

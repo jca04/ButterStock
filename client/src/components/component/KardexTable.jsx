@@ -1,5 +1,8 @@
 import React from "react";
-import "../../public/css/kardexStyle.css";
+import style from "../../public/css/kardexStyle.module.css";
+
+//icons 
+import { TbNotesOff } from "react-icons/tb";
 
 export default function KardexTable({ kardex, ingredient }) {
   const fechaLocal = (fecha) => {
@@ -22,35 +25,46 @@ export default function KardexTable({ kardex, ingredient }) {
     </tr>
   ));
   return (
-    <>
-      <section className="kardex_table">
-        <div className="name_ingredient">{ingredient}</div>
-        <div className="container_table">
-          <table className="peps_table">
+    <section className={style.KardexTable}>
+      <header className={style.headerKardex}>{ingredient}</header>
+      <div>
+        {kardex.length > 0 ? (
+          <table className={style.table}>
             <thead>
               <tr>
-                <th>Fecha</th>
-                <th colSpan="3">Entradas</th>
-                <th colSpan="3">Salidas</th>
-                <th colSpan="3">Saldo</th>
+                <th className={style.thFa}>Fecha</th>
+                <th colSpan="3" className={style.thFa}>
+                  Entradas
+                </th>
+                <th colSpan="3" className={style.thFa}>
+                  Salidas
+                </th>
+                <th colSpan="3" className={style.thFa}>
+                  Saldo
+                </th>
               </tr>
               <tr>
                 <th></th>
-                <th className="small_th">Cantidad</th>
-                <th className="small_th">Costo</th>
-                <th className="small_th">Total</th>
-                <th className="small_th">Cantidad</th>
-                <th className="small_th">Costo</th>
-                <th className="small_th">Total</th>
-                <th className="small_th">Cantidad</th>
-                <th className="small_th">Costo</th>
-                <th className="small_th">Total</th>
+                <th className={style.samllTh}>Cantidad</th>
+                <th className={style.samllTh}>Costo</th>
+                <th className={style.samllTh}>Total</th>
+                <th className={style.samllTh}>Cantidad</th>
+                <th className={style.samllTh}>Costo</th>
+                <th className={style.samllTh}>Total</th>
+                <th className={style.samllTh}>Cantidad</th>
+                <th className={style.samllTh}>Costo</th>
+                <th className={style.samllTh}>Total</th>
               </tr>
             </thead>
-            <tbody className="peps_tbody">{rows}</tbody>
+            <tbody>{rows}</tbody>
           </table>
-        </div>
-      </section>
-    </>
+        ) : (
+          <div className={style.boxImgInfoNot}>
+            <div className={style.notFoundKardex}><TbNotesOff/></div>
+            No se tiene registro del ingrediente {ingredient}
+          </div>
+        )}
+      </div>
+    </section>
   );
 }

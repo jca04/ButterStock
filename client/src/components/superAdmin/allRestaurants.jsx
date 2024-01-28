@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useMemo } from "react";
 import Navbar from "../reuseComponents/navbar";
-import "../../public/css/allRestaurantStyle.css";
+import style from "../../public/css/allRestaurantStyle.module.css";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { getAllRestaurants, toggleRestaurante } from "../../api/restaurant.js";
 import DataTable from "react-data-table-component";

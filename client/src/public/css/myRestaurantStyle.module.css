@@ -1,0 +1,65 @@
+.globalFather{
+  display: flex;
+  background-color: white;
+}
+
+.containerMyBusiness{
+  display: flex;
+  width: 80%;
+  background-color: #dedede61;
+  padding-left: 45px;
+  padding-top: 30px;
+}
+
+.prebodyContainer{
+  width: 100%;
+}
+
+.headerBusiness{
+  font-size: 1.5em;
+}
+
+.bodyBusiness{
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 6px;
+  padding: 10px;
+  margin-top: 40px;
+  box-shadow: 2px 9px 12px -5px rgba(0, 0, 0, 0.4);
+  margin-right: 40px
+}
+
+.btnEditBusinnes{
+  background-color: white;
+  border-radius: 6px;
+  border: 1px solid #dedede61;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  width: 10%;
+}
+
+.btnEditBusinnes:hover{
+  transform: scale(1.1);
+  transition: all 200ms ease-in-out;
+  background-color: #f5b702;
+}
+
+.boxBtnSave{
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.btnSaveBusiness{
+  background-color: #f5b702;
+  padding: 10px;
+  border: none;
+  outline: none;
+  border-radius: 6px;
+  box-shadow: 2px 9px 12px -5px rgba(0, 0, 0, 0.4);
+  margin: auto;
+  width: 20%;
+}

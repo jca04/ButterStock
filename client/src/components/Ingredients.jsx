@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
+
+//js
 import {
   banIngredient,
   getIngredients,
@@ -7,18 +9,31 @@ import {
   createIngredient,
   updateIngredients,
 } from "../api/ingredients";
+
+//components
 import Navbar from "./reuseComponents/navbar";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import DataTable from "react-data-table-component";
-import "../public/css/ingredientsStyle.css";
+import Select from "react-select";
+import { Field, Form, Formik } from "formik";
 import { toast } from "react-toastify";
-import { CiCircleAlert } from "react-icons/ci";
-import { BiFoodMenu } from "react-icons/bi";
+import CircularProgress from "@mui/material/CircularProgress";
+
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+
+
+//icons
 import { AiOutlineAppstoreAdd, AiOutlineSearch } from "react-icons/ai";
 import { MdImageNotSupported } from "react-icons/md";
-import { Field, Form, Formik } from "formik";
-import Select from "react-select";
-import Load from "./reuseComponents/loadRender";
+import { MdDeleteOutline } from "react-icons/md";
+import { CiEdit } from "react-icons/ci";
+
+//style
+import style from "../public/css/ingredientsStyle.module.css";
 
 let valueCostoTotal = 0;
 
@@ -43,9 +58,7 @@ export default function Ingredients() {
 
   const res = async () => {
     const response = await getIngredients(id);
-    setTimeout(() => {
-      setLoading(false);
-    }, 500);
+    setLoading(false);
     setIngredients(response.ingredientes);
   };
 
@@ -101,7 +114,7 @@ export default function Ingredients() {
 
   const subHeaderComponent = useMemo(() => {
     return (
-      <div className="search-bar-ingredient">
+      <div className={style.searchDiv}>
         <AiOutlineSearch />
         <input
           placeholder="Buscar"
@@ -115,7 +128,7 @@ export default function Ingredients() {
   const columns = [
     {
       name: "Ingrediente",
-      selector: (row) =>  row.nombre_ingrediente,
+      selector: (row) => row.nombre_ingrediente,
     },
     {
       name: "Unidad de medida",
@@ -141,9 +154,10 @@ export default function Ingredients() {
       name: "Acciones",
       cell: (row) => (
         <>
-          <div className="div-actions-ingredients">
+          <div className={style.actionButton}>
             <button
-              className="btn btn-edit"
+              title="Editar ingrediente"
+              className={style.btnInfo}
               onClick={async () => {
                 setCostTotal(row.costo_total);
                 setEditing(row);
@@ -155,18 +169,19 @@ export default function Ingredients() {
                 setForm(true);
               }}
             >
-              Editar
+              <CiEdit />
             </button>
           </div>
-          <div className="div-actions-ingredients">
+          <div className={style.actionButton}>
             <button
-              className="btn btn-danger"
+              title="Eliminar ingrediente"
+              className={style.btnDanger}
               onClick={async () => {
                 setIdDelete(row);
                 setAlertDelete(true);
               }}
             >
-              Eliminar
+              <MdDeleteOutline />
             </button>
           </div>
         </>
@@ -181,9 +196,9 @@ export default function Ingredients() {
         selector: (row) => (
           <>
             {row.imagen == "" ? (
-              <MdImageNotSupported className="img-not-found-image" />
+              <MdImageNotSupported />
             ) : (
-              <img src={row.imagen} alt="receta" className="img_receta" />
+              <img src={row.imagen} alt="receta" className={style.imgRecipe} />
             )}
           </>
         ),
@@ -199,7 +214,7 @@ export default function Ingredients() {
     ];
     return (
       <>
-        <section className="expandable_data">
+        <section className={style.expandDataTable}>
           <DataTable
             columns={columns}
             data={row.data.recetas}
@@ -213,17 +228,19 @@ export default function Ingredients() {
   };
 
   const deleteIngredient = async () => {
-    setAlertDelete(false);
-    setDeleting(true);
     const response = await banIngredient(idDelete.id_ingrediente);
-    if (response.message == "Ingrediente eliminado"){
+    if (response.message == "Ingrediente eliminado") {
       toastDangerDelete(response.message);
       setTimeout(() => {
-      setDeleting(false);
-      }, (800));
+        setDeleting(false);
+        setAlertDelete(false)
+      }, 800);
 
       res();
-      localStorage.setItem('refreshIngredients', true);
+      localStorage.setItem("refreshIngredients", true);
+    }else{
+      setAlertDelete(false);
+      setDeleting(false);
     }
   };
 
@@ -287,8 +304,6 @@ export default function Ingredients() {
               if (valueS.includes(value)) {
                 console.log(valueS, value);
                 arrSearch.push(ingredients[i]);
-               
-                
               }
             }
           }
@@ -301,320 +316,285 @@ export default function Ingredients() {
     setSearchTable(resultNoRepe);
   };
 
-
   //intervalo para actulizar la pagina
   const intervaloRecipe = setInterval(() => {
-    const local = localStorage.getItem('refreshRecipe');
-    if (local != undefined){
+    const local = localStorage.getItem("refreshRecipe");
+    if (local != undefined) {
       res();
-      localStorage.removeItem('refreshRecipe');
+      localStorage.removeItem("refreshRecipe");
     }
   }, 1000);
 
   return (
-    <>
-      <Navbar restaurant = {id} />
-      {isForm ? (
-        <div className="form-all-ingredients">
-          <div className="body-form-all-ingredients">
-            <div className="close-modal-all-ingredients">
-              <button
-                type="button"
-                onClick={() => {
-                  setForm(false);
-                  setEditing({});
-                }}
-              >
-                Cerrar
-              </button>
-            </div>
-            <div className="title-form-ingredients">
-              {JSON.stringify(isEditing) != "{}" ? "Editar" : "Crear"}{" "}
-              ingrediente
-            </div>
-            <div className="form-ingredients">
-              <Formik
-                initialValues={{
-                  nombre_ingrediente:
-                    JSON.stringify(isEditing) != "{}"
-                      ? isEditing.nombre_ingrediente
-                      : "",
-                  unidad_medida: "",
-                  costo_unitario:
-                    JSON.stringify(isEditing) != "{}"
-                      ? isEditing.costo_unitario
-                      : 0,
-                  cantidad_total_ingrediente:
-                    JSON.stringify(isEditing) != "{}"
-                      ? isEditing.cantidad_total_ingrediente
-                      : 0,
-                  costo_total: valueCostoTotal,
-                  kardex: "",
-                }}
-                onSubmit={async (values) => {
-                  try {
-                    values.unidad_medida = gramage.value;
-                    values.kardex = kardex.value;
-                    values.costo_total = valueCostoTotal;
+    <div className={style.globalIngredients}>
+      <Navbar restaurant={id} />
+      <Dialog open={isForm} className={style.fatherDialog} onClose={() => setForm(false)}>
+        <DialogTitle className={style.headerIngredient}>Ingredientes <button className={style.btnClose} onClick={() => setForm(false)}>Cerrar</button></DialogTitle>
+        <DialogContent className={style.dialogIngredient}>
+          <Formik
+            initialValues={{
+              nombre_ingrediente: JSON.stringify(isEditing) != "{}" ? isEditing.nombre_ingrediente : "",
+              unidad_medida: "",
+              costo_unitario: JSON.stringify(isEditing) != "{}" ? isEditing.costo_unitario : 0,
+              cantidad_total_ingrediente: JSON.stringify(isEditing) != "{}" ? isEditing.cantidad_total_ingrediente : 0,
+              costo_total: valueCostoTotal,
+              kardex: "",
+            }}
+            onSubmit={async (values) => {
+              try {
+                values.unidad_medida = gramage.value;
+                values.kardex = kardex.value;
+                values.costo_total = valueCostoTotal;
 
-                    if (JSON.stringify(isEditing) == "{}") {
-                      //creacion de un nuevo ingrediente
-                      const response = await createIngredient(values, id);
-                      if (response.message == "Ingrediente creado") {
-                        if (
-                          response.id_ingrediente != "" &&
-                          response.id_ingrediente != undefined
-                        ) {
-                          let jsonAdd = {
-                            cantidad_total_ingrediente:
-                              values.cantidad_total_ingrediente,
-                            costo_total: values.costo_total,
-                            costo_unitario: values.costo_unitario,
-                            id_ingrediente: response.id_ingrediente,
-                            ingrediente_activo: 1,
-                            nombre_ingrediente: values.nombre_ingrediente,
-                            recetas: [],
-                            unidad_medida: values.unidad_medida,
-                            kardex: values.kardex,
-                          };
+                if (JSON.stringify(isEditing) == "{}") {
+                  //creacion de un nuevo ingrediente
+                  const response = await createIngredient(values, id);
+                  if (response.message == "Ingrediente creado") {
+                    if (
+                      response.id_ingrediente != "" &&
+                      response.id_ingrediente != undefined
+                    ) {
+                      let jsonAdd = {
+                        cantidad_total_ingrediente:
+                        values.cantidad_total_ingrediente,
+                        costo_total: values.costo_total,
+                        costo_unitario: values.costo_unitario,
+                        id_ingrediente: response.id_ingrediente,
+                        ingrediente_activo: 1,
+                        nombre_ingrediente: values.nombre_ingrediente,
+                        recetas: [],
+                        unidad_medida: values.unidad_medida,
+                        kardex: values.kardex,
+                      };
 
-                      
-                          res();
-                          localStorage.setItem('refreshIngredients', true);
-                          toastSucces(response.message);
-                        } else {
-                          window.location.reload();
-                        }
-                      } else {
-                        toastDangerDelete(response.message);
-                      }
+                      res();
+                      localStorage.setItem("refreshIngredients", true);
+                      toastSucces(response.message);
                     } else {
-                      //edicion de un ingrediente
-                      const response = await updateIngredients(
-                        values,
-                        isEditing.id_ingrediente
-                      );
+                      window.location.reload();
+                    }
+                  } else {
+                    toastDangerDelete(response.message);
+                  }
+                } else {
+                  //edicion de un ingrediente
+                  const response = await updateIngredients(
+                    values,
+                    isEditing.id_ingrediente
+                  );
 
-                      if (response == "Se ha actualizado correctamente") {
-                        let arrEdit = ingredients;
+                  if (response == "Se ha actualizado correctamente") {
+                    let arrEdit = ingredients;
 
-                        arrEdit.forEach((row) => {
-                          if (row.id_ingrediente == isEditing.id_ingrediente) {
-                            (row.kardex = values.kardex),
-                              (row.nombre_ingrediente =
-                                values.nombre_ingrediente);
-                          }
-                        });
+                    arrEdit.forEach((row) => {
+                      if (row.id_ingrediente == isEditing.id_ingrediente) {
+                        (row.kardex = values.kardex),
+                          (row.nombre_ingrediente = values.nombre_ingrediente);
+                      }
+                    });
 
-                        toastSucces(response);
-                        localStorage.setItem('refreshIngredients', true);
-                      } else {
-                        toastDangerDelete(response);
+                    toastSucces(response);
+                    localStorage.setItem("refreshIngredients", true);
+                  } else {
+                    toastDangerDelete(response);
+                  }
+                }
+
+                setForm(false);
+              } catch (err) {
+                console.log(err);
+              }
+            }}
+          >
+            {({ handleSubmit, touched, isSubmitting, errors }) => (
+              <Form onSubmit={handleSubmit}>
+                <div >
+                  <label
+                    className={style.labelForm}
+                    htmlFor="nombre_ingrediente"
+                  >
+                    Nombre Ingrediente:
+                  </label>
+                  <Field
+                    type="text"
+                    name="nombre_ingrediente"
+                    placeholder="nombre del Ingrediente"
+                    autoComplete={"off"}
+                    validate={validateText}
+                    id="nombre_ingrediente"
+                    style={
+                      errors.nombre_ingrediente &&
+                      touched.nombre_ingrediente && {
+                        border: "1px solid red",
                       }
                     }
-
-                    setForm(false);
-                  } catch (err) {
-                    console.log(err);
-                  }
-                }}
-              >
-                {({ handleSubmit, touched, isSubmitting, errors }) => (
-                  <Form onSubmit={handleSubmit}>
-                    <div className="input-all-ingredients">
+                  />
+                  <div className={style.messageError}>
+                    {errors.nombre_ingrediente &&
+                      touched.nombre_ingrediente && (
+                        <p className="error">{errors.nombre_ingrediente}</p>
+                      )}
+                  </div>
+                  {JSON.stringify(isEditing) == "{}" ? (
+                    <>
                       <label
-                        className="label-input-form"
-                        htmlFor="nombre_ingrediente"
-                      >
-                        Nombre Ingrediente
-                      </label>
-                      <Field
-                        type="text"
-                        name="nombre_ingrediente"
-                        placeholder="nombre del Ingrediente"
-                        autoComplete={"off"}
-                        validate={validateText}
-                        id="nombre_ingrediente"
-                        style={
-                          errors.nombre_ingrediente &&
-                          touched.nombre_ingrediente && {
-                            border: "1px solid red",
-                          }
-                        }
-                      />
-                      <div className="error-respi">
-                        {errors.nombre_ingrediente &&
-                          touched.nombre_ingrediente && (
-                            <p className="error">{errors.nombre_ingrediente}</p>
-                          )}
-                      </div>
-                      {JSON.stringify(isEditing) == "{}" ? (
-                        <>
-                          <label
-                            className="label-input-form"
-                            htmlFor="unidad_medida"
-                          >
-                            Unidad de medida
-                          </label>
-                          <Select
-                            onChange={(e) => setGramage(e)}
-                            className="select-gramace-ingredients"
-                            closeMenuOnSelect={true}
-                            defaultValue={gramage}
-                            options={[
-                              { label: "und", value: "und" },
-                              { label: "gr", value: "gr" },
-                              { label: "lb", value: "lb" },
-                              { label: "kg", value: "kg" },
-                              { label: "oz", value: "oz" },
-                              { label: "lt", value: "lt" },
-                              { label: "cm3", value: "cm3" },
-                              { label: "ml", value: "ml" },
-                            ]}
-                            placeholder="Unidad medida"
-                            isMulti={false}
-                          />
-                          <label
-                            className="label-input-form"
-                            htmlFor="costoUnitario"
-                          >
-                            Costo Unitario
-                          </label>
-                          <Field
-                            type="number"
-                            step="any"
-                            min="1"
-                            autoComplete={"off"}
-                            placeholder="Costo unitario"
-                            onInput={costoTotal()}
-                            id="costoUnitario"
-                            name="costo_unitario"
-                            validate={validateNumber}
-                            style={
-                              errors.costo_unitario &&
-                              touched.costo_unitario && {
-                                border: "1px solid red",
-                              }
-                            }
-                          />
-                          <div className="error-respi">
-                            {errors.costo_unitario &&
-                              touched.costo_unitario && (
-                                <p className="error">{errors.costo_unitario}</p>
-                              )}
-                          </div>
-
-                          <label className="label-input-form" htmlFor="cant">
-                            Cantidad en {gramage.label}
-                          </label>
-                          <Field
-                            type="number"
-                            step="any"
-                            min="1"
-                            id="cant"
-                            validate={validateNumber}
-                            onInput={costoTotal()}
-                            autoComplete={"off"}
-                            style={
-                              errors.cantidad_total_ingrediente &&
-                              touched.cantidad_total_ingrediente && {
-                                border: "1px solid red",
-                              }
-                            }
-                            placeholder="Cantidad total"
-                            name="cantidad_total_ingrediente"
-                          />
-                          <div className="error-respi">
-                            {errors.cantidad_total_ingrediente &&
-                              touched.cantidad_total_ingrediente && (
-                                <p className="error">
-                                  {errors.cantidad_total_ingrediente}
-                                </p>
-                              )}
-                          </div>
-                          <label className="label-input-form" htmlFor="cost">
-                            Costo Total
-                          </label>
-                          <Field
-                            type="number"
-                            step="any"
-                            min="1"
-                            autoComplete={"off"}
-                            id="cost"
-                            value={
-                              costTotal !== 0 && valueCostoTotal == 0
-                                ? costTotal
-                                : valueCostoTotal
-                            }
-                            placeholder="Costo total"
-                            disabled={true}
-                            name="costo_total"
-                          />
-                          <div className="error-respi"></div>
-                        </>
-                      ) : null}
-                      <label
-                        className="label-input-form"
+                        className={style.labelForm}
                         htmlFor="unidad_medida"
                       >
-                        Kardex
+                        Unidad de medida
                       </label>
                       <Select
-                        onChange={(e) => setKardex(e)}
-                        className="select-gramace-ingredients"
+                        onChange={(e) => setGramage(e)}
+                        className={style.selectForm}
                         closeMenuOnSelect={true}
-                        defaultValue={kardex}
+                        defaultValue={gramage}
                         options={[
-                          { label: "PEPS", value: "PEPS" },
-                          {
-                            label: "Promedio ponderado",
-                            value: "Promedio ponderado",
-                          },
+                          { label: "und", value: "und" },
+                          { label: "gr", value: "gr" },
+                          { label: "lb", value: "lb" },
+                          { label: "kg", value: "kg" },
+                          { label: "oz", value: "oz" },
+                          { label: "lt", value: "lt" },
+                          { label: "cm3", value: "cm3" },
+                          { label: "ml", value: "ml" },
                         ]}
                         placeholder="Unidad medida"
                         isMulti={false}
                       />
-                    </div>
-                    <div className="btn-send-ingredients">
-                      <button type="submit" disabled={isSubmitting}>
-                        {isSubmitting ? (
-                          <AiOutlineLoading3Quarters className="load-respie-send" />
-                        ) : (
-                          "Enviar"
+                      <label
+                        className={style.labelForm}
+                        htmlFor="costoUnitario"
+                      >
+                        Costo Unitario
+                      </label>
+                      <Field
+                        type="number"
+                        step="any"
+                        min="1"
+                        autoComplete={"off"}
+                        placeholder="Costo unitario"
+                        onInput={costoTotal()}
+                        id="costoUnitario"
+                        name="costo_unitario"
+                        validate={validateNumber}
+                        style={
+                          errors.costo_unitario &&
+                          touched.costo_unitario && {
+                            border: "1px solid red",
+                          }
+                        }
+                      />
+                      <div className={style.messageError}>
+                        {errors.costo_unitario && touched.costo_unitario && (
+                          <p className="error">{errors.costo_unitario}</p>
                         )}
-                      </button>
-                    </div>
-                  </Form>
-                )}
-              </Formik>
-            </div>
+                      </div>
+
+                      <label className={style.labelForm} htmlFor="cant">
+                        Cantidad en {gramage.label}
+                      </label>
+                      <Field
+                        type="number"
+                        step="any"
+                        min="1"
+                        id="cant"
+                        validate={validateNumber}
+                        onInput={costoTotal()}
+                        autoComplete={"off"}
+                        style={
+                          errors.cantidad_total_ingrediente &&
+                          touched.cantidad_total_ingrediente && {
+                            border: "1px solid red",
+                          }
+                        }
+                        placeholder="Cantidad total"
+                        name="cantidad_total_ingrediente"
+                      />
+                      <div className={style.messageError}>
+                        {errors.cantidad_total_ingrediente &&
+                          touched.cantidad_total_ingrediente && (
+                            <p className="error">
+                              {errors.cantidad_total_ingrediente}
+                            </p>
+                          )}
+                      </div>
+                      <label  className={style.labelForm} htmlFor="cost">
+                        Costo Total
+                      </label>
+                      <Field
+                        type="number"
+                        step="any"
+                        min="1"
+                        autoComplete={"off"}
+                        id="cost"
+                        value={
+                          costTotal !== 0 && valueCostoTotal == 0
+                            ? costTotal
+                            : valueCostoTotal
+                        }
+                        placeholder="Costo total"
+                        disabled={true}
+                        name="costo_total"
+                      />
+                      <div className={style.messageError}></div>
+                    </>
+                  ) : null}
+                  <label className={style.labelForm} htmlFor="unidad_medida">
+                    Kardex
+                  </label>
+                  <Select
+                    onChange={(e) => setKardex(e)}
+                    className={style.selectForm}
+                    closeMenuOnSelect={true}
+                    defaultValue={kardex}
+                    options={[
+                      { label: "PEPS", value: "PEPS" },
+                      {
+                        label: "Promedio ponderado",
+                        value: "Promedio ponderado",
+                      },
+                    ]}
+                    placeholder="Unidad medida"
+                    isMulti={false}
+                  />
+                </div>
+                <div className={style.btnSendIngredient}>
+                  <button type="submit" disabled={isSubmitting}>
+                    {isSubmitting ? (
+                      <div className={style.iconSubmit}><CircularProgress color="inherit" /> </div> 
+                    ) : (
+                      "Enviar"
+                    )}
+                  </button>
+                </div>
+              </Form>
+            )}
+          </Formik>
+        </DialogContent>
+      </Dialog>
+
+      {/* datatable  */}
+
+      <section className={style.bodyIngredients}>
+        <header className={style.header}>Ingredientes</header>
+        <section className={style.bodyBox}>
+          <div className={style.addNewIngredient}>
+            <button
+              type="button"
+              onClick={() => {
+                setForm(true);
+                setCostTotal(0);
+                toatInfo();
+                setEditing({});
+              }}
+            >
+              <AiOutlineAppstoreAdd />
+              Agregar un nuevo ingrediente
+            </button>
           </div>
-        </div>
-      ) : null}
-      {loading ? (
-        <Load/>
-      ) : (
-        <section className="body-all-ingredients">
-          <section className="header-all-ingredients">
-            <BiFoodMenu /> Ingredientes
-          </section>
-          <section className="father_all_ingredients">
-            <div className="add-new-ingredient">
-              <button
-                type="button"
-                onClick={() => {
-                  setForm(true);
-                  setCostTotal(0);
-                  toatInfo();
-                  setEditing({});
-                }}
-              >
-                <AiOutlineAppstoreAdd />
-                Agregar un nuevo ingrediente
-              </button>
-            </div>
+          {console.log(ingredients)}
+          {!loading  ? (
             <DataTable
-              className="datatable-ingredients"
               columns={columns}
               responsive={true}
               data={searchTable.length > 0 ? searchTable : ingredients}
@@ -628,66 +608,52 @@ export default function Ingredients() {
               expandableRowExpanded={(row) => row.expandableRowExpanded}
               expandableRowsComponent={(row) => expandableRowsRecipe(row)}
               paginationComponentOptions={paginationComponentOptions}
+              striped
             />
-          </section>
+          ) : (
+            <div className={style.loadDataTable}>
+              <CircularProgress color="inherit" />
+            </div>
+          )}
         </section>
-      )}
+      </section>
+
       {/* Alert para cuando se elimine un ingrediente */}
-      {alertDelete ? (
-        <div className="alert-delete-ingredient">
-          <div className="body-alert-ingredient">
-            <div className="header-alert-ingredient">
-              <CiCircleAlert className="icon-alert-ingredient" />
-            </div>
-            <div className="info-alert-ingredient">
-              <p>¿Estas seguro de eliminar este ingrediente?</p>
-            </div>
-            {JSON.stringify(idDelete) != "{}" && idDelete.recetas.length > 0 ? (
-              <div className="data-alert-ingredients">
+      <Dialog
+        open={alertDelete}
+        onClose={() => setAlertDelete(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title" className={style.deleteIngredientD}>
+          <p className={style.deleteTitle}>Eliminar ingrediente</p>
+        </DialogTitle>
+        <DialogContent className={style.deleteIngredientD}>
+          <DialogContentText id="alert-dialog-description">
+          {JSON.stringify(idDelete) != "{}" && idDelete.recetas.length > 0 ? (
+              <div className={style.messageDelete}>
                 <p>
-                  Este ingrediente hace parte de{" "}
-                  <strong>{idDelete.recetas.length}</strong> recetas
+                  Este ingrediente hace parte de 
+                  <strong> {idDelete.recetas.length}</strong> recetas
                 </p>
                 <p>
-                  Si lo eliminas los valores de dichas recetas se veran
-                  afectados
+                  Si lo eliminas los valores de dichas recetas se veran afectados
                 </p>
               </div>
-            ) : null}
-            <div className="btn-alert-ingredient">
-              <button
-                type="button"
-                className="btn-delete-ingredient"
-                onClick={() => deleteIngredient()}
-              >
-                Aceptar
-              </button>
-              <button
-                type="button"
-                className="btn-cancel-ingredient"
-                onClick={() => {
-                  setAlertDelete(false);
-                  setIdDelete({});
-                }}
-              >
-                Cancelar
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
-      {isDeleting ? (
-        <div className="sending-respie">
-          <div className="body-info-respie">
-            <div className="info-sending-respie">
-              <div className="icon-loading-respie">
-                <AiOutlineLoading3Quarters className="load-send-respie"/>
-              </div>
-              <div className="txt-loading-respie">Eliminando ingrediente</div>
-            </div>
-          </div>
-        </div>
-      ) : (null)}
-    </>
+            ) : (
+              <p className={style.infoDelete}>¿Estas seguro de eliminar este ingrediente?</p>
+            )}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions className={style.deleteIngredientD}>
+          <Button disabled={isDeleting} className={style.btnAcept} onClick={() => { 
+            deleteIngredient();
+            setDeleting(true);
+          }}>
+          {isDeleting ? ( <CircularProgress color="inherit" />) : ("Aceptar")}</Button>
+          <Button className={style.btnCancelDelete} onClick={() => setAlertDelete(false)}>Cancelar</Button>
+        </DialogActions>
+      </Dialog>
+    </div>
   );
 }

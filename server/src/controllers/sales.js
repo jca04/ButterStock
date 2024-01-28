@@ -20,34 +20,33 @@ const saveSales = async (req, res) => {
         //consultar el costo de venta de esta receta
         const quantity_recipe = parseInt(dataInfo["cantidad"]);
         //guardar_venta
-        const insert_recipe = await conn.query(
-          "INSERT INTO " +
-            " tbl_ventas(id_ventas, cantidad_venta, tipo_venta, id_receta, id_restaurante) " +
-            " VALUES(?,?,?,?,?)",
-          [uid, quantity_recipe, "receta", id, restaurant]
-        );
+        // const insert_recipe = await conn.query(
+        //   "INSERT INTO " +
+        //     " tbl_ventas(id_ventas, cantidad_venta, tipo_venta, id_receta) " +
+        //     " VALUES(?,?,?,?)",
+        //   [uid, quantity_recipe, "receta", id]
+        // );
 
-        if (insert_recipe.affectedRows > 0) {
-          //encontrar los ingredientes de esta receta o adicion
-          const ingredients = await conn.query(
+        //encontrar los ingredientes de esta receta o adicion
+        const ingredients = await conn.query(
             "SELECT" +
               " ingR.unidad_medida_r, ingR.cantidad_por_receta, ingR.id_ingrediente, ingR.id_receta, ing.kardex FROM tbl_ingredientes_receta AS ingR" +
               " INNER JOIN tbl_ingredientes AS ing ON" +
               " ing.id_ingrediente = ingR.id_ingrediente" +
               " WHERE ingR.activo = 1 && ingR.id_receta = ?",
             [id]
-          );
+        );
 
-          if (ingredients.length > 0) {
-            for (const ing in ingredients) {
-              ingredientsResponse.push({
-                unidad_medida: ingredients[ing]["unidad_medida_r"],
-                cantidad: ingredients[ing]["cantidad_por_receta"],
-                id_ingrediente: ingredients[ing]["id_ingrediente"],
-                kardex: ingredients[ing]["kardex"],
-                cantidad_receta: quantity_recipe,
-              });
-            }
+        console.log(ingredients)
+        if (ingredients.length > 0) {
+          for (const ing in ingredients) {
+            ingredientsResponse.push({
+              unidad_medida: ingredients[ing]["unidad_medida_r"],
+              cantidad: ingredients[ing]["cantidad_por_receta"],
+              id_ingrediente: ingredients[ing]["id_ingrediente"],
+              kardex: ingredients[ing]["kardex"],
+              cantidad_receta: quantity_recipe,
+            });
           }
         }
       } else {
