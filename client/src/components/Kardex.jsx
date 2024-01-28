@@ -1,41 +1,38 @@
 import React, { useEffect, useState } from "react";
 import { getKardex } from "../api/kardex";
-import style from "..//public/css/kardexStyle.module.css";
+import style from "../public/css/kardexStyle.module.css";
 
 //import components
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
 import KardexTable from "./component/KardexTable";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function Kardex({id_ingrediente}) {
 
   const [kardex, setKardex] = useState([]);
   const [ingredient, setIngredient] = useState("");
+  const [loadKardex, setKardexLoad] = useState(false);
+
+  document.title = "ButterStock | Kardex";
+
 
   useEffect(() => { 
-    document.title = "Kardex";
     const res = async () => {
       const response = await getKardex(id_ingrediente);
       setKardex(response.data.kardex);
       setIngredient(response.data.ingrediente);
+
+      setKardexLoad(true);
     };
     res();
   }, []);
 
   return (
     <>
-      <Dialog
-        open={true}
-        className={style.modalKardex}
-      >
-        <DialogContent>
-            <KardexTable kardex={kardex} ingredient={ingredient} />
-        </DialogContent>
-        <DialogActions>
-        </DialogActions>
-      </Dialog>
-
+    {loadKardex ? (
+     <KardexTable kardex={kardex} ingredient={ingredient} />
+     ) : (
+      <div className={style.loadingTable}><CircularProgress color="inherit" /></div>
+     )}
     </>
   );
 }

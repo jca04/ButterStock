@@ -74,11 +74,9 @@
   margin-left: 10px;
 }
 
-.actionButton {
-}
 
 .btnInfo {
-  background-color: #20db4557;
+  background-color: #dedede61;
   border: none;
   padding: 5px;
   border-radius: 6px;
@@ -225,4 +223,9 @@ form > div > input:focus {
 
 .btnCancelDelete{
   color: black !important;
+}
+
+.imgRecipe{
+  height: 100%;
+  width: 100%;
 }

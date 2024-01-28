@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+
+//componentes
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -6,20 +8,27 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import CircularProgress from "@mui/material/CircularProgress";
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import Select from "react-select";
 import { toast } from "react-toastify";
-import { AiOutlineCloseCircle } from 'react-icons/ai';
+
+//apis
 import { getDataSelectsSalida } from "../../api/salidas";
 import { saveSales } from "../../api/sales";
-import { salidasPeps, salidasPromPonderado, validacionInventario } from "../../api/kardex";
-import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
-import Load from "../reuseComponents/loadRender";
-import  style from '../../public/css/salidaStyle.module.css';
+import {
+  salidasPeps,
+  salidasPromPonderado,
+  validacionInventario,
+} from "../../api/kardex";
+
+//icons
+import { TbNotesOff } from "react-icons/tb";
+
+//styles
+import style from "../../public/css/salidaStyle.module.css";
 
 const unitArr = ["kg", "lb", "oz", "gr", "mg", "und"];
 
-function Salidas({closeModal, id_restaurant }) {
+function Salidas({ id_restaurant }) {
   const [dataSelect, setDataSelect] = useState([]);
   const [selectedData, setSelectedData] = useState([]);
   const [dataSend, setDataSend] = useState({});
@@ -29,7 +38,7 @@ function Salidas({closeModal, id_restaurant }) {
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
-    document.title = 'ButterStock | ventas';
+    document.title = "ButterStock | ventas";
 
     const getData = async () => {
       setLoading(true);
@@ -134,10 +143,6 @@ function Salidas({closeModal, id_restaurant }) {
     setOpen(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   const handleLoadSend = async () => {
     setSending(true);
 
@@ -148,7 +153,6 @@ function Salidas({closeModal, id_restaurant }) {
         //Aqui estan los ingredientes listo,
         //cabe recalcar que la unidad de medida puede ser la que tiene en la receta
         //por lo tanto toca hacer la conversion de unidades para guradarlo en peps
-
 
         // Verifico si hay ingredientes que no tienen inventario
         let sinInventario = []; // Array de ingredientes que no tienen inventario
@@ -177,10 +181,14 @@ function Salidas({closeModal, id_restaurant }) {
               No hay suficiente inventario para los siguientes ingredientes:
               <br />
               {sinInventario.map((ingrediente, index) => {
-                return <p key={index}><strong> - {ingrediente}</strong></p>;
+                return (
+                  <p key={index}>
+                    <strong> - {ingrediente}</strong>
+                  </p>
+                );
               })}
             </div>
-          )
+          );
 
           toast.error(mensaje, {
             position: "top-right",
@@ -212,7 +220,6 @@ function Salidas({closeModal, id_restaurant }) {
                 id_restaurant
               );
 
- 
               if (res.data.message == "Salida registrada") {
                 enviado = true;
               }
@@ -264,147 +271,147 @@ function Salidas({closeModal, id_restaurant }) {
 
   return (
     <>
-          
-        <div className="modal_container">
-          {!isLoading ? (
-            <div className="modal_content">
-              <h3 className="title-salida"><ExitToAppIcon />Ingresar Ventas</h3>
-              <button className="btn-close-modal-comandas" onClick={closeModal}><AiOutlineCloseCircle/> Cerrar</button>
-              <div className="selects-salidas">
-                <label htmlFor="select-data" className="label-select">
-                  Lista de ingredientes, recetas y adiciones
-                </label>
-                <div className="select_recipes">
-                  <Select
-                    id="select-data"
-                    className="select-salidas"
-                    closeMenuOnSelect={false}
-                    options={dataSelect}
-                    isMulti
-                    onChange={handleSelect}
-                  />
-                </div>
-                <div className="select_ingredient_adition">
-                  {selectedData.length > 0 ? (
-                    <div className="table-salida">
-                      <form onSubmit={(e) => handleSendDataServer(e)}>
-                      <div className="list-salidas"><p><ReceiptLongIcon/>Lista de ventas</p></div>
-                        <table>
-                          <thead>
-                            <tr>
-                              <th>Nombre</th>
-                              <th>Tipo</th>
-                              <th>Cantidad</th>
-                              <th>Unidad de medida</th>
+      <div className={style.containerSalidas}>
+        {!isLoading ? (
+          <div>
+            <h3 className={style.titleSales}>Ingresar Ventas</h3>
+            <div>
+              <label htmlFor="select-data">
+                Lista de ingredientes, recetas y adiciones
+              </label>
+              <div className={style.selectSales}>
+                <Select
+                  id="select-data"
+                  closeMenuOnSelect={false}
+                  options={dataSelect}
+                  isMulti
+                  onChange={handleSelect}
+                />
+              </div>
+              <div className={style.boxTableSales}>
+                {selectedData.length > 0 ? (
+                  <form onSubmit={(e) => handleSendDataServer(e)}>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Nombre</th>
+                          <th>Tipo</th>
+                          <th>Cantidad</th>
+                          <th>Unidad de medida</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedData.map((row, index) => {
+                          return (
+                            <tr key={index}>
+                              <td>
+                                {row.id_receta != undefined
+                                  ? row.nombre_receta
+                                  : row.nombre_ingrediente}
+                              </td>
+                              {row.id_receta != undefined &&
+                              row.sub_receta == 0 ? (
+                                <td>Receta</td>
+                              ) : null}
+                              {row.id_receta != undefined &&
+                              row.sub_receta == 1 ? (
+                                <td>Adicion</td>
+                              ) : null}
+                              {row.id_ingrediente != undefined ? (
+                                <td>Ingrediente</td>
+                              ) : null}
+
+                              {row.id_receta != undefined ? (
+                                <td>
+                                  <input
+                                    className={style.inputSale}
+                                    onChange={(e) =>
+                                      handleSend(row.id_receta, e, "cantidad")
+                                    }
+                                    placeholder="Cantidad"
+                                    type="number"
+                                    step={"any"}
+                                    min={1}
+                                    required
+                                  />
+                                </td>
+                              ) : (
+                                <td>
+                                  <input
+                                    className={style.inputSale}
+                                    onChange={(e) =>
+                                      handleSend(
+                                        row.id_ingrediente,
+                                        e,
+                                        "cantidad"
+                                      )
+                                    }
+                                    placeholder={`Cantidad total: ${row.cantidad_max}`}
+                                    type="number"
+                                    step={"any"}
+                                    min={1}
+                                    max={row.cantidad_max}
+                                    required
+                                  />
+                                </td>
+                              )}
+
+                              {row.id_receta != undefined ? (
+                                <td></td>
+                              ) : (
+                                <td>
+                                  <select
+                                    onChange={(e) =>
+                                      handleSend(
+                                        row.id_ingrediente,
+                                        e,
+                                        "unidad"
+                                      )
+                                    }
+                                    className={style.selectSale}
+                                    required
+                                  >
+                                    <option value="">Ninguno</option>
+                                    {unitArr.includes(row.unidad_medida) ? (
+                                      <>
+                                        <option value="und">und</option>
+                                        <option value="gr">gr</option>
+                                        <option value="lb">lb</option>
+                                        <option value="kg">kg</option>
+                                        <option value="oz">oz</option>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <option value="lt">lt</option>
+                                        <option value="cm3">cm3</option>
+                                        <option value="ml">ml</option>
+                                      </>
+                                    )}
+                                  </select>
+                                </td>
+                              )}
                             </tr>
-                          </thead>
-                          <tbody>
-                            {selectedData.map((row, index) => {
-                              return (
-                                <tr key={index}>
-                                  <td>
-                                    {row.id_receta != undefined ? row.nombre_receta: row.nombre_ingrediente}
-                                  </td>
-                                  {row.id_receta != undefined && row.sub_receta == 0 ? ( <td>Receta</td>) : null}
-                                  {row.id_receta != undefined && row.sub_receta == 1 ? ( <td>Adicion</td>) : null}
-                                  {row.id_ingrediente != undefined ? (<td>Ingrediente</td> ) : null}
-
-                                  {row.id_receta != undefined ? (
-                                    <td>
-                                      <input
-                                        className="input-salida"
-                                        onChange={(e) =>
-                                          handleSend(
-                                            row.id_receta,
-                                            e,
-                                            "cantidad"
-                                          )
-                                        }
-                                        placeholder="Cantidad"
-                                        type="number"
-                                        step={"any"}
-                                        min={1}
-                                        required
-                                      />
-                                    </td>
-                                  ) : (
-                                    <td>
-                                      <input
-                                        className="input-salida"
-                                        onChange={(e) =>
-                                          handleSend(
-                                            row.id_ingrediente,
-                                            e,
-                                            "cantidad"
-                                          )
-                                        }
-                                        placeholder={`Cantidad total: ${row.cantidad_max}`}
-                                        type="number"
-                                        step={"any"}
-                                        min={1}
-                                        max={row.cantidad_max}
-                                        required
-                                      />
-                                    </td>
-                                  )}
-
-                                  {row.id_receta != undefined ? (
-                                    <td></td>
-                                  ) : (
-                                    <td>
-                                      <select
-                                        onChange={(e) =>
-                                          handleSend(
-                                            row.id_ingrediente,
-                                            e,
-                                            "unidad"
-                                          )
-                                        }
-                                        className="input-salida"
-                                        required
-                                      >
-                                        <option value="">Ninguno</option>
-                                        {unitArr.includes(row.unidad_medida) ? (
-                                          <>
-                                            <option value="und">und</option>
-                                            <option value="gr">gr</option>
-                                            <option value="lb">lb</option>
-                                            <option value="kg">kg</option>
-                                            <option value="oz">oz</option>
-                                          </>
-                                        ) : (
-                                          <>
-                                            <option value="lt">lt</option>
-                                            <option value="cm3">cm3</option>
-                                            <option value="ml">ml</option>
-                                          </>
-                                        )}
-                                      </select>
-                                    </td>
-                                  )}
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                        <button
-                          className="salida-button"
-                          onClick={handleSubmit}
-                          type="submit"
-                        >
-                          Ingresar Venta
-                        </button>
-                      </form>
-                    </div>
-                  ) : null}
-                </div>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                    <button
+                      className={style.btnSubmitSale}
+                      onClick={handleSubmit}
+                      type="submit"
+                    >
+                      Ingresar Venta
+                    </button>
+                  </form>
+                ) : (<div className={style.selectAnyIngredient}><div><TbNotesOff/></div>Seleccione un ingrediente, platillo, o preparacion</div>)}
               </div>
             </div>
-          ) : (<Load/>)}
-        </div>
+          </div>
+        ) : null}
+      </div>
+
       <Dialog
         open={open}
-        onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
@@ -413,25 +420,21 @@ function Salidas({closeModal, id_restaurant }) {
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Estos datos ingresara como salidas al sistema, de acuerdo al metodo
+            Estos datos ingresara como venta al sistema, de acuerdo al metodo
             que este tenga
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button
-            className="btn-cancel-salida btn-salida"
-            onClick={handleClose}
+            className={style.btnSaveSale}
+            id="btn-salida-id"
+            onClick={handleLoadSend}
             disabled={sending}
           >
-            Cancelar
+            {sending ? <CircularProgress color="inherit" /> : "Aceptar"}
           </Button>
-          <Button
-            className="btn-acept-salida btn-salida"
-            id = "btn-salida-id"
-            onClick={handleLoadSend}
-            autoFocus
-          >
-            {sending ? (<CircularProgress />) : ("Aceptar")}
+          <Button className={style.btnCancelSave} disabled={sending} onClick={() => setOpen(false)}>
+            Cancelar
           </Button>
         </DialogActions>
       </Dialog>

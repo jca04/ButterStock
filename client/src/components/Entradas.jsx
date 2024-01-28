@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from "react";
-import style from "../public/css/comandasStyle.module.css";
+
+//style
+import style from "../public/css/entradasStyle.module.css";
+
+//Apis
 import { getIngredients } from "../api/ingredients";
+import { entradasPeps, entradasPromPonderado, salidasPeps, validacionInventario } from "../api/kardex";
+
+//components
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
-import { entradasPeps, entradasPromPonderado, salidasPeps, validacionInventario } from "../api/kardex";
 import { toast } from "react-toastify";
-import {AiOutlineCloseCircle} from 'react-icons/ai';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
-import Load from "./reuseComponents/loadRender";
+import CircularProgress from '@mui/material/CircularProgress';
 
+import { TbNotesOff } from "react-icons/tb";
 
 const unitArr = ['kg','lb','oz','gr','mg','und'];
 
@@ -195,31 +199,31 @@ export default function Comandas({ closeModal, id_restaurant }) {
   
   return (
     <>
-    <div className="modal_container">
-      <div className="modal_content">
+    <div className={style.containerEntradas}>
+      <div className={style.content}>
       {!isLoad ? (
         <>
-        <button className="btn-close-modal-comandas" onClick={closeModal}><AiOutlineCloseCircle/> Cerrar</button>
-        <div className="comandas_container">
-          <h3><ShoppingCartIcon/>Ingresar Compras</h3>
-          <div className="select-container">
-            <label htmlFor="select-entradas">Seleccionar las compras </label>
+        <div className={style.entradaBody}>
+          <h3>Ingresar Compras</h3>
+          <div className={style.selectBox}>
+            <label htmlFor="select-entradas">Seleccionar las compras: </label>
             <Select 
               closeMenuOnSelect = {false} 
               components={animatedComponents} 
               options={options} 
               isMulti
-              className="select-ingredients"
+              className={style.selectComponent}
               id="select-entradas"
               onChange={(e) => {handleSelect(e); refreshTotalBuys(e)}}
               value={selectedIngredients}
             />
           </div>
-          <div className="table_container">
+          <div className={style.tableBox}>
+            {console.log(selectedIngredients)}
+          
             {
               selectedIngredients.length > 0 ?
-                <form onSubmit={(e) => handleSubmitEntradas(e)} className="table-entradas-form">
-                  <div className="list-entradas"><p><ReceiptLongIcon/>Lista de compras</p></div>
+                <form onSubmit={(e) => handleSubmitEntradas(e)}>
                   <table>
                     <thead>
                       <tr>
@@ -237,7 +241,7 @@ export default function Comandas({ closeModal, id_restaurant }) {
                           <tr key={index}>
                             <td>{ingredient.label}</td>
                             <td>
-                              <input type="number" min= "1" step={'any'} className="input-entrada" placeholder="Ingrese la cantidad" required
+                              <input type="number" min= "1" step={'any'} className={style.inputEntrada} placeholder="Ingrese la cantidad" required
                                 onChange={(e) => {
                                   handleEntradas(ingredient.value, "cantidad", e.target.value, ingredient.kardex);
                                   valueBuys(e, ingredient, 'input-1')
@@ -245,7 +249,7 @@ export default function Comandas({ closeModal, id_restaurant }) {
                               />
                             </td>
                             <td>
-                              <select defaultValue={ingredient.unidad_medida} onChange={(e) => handleEntradas(ingredient.value, "unidad_medida", e.target.value, ingredient.kardex)} required>
+                              <select className={style.selectGramage} defaultValue={ingredient.unidad_medida} onChange={(e) => handleEntradas(ingredient.value, "unidad_medida", e.target.value, ingredient.kardex)} required>
                                 <option value="">Ninguno</option>
                                 {unitArr.includes(ingredient.unidad_medida) ? (
                                   <>
@@ -265,7 +269,7 @@ export default function Comandas({ closeModal, id_restaurant }) {
                               </select>
                             </td>
                             <td> 
-                              <input type="number" min="1" className="input-entrada" placeholder="Ingrese el costo unitario" required
+                              <input type="number" min="1" className={style.inputEntrada} placeholder="Ingrese el costo unitario" required
                                 onChange={(e) => {
                                   handleEntradas(ingredient.value, "costo_unitario", e.target.value, ingredient.kardex);
                                   valueBuys(e, ingredient, 'input-2')
@@ -285,27 +289,26 @@ export default function Comandas({ closeModal, id_restaurant }) {
                     }
                     {JSON.stringify(dataCost) != '{}' ? (
                       <tr>
-                        <td className="td-total"></td>
-                        <td className="td-total"></td>
-                        <td className="td-total"></td>
-                        <td className="td-total"></td>
-                        <td>
-                          <div className="div-total">total </div> 
-                          <div className="div-txt-total">{`$ ${total}`}</div>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td className={style.tdTotal}>
+                          <span>Total: {`$${total}`}</span>
                        </td>
                       </tr>
                     ): null}
                     </tbody>
                   </table>
-                  <button type="submit"  className="btn-ingresar-entrada">Ingresar Compra</button>
+                  <button type="submit" className={style.btnSaveEntrada}>Ingresar Compra</button>
                 </form>
                 :
-                null
+                 <div className={style.selectAnyIngredient}><div><TbNotesOff/></div>Seleccione algun ingrediente</div>
                 }
               </div>
             </div>
             </>
-           ) : ( <Load/>) }
+           ) : (<div className={style.loadEntrada}><CircularProgress color="inherit"/></div>) }
       </div>
     </div>
     </>

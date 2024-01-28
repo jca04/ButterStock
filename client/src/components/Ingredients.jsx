@@ -196,9 +196,9 @@ export default function Ingredients() {
         selector: (row) => (
           <>
             {row.imagen == "" ? (
-              <MdImageNotSupported className="img-not-found-image" />
+              <MdImageNotSupported />
             ) : (
-              <img src={row.imagen} alt="receta" className="img_receta" />
+              <img src={row.imagen} alt="receta" className={style.imgRecipe} />
             )}
           </>
         ),
@@ -608,6 +608,7 @@ export default function Ingredients() {
               expandableRowExpanded={(row) => row.expandableRowExpanded}
               expandableRowsComponent={(row) => expandableRowsRecipe(row)}
               paginationComponentOptions={paginationComponentOptions}
+              striped
             />
           ) : (
             <div className={style.loadDataTable}>

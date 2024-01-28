@@ -215,6 +215,12 @@
   border-radius: 50%;
 }
 
+.boxCloseModal > button:hover{
+  transform: scale(1.1);
+  transition: all 200ms ease-in-out;
+  background-color: white;
+}
+
 .titleForm {
   background-color: #f5b702;
   width: 100%;
@@ -377,10 +383,6 @@
  width: 25%;
  padding: 10px;
  background-color: #dedede61;
-}
-
-.tableInfoValues{
-
 }
 
 .tdName{

@@ -1,6 +1,9 @@
 import React from "react";
 import style from "../../public/css/kardexStyle.module.css";
 
+//icons 
+import { TbNotesOff } from "react-icons/tb";
+
 export default function KardexTable({ kardex, ingredient }) {
   const fechaLocal = (fecha) => {
     const fechaLocal = new Date(fecha);
@@ -22,17 +25,23 @@ export default function KardexTable({ kardex, ingredient }) {
     </tr>
   ));
   return (
-    <>
-      <section className={style.KardexTable}>
-        <header className={style.headerKardex}>{ingredient}</header>
-        <div className="container_table">
+    <section className={style.KardexTable}>
+      <header className={style.headerKardex}>{ingredient}</header>
+      <div>
+        {kardex.length > 0 ? (
           <table className={style.table}>
             <thead>
               <tr>
-                <th  className={style.thFa}>Fecha</th>
-                <th colSpan="3" className={style.thFa}>Entradas</th>
-                <th colSpan="3" className={style.thFa}>Salidas</th>
-                <th colSpan="3" className={style.thFa}>Saldo</th>
+                <th className={style.thFa}>Fecha</th>
+                <th colSpan="3" className={style.thFa}>
+                  Entradas
+                </th>
+                <th colSpan="3" className={style.thFa}>
+                  Salidas
+                </th>
+                <th colSpan="3" className={style.thFa}>
+                  Saldo
+                </th>
               </tr>
               <tr>
                 <th></th>
@@ -47,10 +56,15 @@ export default function KardexTable({ kardex, ingredient }) {
                 <th className={style.samllTh}>Total</th>
               </tr>
             </thead>
-            <tbody className="peps_tbody">{rows}</tbody>
+            <tbody>{rows}</tbody>
           </table>
-        </div>
-      </section>
-    </>
+        ) : (
+          <div className={style.boxImgInfoNot}>
+            <div className={style.notFoundKardex}><TbNotesOff/></div>
+            No se tiene registro del ingrediente {ingredient}
+          </div>
+        )}
+      </div>
+    </section>
   );
 }
