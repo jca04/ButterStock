@@ -43,6 +43,7 @@ function Navbar({restaurant}) {
   const dispatch = useDispatch();
   //estado global trayendo los datos
   let homeSlice = useSelector(state => state.home);
+  let to_64 = btoa(restaurant);
   const [dataUser, setDataUser] = useState({});
   const [modalEntradas, setModalEntradas] = useState(false);
   const [modalSalidas, setModalSalidas] = useState(false);
@@ -82,7 +83,7 @@ function Navbar({restaurant}) {
     if (dataUser.superAdmin !== undefined){
       if (dataUser.superAdmin == 0){
         return(
-          <Link className={style.linkNavbar} to={`../configurations/${restaurant}`} >
+          <Link className={style.linkNavbar} to={`../configurations/${to_64}`} >
             <li className={style.liNavbar}>
               <GrConfigure className={style.iconStrokeMin}/>
               <span> Mi negocio</span>
@@ -201,7 +202,7 @@ function Navbar({restaurant}) {
           </ul>
           {/* ingredientes */}
           <ul>
-            <Link className={style.linkNavbar} to={`/ingredients/all/${restaurant}`}> 
+            <Link className={style.linkNavbar} to={`/ingredients/all/${to_64}`}> 
               <li className={style.liNavbar}>
                 <IoFastFoodOutline className={` ${style.icon} ${style.iconStrokeMin} `}/>
                 <span>Ingredientes</span>
@@ -210,7 +211,7 @@ function Navbar({restaurant}) {
           </ul>
           {/* Recetas */}
           <ul>
-            <Link className={style.linkNavbar} to={`/Recipe_book/all/${restaurant}`}> 
+            <Link className={style.linkNavbar} to={`/Recipe_book/all/${to_64}`}> 
               <li className={style.liNavbar}>
                 <LuChefHat className={` ${style.icon} `}/>
                 <span>Recetario</span>
@@ -219,7 +220,7 @@ function Navbar({restaurant}) {
           </ul>
           {/* inventario */}
           <ul>
-            <Link className={style.linkNavbar} to={`/inventory/${restaurant}`}> 
+            <Link className={style.linkNavbar} to={`/inventory/${to_64}`}> 
               <li className={style.liNavbar}>
                 <LiaClipboardListSolid className={` ${style.icon} ${style.iconStrokeMin} `}/>
                 <span>Inventario</span>
@@ -228,7 +229,7 @@ function Navbar({restaurant}) {
           </ul>
           {/* estado de resultado */}
           <ul>
-            <Link className={style.linkNavbar} to={`/edr/${restaurant}`}> 
+            <Link className={style.linkNavbar} to={`/edr/${to_64}`}> 
               <li className={style.liNavbar}>
                 <MdAttachMoney className={` ${style.icon} ${style.iconStrokeMin} `}/>
                 <span>Estado de resultado</span>

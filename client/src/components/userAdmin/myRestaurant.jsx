@@ -13,6 +13,7 @@ import Container from '@mui/material/Container';
 //Apis
 import { getuserPerRest } from "../../api/users";
 import { loadRestaurant, editRestaurant } from "../../api/restaurant";
+import { verifyUrl } from "../../auth/verifyUrl";
 
 //icons
 import {MdAddBusiness} from 'react-icons/md';
@@ -23,25 +24,12 @@ import {HiUsers} from 'react-icons/hi';
 import style from '../../public/css/myRestaurantStyle.module.css';
 
 function MyRestaurante(){
-  const { id } = useParams();
+  let { id } = useParams();
+  id = verifyUrl(id);
+
   const [data, setData] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [isDisabledInput, setDisabledInput] = useState(true);
-  const [users, setUsers] = useState([]);
-  const columns = [
-    {
-      name: 'Nombre',
-      selector: (row) => row.nombre,
-    },
-    {
-      name: 'Apellido',
-      selector: (row) => row.apellido,
-    },
-    {
-      name: 'Correo',
-      selector: (row) => row.correo,
-    }
-  ]
 
   const showToastMessageNo = (text) => {
     toast.error(text, {

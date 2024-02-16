@@ -9,6 +9,7 @@ import {
   createIngredient,
   updateIngredients,
 } from "../api/ingredients";
+import { verifyUrl } from "../auth/verifyUrl";
 
 //components
 import Navbar from "./reuseComponents/navbar";
@@ -17,7 +18,6 @@ import Select from "react-select";
 import { Field, Form, Formik } from "formik";
 import { toast } from "react-toastify";
 import CircularProgress from "@mui/material/CircularProgress";
-
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -25,12 +25,12 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 
-
 //icons
 import { AiOutlineAppstoreAdd, AiOutlineSearch } from "react-icons/ai";
 import { MdImageNotSupported } from "react-icons/md";
 import { MdDeleteOutline } from "react-icons/md";
 import { CiEdit } from "react-icons/ci";
+import { AiOutlineCloseCircle } from 'react-icons/ai';
 
 //style
 import style from "../public/css/ingredientsStyle.module.css";
@@ -38,6 +38,9 @@ import style from "../public/css/ingredientsStyle.module.css";
 let valueCostoTotal = 0;
 
 export default function Ingredients() {
+  let { id } = useParams();
+  id = verifyUrl(id);
+  
   const [loading, setLoading] = useState(true);
   const [ingredients, setIngredients] = useState([]);
   const [isForm, setForm] = useState(false);
@@ -49,7 +52,6 @@ export default function Ingredients() {
   const [idDelete, setIdDelete] = useState({});
   const [searchTable, setSearchTable] = useState({});
   const [isDeleting, setDeleting] = useState(false);
-  const { id } = useParams();
 
   useEffect(() => {
     document.title = "ButterStock | Ingredientes";
@@ -316,20 +318,13 @@ export default function Ingredients() {
     setSearchTable(resultNoRepe);
   };
 
-  //intervalo para actulizar la pagina
-  const intervaloRecipe = setInterval(() => {
-    const local = localStorage.getItem("refreshRecipe");
-    if (local != undefined) {
-      res();
-      localStorage.removeItem("refreshRecipe");
-    }
-  }, 1000);
 
   return (
     <div className={style.globalIngredients}>
       <Navbar restaurant={id} />
       <Dialog open={isForm} className={style.fatherDialog} onClose={() => setForm(false)}>
-        <DialogTitle className={style.headerIngredient}>Ingredientes <button className={style.btnClose} onClick={() => setForm(false)}>Cerrar</button></DialogTitle>
+        <DialogTitle className={style.headerIngredient}>Ingredientes </DialogTitle>
+        <button className={style.btnClose} onClick={() => setForm(false)}><AiOutlineCloseCircle/></button>
         <DialogContent className={style.dialogIngredient}>
           <Formik
             initialValues={{
