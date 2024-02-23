@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import { getIngredients } from "../api/ingredients";
 import style from "../public/css/inventoryStyle.module.css";
 
+import { verifyUrl } from "../auth/verifyUrl";
+
 //import components
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -18,7 +20,9 @@ import { AiOutlineSearch } from "react-icons/ai";
 
 
 export default function Inventory() {
-  const { id } = useParams();
+  let { id } = useParams();
+  id = verifyUrl(id)
+
   const [data, setData] = useState([]);
   const [data_search, setDataSearch] = useState([]);
   const [loadKardexComponent, setKardex] = useState([]);

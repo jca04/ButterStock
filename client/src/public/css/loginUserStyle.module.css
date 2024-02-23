@@ -33,7 +33,7 @@
   flex-direction: column;
   width: 50%;
   height: 100%;
-  border-radius: 5px;
+  border-radius: 0px 200px 200px 0px;
 }
 
 .separtaLeft{
@@ -101,8 +101,8 @@
   margin-bottom: 15px;
 }
 
-.formInput {
-}
+/* .formInput {
+} */
 
 .divInput > input {
   width: 100%;
@@ -136,6 +136,15 @@
   background: #f5b702;
   cursor: pointer;
   font-size: 1em;
+}
+
+.divInputBtn > button > span{
+  height: 20px !important;
+}
+
+.divInputBtn > button > span > svg{
+  height: 100% !important;
+  display: inline !important;
 }
 
 .divInputBtn > button:hover {

@@ -1,30 +1,36 @@
 import React, {useEffect, useState} from 'react'
-import Navbar from './reuseComponents/navbar'
-import style from "../public/css/estadoDeResultadoStyle.module.css"
 import { useParams } from 'react-router-dom'
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import { DatePicker } from "@mui/x-date-pickers/DatePicker"
-import dayjs from 'dayjs'
+//apis
+import { verifyUrl } from '../auth/verifyUrl'
+//components
+import Navbar from './reuseComponents/navbar'
+// import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
+// import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+// import { DatePicker } from "@mui/x-date-pickers/DatePicker"
+// import dayjs from 'dayjs'
 import { getAllEdr, getEdr, getPieChartEdr } from '../api/edr'
 import Edr from './component/Edr'
-import PieChartEdr from './reuseComponents/PieChartEdr'
+// import PieChartEdr from './reuseComponents/PieChartEdr'
 import EdrHistoricalTable from './component/EdrHistoricalTable'
 import EdrGraph from './reuseComponents/EdrGraph'
 
+//style
+import style from "../public/css/estadoDeResultadoStyle.module.css"
 
 export default function EstadoDeResultado() {
 
-    document.title = "Estado de Resultado"
+    document.title = "ButterStock | Estado de Resultado"
 
-    const { id_restaurant } = useParams();
-    const [selectedDate, setSelectedDate] = useState(null);
-    const [selectedMonth, setSelectedMonth] = useState(null);
-    const [edr, setEdr] = useState([]);
-    const [edrLoading, setEdrLoading] = useState(false);
+    let{ id_restaurant } = useParams();
+    id_restaurant = verifyUrl(id_restaurant)
+
+    // const [selectedDate, setSelectedDate] = useState(null);
+    // const [selectedMonth, setSelectedMonth] = useState(null);
+    // const [edr, setEdr] = useState([]);
+    // const [edrLoading, setEdrLoading] = useState(false);
     const [edrModalOpen, setEdrModalOpen] = useState(false);
     const [ edrTipo, setEdrTipo ] = useState("")
-    const [data, setData] = useState({})
+    // const [data, setData] = useState({})
     const [edrsData, setEdrsData] = useState([])
 
     useEffect(() => {

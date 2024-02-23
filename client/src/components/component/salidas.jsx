@@ -19,6 +19,7 @@ import {
   salidasPromPonderado,
   validacionInventario,
 } from "../../api/kardex";
+import { verifyUrl } from "../../auth/verifyUrl";
 
 //icons
 import { TbNotesOff } from "react-icons/tb";
@@ -29,6 +30,9 @@ import style from "../../public/css/salidaStyle.module.css";
 const unitArr = ["kg", "lb", "oz", "gr", "mg", "und"];
 
 function Salidas({ id_restaurant }) {
+
+  id_restaurant = verifyUrl(id_restaurant)
+
   const [dataSelect, setDataSelect] = useState([]);
   const [selectedData, setSelectedData] = useState([]);
   const [dataSend, setDataSend] = useState({});
@@ -277,7 +281,7 @@ function Salidas({ id_restaurant }) {
             <h3 className={style.titleSales}>Ingresar Ventas</h3>
             <div>
               <label htmlFor="select-data">
-                Lista de ingredientes, recetas y adiciones
+                Lista de ingredientes, platillos y preparaciones
               </label>
               <div className={style.selectSales}>
                 <Select
@@ -311,11 +315,11 @@ function Salidas({ id_restaurant }) {
                               </td>
                               {row.id_receta != undefined &&
                               row.sub_receta == 0 ? (
-                                <td>Receta</td>
+                                <td>Platillo</td>
                               ) : null}
                               {row.id_receta != undefined &&
                               row.sub_receta == 1 ? (
-                                <td>Adicion</td>
+                                <td>Preparación</td>
                               ) : null}
                               {row.id_ingrediente != undefined ? (
                                 <td>Ingrediente</td>
@@ -407,7 +411,7 @@ function Salidas({ id_restaurant }) {
               </div>
             </div>
           </div>
-        ) : null}
+        ) : (<div className={style.loadEntrada}><CircularProgress color="inherit"/></div>)}
       </div>
 
       <Dialog

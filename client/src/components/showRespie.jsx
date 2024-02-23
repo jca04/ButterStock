@@ -14,6 +14,7 @@ import {
 } from "../api/resipe";
 import { convertion } from "../public/js/unitConversion";
 import { fileUpload } from "../app/cloudinary";
+import { verifyUrl } from "../auth/verifyUrl";
 
 //components
 import Navbar from "./reuseComponents/navbar";
@@ -47,6 +48,9 @@ let unitArr = ["kg", "lb", "oz", "gr", "mg", "und"];
 let json = {};
 
 function ShowRespie() {
+  let { id } = useParams();
+  id = verifyUrl(id);
+
   //localState
   const [divide, setDivide] = useState(1);
   const [stateResipe, setResipes] = useState([]);
@@ -66,7 +70,6 @@ function ShowRespie() {
   //new
   const [infoIngredients, setInfoIngredients] = useState({});
 
-  const { id } = useParams();
   const dataTipoPlato = [
     { label: "Plato", value: "Plato" },
     { label: "Bebida", value: "Bebida" },
@@ -374,7 +377,7 @@ function ShowRespie() {
       valueMargenError + valueMargenError * margenContribucion;
     const costoPotencialVenta = valueMargenError + valueMargenContribucion;
     const iva = infoReceta.iva != undefined ? infoReceta.iva : 0.19;
-    const costoVenta = costoPotencialVenta + costoPotencialVenta * iva;
+    const costoVenta = valueMargenContribucion + valueMargenContribucion * iva;
 
     setInfoReceta({
       subTotal: sumatoriaIngredients.toFixed(0),
@@ -518,7 +521,7 @@ function ShowRespie() {
 
         if (divide != 0) {
           value =
-            (parseFloat(margenContribucion) + parseFloat(margenError)) / divide;
+            (parseFloat(margenContribucion)) / divide;
         }
 
         let costo_venta =
@@ -1415,7 +1418,7 @@ function ShowRespie() {
                           )}
                         </td>
                       </tr>
-                      <tr>
+                      {/* <tr>
                         <td className={style.tdName}>
                           Costo potencial venta
                         </td>
@@ -1434,7 +1437,7 @@ function ShowRespie() {
                             "N/A"
                           )}
                         </td>
-                      </tr>
+                      </tr> */}
                       <tr>
                         <td className={style.tdName}>Iva</td>
                       </tr>
