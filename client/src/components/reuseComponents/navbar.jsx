@@ -260,7 +260,7 @@ function Navbar({restaurant}) {
       >
         <button className={style.btnModalEntradas} onClick={() => setModalEntradas(false)}><AiOutlineCloseCircle/></button>
         <DialogContent>
-          <Entradas id_restaurant = {restaurant} />
+          <Entradas id_restaurant = {to_64} />
         </DialogContent>
       </Dialog>
     ) : null}
@@ -274,7 +274,7 @@ function Navbar({restaurant}) {
       >
         <button className={style.btnModalEntradas} onClick={() => setModalSalidas(false)}><AiOutlineCloseCircle/></button>
         <DialogContent>
-          <Salidas id_restaurant = {restaurant} />
+          <Salidas id_restaurant = {to_64} />
         </DialogContent>
       </Dialog>
     ) : null}

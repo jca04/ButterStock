@@ -132,11 +132,11 @@ export default function Edr({ id_restaurant, tipoEdr, closeModal }) {
         </h4>
         <div className="edr-modal-body">
           <h4>Total ventas del {tipoEdr == "diario" ? "dia" : "mes"}:</h4>
-          <div>${Number(edrData.totalVentas).toLocaleString()}</div>
+          <div>${edrData.totalVentas ? Number(edrData.totalVentas).toLocaleString() : "$0"}</div>
         </div>
         <div className="edr-modal-body">
           <h4>Total costos del {tipoEdr == "diario" ? "dia" : "mes"}:</h4>
-          <div>${Number(edrData.totalCostos).toLocaleString()}</div>
+          <div>${edrData.totalCostos ? Number(edrData.totalCostos).toLocaleString() : "$0"}</div>
         </div>
         <div className="add-otros-gastos">
           <h4>Añadir otros gastos</h4>

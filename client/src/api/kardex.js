@@ -45,6 +45,12 @@ export const entradasPromPonderado = async (
   unidad_medida,
   id_restaurant
 ) => {
+
+  console.log(  id_ingredient,
+    cantidad,
+    costo_unitario,
+    unidad_medida,
+    id_restaurant)
   try {
     const response = await axios.post(
       `/kardex/promedio/entradas/${id_ingredient}`,

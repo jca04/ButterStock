@@ -76,8 +76,8 @@ const getEdr = async (fecha_edr, id_restaurante, fechaActualArr) => {
           }
         } else {
           const infoIngrediente = await queryAsync(
-            "SELECT unidad_medida, costo_unitario FROM tbl_ingrediente " +
-              "WHERE id_ingrediente = ? && id_restaurante = ?",
+            "SELECT unidad_medida, costo_unitario FROM tbl_ingredientes " +
+              "WHERE id_ingrediente = ? && id_restaurant = ?",
             [venta.id_ingrediente, id_restaurante]
           );
           for (const info of infoIngrediente) {
@@ -145,8 +145,8 @@ const getEdr = async (fecha_edr, id_restaurante, fechaActualArr) => {
           }
         } else {
           const infoIngrediente = await queryAsync(
-            "SELECT unidad_medida, costo_unitario FROM tbl_ingrediente " +
-              "WHERE id_ingrediente = ? && id_restaurante = ?",
+            "SELECT unidad_medida, costo_unitario FROM tbl_ingredientes " +
+              "WHERE id_ingrediente = ? && id_restaurant = ?",
             [venta.id_ingrediente, id_restaurante]
           );
           for (const info of infoIngrediente) {

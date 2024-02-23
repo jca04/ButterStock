@@ -41,7 +41,6 @@ export default function Comandas({id_restaurant }) {
     fetchIngredients();
   }, [])
 
-
   const handleSelect = (selectedValues) => {
     setSelectedIngredients(selectedValues);
   }

@@ -377,7 +377,7 @@ function ShowRespie() {
       valueMargenError + valueMargenError * margenContribucion;
     const costoPotencialVenta = valueMargenError + valueMargenContribucion;
     const iva = infoReceta.iva != undefined ? infoReceta.iva : 0.19;
-    const costoVenta = costoPotencialVenta + costoPotencialVenta * iva;
+    const costoVenta = valueMargenContribucion + valueMargenContribucion * iva;
 
     setInfoReceta({
       subTotal: sumatoriaIngredients.toFixed(0),
@@ -521,7 +521,7 @@ function ShowRespie() {
 
         if (divide != 0) {
           value =
-            (parseFloat(margenContribucion) + parseFloat(margenError)) / divide;
+            (parseFloat(margenContribucion)) / divide;
         }
 
         let costo_venta =
@@ -1418,7 +1418,7 @@ function ShowRespie() {
                           )}
                         </td>
                       </tr>
-                      <tr>
+                      {/* <tr>
                         <td className={style.tdName}>
                           Costo potencial venta
                         </td>
@@ -1437,7 +1437,7 @@ function ShowRespie() {
                             "N/A"
                           )}
                         </td>
-                      </tr>
+                      </tr> */}
                       <tr>
                         <td className={style.tdName}>Iva</td>
                       </tr>
