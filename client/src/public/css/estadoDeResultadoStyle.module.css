@@ -1,3 +1,183 @@
+.globalEdr {
+    display: flex;
+    background-color: white;
+}
+
+
+.edr_wrapper {
+  width: 80%;
+  background-color: #dedede61;
+  padding-left: 45px;
+  padding-top: 30px;
+  height: 100vh;
+  overflow: auto;
+}
+  
+
+.edr_container {
+    display: grid;
+    grid-template-areas:
+      "aside main main main"
+      "grafica grafica grafica grafica";
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto;
+    margin: auto;
+    margin-top: 30px;
+    background: white;
+    border-radius: 6px;
+    padding: 10px;
+    margin-right: 35px;
+    min-height: 90vh;
+  }
+
+  .aside_content {
+    grid-area: aside;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.btns_edr {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    /* background-color: #fff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px; */
+    padding: 10px;
+    height: 150px;
+}
+
+.btn {
+    width: 150px;
+    height: 60px;
+    border-radius: 8px;
+    border: none;
+    background-color: #ffb400;
+    color: #333;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.btn:hover {
+    background-color: #ffcc00;
+    transform: scale(1.05);
+}
+
+.edr_description {
+    text-align: center;
+    color: #555;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.calendar{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 40px;
+}
+
+.calendar_content {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
+    margin-top: 40px;
+}
+
+.calendar h1 {
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: #000;
+}
+
+.date_picker {
+    width: 200px;
+    height: 50px;
+    border-radius: 5px;
+    border: none;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.historico_container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0px 0px 5px 0px rgba(82, 81, 81, 0.75);
+}
+
+.historico_content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 90%;
+    margin: 20px 0 20px 0;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid silver;
+
+}
+
+.otros_gastos {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    align-items: center;
+    background: #fff;
+    border-radius: 10px;
+    width: 100%;
+}
+
+.negativo {
+    border: 1px solid red;
+}
+
+.no_data {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 50px;
+}
+
+.no_data h1 {
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: #000;
+}
+
+.main_content {
+    grid-area: main;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.graph {
+    grid-area: grafica;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    border-radius: 10px;
+    padding: 10px;
+}
 .stateOfContainer{
     display: flex;
 }

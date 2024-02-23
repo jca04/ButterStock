@@ -6,6 +6,7 @@ const {
   getEdrByDate,
   getEdrData,
   getPieChartEdr,
+  getAllEdr,
 } = require("../controllers/estadoDeResultado");
 
 const edrRouter = express.Router();
@@ -15,5 +16,6 @@ edrRouter.post("/create", checkJwt, edr);
 edrRouter.post("/get", checkJwt, getEdrByDate);
 edrRouter.post("/get-data", checkJwt, getEdrData);
 edrRouter.post("/get-pie-chart", checkJwt, getPieChartEdr);
+edrRouter.get("/get-all-edr/:id_restaurant", checkJwt, getAllEdr);
 
 module.exports = edrRouter;

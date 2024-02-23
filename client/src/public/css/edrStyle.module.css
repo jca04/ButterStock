@@ -1,4 +1,4 @@
-.edr-modal {
+.edr_modal {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -11,13 +11,13 @@
     z-index: 1000;
 }
 
-.edr-modal-content {
+.edr_modal_content {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     background-color: #fff;
-    width: 30%;
+    width: 35%;
     height: 70%;
     border-radius: 10px;
     padding: 20px;
@@ -27,14 +27,14 @@
 
 
 
-.edr-modal-body {
+.edr_modal_body {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
 }
 
-.edr-modal-body h4 {
+.edr_modal_body h4 {
     font-size: 1rem;
     font-weight: 400;
     color: #000;
@@ -42,7 +42,7 @@
     width: 90%;
 }
 
-.edr-modal-body div {
+.edr_modal_body div {
     width: 90%;
   border: 1px solid #aaa; 
   border-radius: 5px;
@@ -56,7 +56,7 @@
   pointer-events: none;
 }
 
-.add-otros-gastos {
+.add_otros_gastos {
     display: flex;
     align-items: center;
     width: 90%;
@@ -64,14 +64,14 @@
     margin-top: 10px;
 }
 
-.add-otros-gastos h4 {
+.add_otros_gastos h4 {
     font-size: 1rem;
     font-weight: 400;
     color: #000;
     margin-bottom: 10px;
 }
 
-.add-btn {
+.add_btn {
     font-size: 1.3rem;
     color: #f5c70e;
     cursor: pointer;
@@ -80,7 +80,7 @@
     border: none;
 }
 
-.close-inputs {
+.close_inputs {
     font-size: 1.3rem;
     color: black;
     cursor: pointer;
@@ -89,7 +89,7 @@
     border: none;
 }
 
-.otros-gastos-inputs {
+.otros_gastos_inputs {
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -100,17 +100,17 @@
     padding-right: 2px;
 }
 
-.otros-gastos-inputs::-webkit-scrollbar-thumb {
+.otros_gastos_inputs::-webkit-scrollbar-thumb {
     background-color: #fce795;
     border-radius: 5px;
 }
 
-.otros-gastos-inputs::-webkit-scrollbar {
+.otros_gastos_inputs::-webkit-scrollbar {
     width: 5px;
     background-color: white;
 }
 
-.inputs-otros-gastos {
+.inputs_otros_gastos {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -118,14 +118,14 @@
     margin-bottom: 10px;
 }
 
-.otros-gastos-field {
+.otros_gastos_field {
     border: 1px solid #aaa; 
     border-radius: 5px;
     padding: 10px;
     width: 220px;
 }
 
-.edr-modal-utilidad {
+.edr_modal_utilidad {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -133,14 +133,14 @@
     margin-top: 10px;
 }
 
-.edr-modal-utilidad h4{
+.edr_modal_utilidad h4{
     font-size: 1rem;
     font-weight: 400;
     color: #000
 
 }
 
-.edr-modal-utilidad div {
+.edr_modal_utilidad div {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -157,7 +157,7 @@
 
 }
 
-.edr-modal-btn {
+.edr_modal_btn {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -165,7 +165,7 @@
     margin-top: 50px;
 }
 
-.edr-modal-btn button {
+.edr_modal_btn button {
     width: 100px;
     padding: 10px;
     border-radius: 5px;
@@ -179,7 +179,7 @@
 
 }
 
-.edr-modal-btn button:hover {
+.edr_modal_btn button:hover {
     background-color: #f8e080;
     color: #000;
 }
@@ -191,3 +191,16 @@
     font-size: 1.5rem;
     cursor: pointer;
 }
+
+.close_button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #fff; 
+    border: none;
+    cursor: pointer;
+  }
+  
+  .close_button:hover {
+    color: #ff0000;
+  }
