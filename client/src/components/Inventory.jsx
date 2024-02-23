@@ -1,20 +1,37 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { getIngredients } from "../api/ingredients";
-import Navbar from "./reuseComponents/navbar";
+import style from "../public/css/inventoryStyle.module.css";
+
+import { verifyUrl } from "../auth/verifyUrl";
+
+//import components
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
 import DataTable from "react-data-table-component";
-import { MdOutlineInventory } from "react-icons/md";
-import {AiOutlineSearch} from 'react-icons/ai';
-import "../public/css/inventoryStyle.css";
-import Load from "./reuseComponents/loadRender";
+import Navbar from "./reuseComponents/navbar";
+import Kardex from "./Kardex";
+import CircularProgress from "@mui/material/CircularProgress";
+
+//icons
+import { AiOutlineCloseCircle } from 'react-icons/ai';
+import { AiOutlineSearch } from "react-icons/ai";
+
+
 
 export default function Inventory() {
-  const { id } = useParams();
+  let { id } = useParams();
+  id = verifyUrl(id)
+
   const [data, setData] = useState([]);
+  const [data_search, setDataSearch] = useState([]);
+  const [loadKardexComponent, setKardex] = useState([]);
   const [isLoading, setLoading] = useState(true);
+  const [modalTable, setModalTable] = useState(false);
 
   useEffect(() => {
-    document.title = 'ButterStock | inventario';
+    document.title = "ButterStock | inventario";
+
     const res = async () => {
       const response = await getIngredients(id);
       setTimeout(() => {
@@ -45,14 +62,43 @@ export default function Inventory() {
     {
       name: "Ver kardex",
       cell: (row) => (
-        <button className="btn-send-kardex">
-           <Link to={`/kardex/${row.id_ingrediente}/${id}`} target="_blank" className="btn-kardex">
+        <button className={style.btnShowKardex} onClick={() => loadKardex(row.id_ingrediente, id)}>
             Ver kardex
-          </Link>
         </button>
       ),
     },
   ];
+
+  const searchKardex = (value) => {
+
+    let resulData = [];
+
+    data.filter((row) => {
+      const cantidad_total_ingrediente = JSON.stringify(row.cantidad_total_ingrediente).toLowerCase();
+      const nombre_ingrediente = row.nombre_ingrediente.toLowerCase();
+      const unidad_medida = row.unidad_medida.toLowerCase();
+      const kardex = row.kardex.toLowerCase();
+      const text_to_search = value.toLowerCase();
+
+      if (
+        cantidad_total_ingrediente.includes(text_to_search) ||
+        nombre_ingrediente.includes(text_to_search) ||
+        unidad_medida.includes(text_to_search) ||
+        kardex.includes(text_to_search)
+      ){
+        resulData.push(row);
+      }
+
+      setDataSearch(resulData);
+
+    });
+  };
+
+
+  const loadKardex = (id_ingrediente, id_restaurante) => {
+    setKardex([id_ingrediente, id_restaurante]);
+    setModalTable(true)
+  }
 
   const paginationComponentOptions = {
     rowsPerPageText: "Filas por página",
@@ -61,49 +107,48 @@ export default function Inventory() {
     selectAllRowsItemText: "Todos",
   };
 
-  const searchKardex = (value) => {
-      console.log(data)
-      const resulData = [];
-      for (const i in data){
-        const nameIngredient = data[i].nombre_ingrediente;
-        const kardex = data[i].kardex;
-      }
-  }
-
   return (
-    <>
-      <Navbar restaurant = {id} />
-      {isLoading ? (
-        <Load/>
-      ): (
-      <section className="body-inventory-father">
-        <section className="father_inventario">
-          <div className="header-inventory">
-            <MdOutlineInventory className="icon-inventory" />
-            <h3>Inventario</h3>
-          </div>
-          <div className="body-inventory">
-            <div className="search-inventory">
-              <div className="div-input-search">
-                <div>
-                <AiOutlineSearch  className="icon-search-recipe"/>
-                    <input type="text" onChange={(e) => searchKardex(e.target.value)} className="input-search-inventory" placeholder="Buscar"/>
-                </div>
-              </div>
+    <div className={style.globalFather}>
+      <Navbar restaurant={id} />
+      <section className={style.bodyInventory}>
+        <header className={style.headerInventory}>Inventario</header>
+        <div className={style.bodyPartInventory}>
+          <div className={style.searchInventory}>
+            <div className={style.boxInput}>
+              <AiOutlineSearch />
+              <input
+                type="text"
+                onChange={(e) => searchKardex(e.target.value)}
+                placeholder="Buscar"
+              />
             </div>
-            <DataTable
-              columns={columns}
-              data={data}
-              pagination
-              paginationPerPage={10}
-              responsive
-              striped
-              paginationComponentOptions={paginationComponentOptions}
-            />
           </div>
-        </section>
+         {!isLoading ? (
+          <DataTable
+            columns={columns}
+            data={data_search.length == 0  ? data : data_search}
+            pagination
+            paginationPerPage={10}
+            responsive
+            striped
+            paginationComponentOptions={paginationComponentOptions}
+          />
+        ):  <div className={style.loadingInventory}><CircularProgress color="inherit" /></div>}
+        </div>
       </section>
-      )}
-    </>
+      {modalTable ? (
+        <>
+        <Dialog
+        open={modalTable}
+        className={style.modalKardex}
+      >
+        <button className={style.btnCloseKardex} onClick={() => {setKardex([]); setModalTable(false)}}><AiOutlineCloseCircle/></button>
+        <DialogContent>
+          <Kardex id_ingrediente = {loadKardexComponent[0]} />
+        </DialogContent>
+      </Dialog>
+      </>
+      ) : (null)}
+    </div>
   );
 }

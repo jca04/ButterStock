@@ -1,0 +1,247 @@
+@import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;500&display=swap");
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Work Sans", sans-serif;
+}
+
+.parent {
+  display: flex;
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background-color: white;
+}
+
+.divContainer {
+  display: flex;
+  position: relative;
+  margin: auto;
+  width: 65%;
+  height: 80%;
+  flex-direction: row;
+  justify-content: space-between;
+  border-radius: 5px;
+  box-shadow: 11px 5px 8px -1px rgba(0, 0, 0, 0.3);
+}
+
+.separateM {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  width: 50%;
+  height: 100%;
+  border-radius: 0px 200px 200px 0px;
+}
+
+.separtaLeft{
+  background-color: #f5b702;
+}
+
+
+.separate1 {
+  width: 65%;
+}
+
+.separate2 {
+  flex-direction: column;
+  border: 1px solid #c7be7e;
+  background-color: white;
+}
+
+.wave{
+  display: block;
+  position: absolute;
+  height: 100%;
+  right: 0;
+}
+
+.wave > img{
+  height: 98%;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  align-items: center;
+}
+
+.header > img {
+  width: 40%;
+  object-fit: cover;
+}
+
+.header > h2 {
+  width: 50%;
+  text-align: center;
+  font-size: 1.1em;
+  font-weight: 500;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  margin: 30px;
+  height: 90%;
+  align-items: center;
+}
+
+.form {
+  width: 100%;
+  padding: 30px;
+}
+
+.divInput {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+/* .formInput {
+} */
+
+.divInput > input {
+  width: 100%;
+  padding: 15px;
+  outline: none;
+  border-radius: 5px;
+  border: 1px solid silver;
+}
+
+.divInput > input:focus {
+  border: 1px solid #f5b702;
+}
+
+.errorLogin {
+  height: 10px;
+}
+.divInputBtn {
+  display: flex;
+  margin: auto;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 55px;
+}
+
+.divInputBtn > button {
+  padding: 10px;
+  width: 55%;
+  border-radius: 5px;
+  outline: none;
+  border: none;
+  background: #f5b702;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.divInputBtn > button > span{
+  height: 20px !important;
+}
+
+.divInputBtn > button > span > svg{
+  height: 100% !important;
+  display: inline !important;
+}
+
+.divInputBtn > button:hover {
+  transition: all 500ms;
+  transform: scale(1.1);
+}
+
+.error {
+  font-size: 0.8em;
+  color: red;
+}
+
+.divTextImg {
+  display: flex;
+  margin: auto;
+  flex-direction: column;
+  z-index: 1;
+}
+
+.divTextImg > p {
+  font-size: 0.8em;
+  text-align: end !important;
+  text-decoration: underline;
+  font-style: italic;
+}
+
+.textImg {
+  font-size: 3em;
+  font-style: italic;
+}
+
+.img-load {
+  height: 18px;
+  width: 100%;
+}
+
+.pNewUser {
+  font-size: 0.8em;
+}
+
+.anewuser {
+  font-size: 0.8em;
+}
+
+.projectersSpan {
+  font-size: 0.6em;
+}
+
+@media screen and (max-width: 1000px) {
+  .divContainer {
+    flex-direction: column-reverse;
+  }
+
+  .separate2 {
+    margin: auto;
+  }
+  .separate1 {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .separate2 {
+    margin: auto;
+    width: 70%;
+  }
+
+  .btnSaveLogin {
+    width: 100% !important;
+  }
+
+  .imglogo {
+    width: 60% !important;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .separate2 {
+    margin: auto;
+    width: 100%;
+  }
+
+  .imgLogo {
+    width: 70% !important;
+  }
+
+  .header > h2 {
+    font-size: 1em;
+  }
+
+  .form {
+    padding: 0px !important;
+    margin-bottom: 25px;
+  }
+
+  .divContainer {
+    height: 100%;
+    width: 100%;
+  }
+}

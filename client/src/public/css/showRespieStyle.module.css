@@ -1,0 +1,408 @@
+.globalRecipe {
+  display: flex;
+}
+
+.body {
+  width: 80%;
+  background-color: #dedede61;
+  padding-left: 45px;
+  padding-top: 30px;
+  height: 100vh;
+  overflow: auto;
+}
+
+.headerRecipe {
+  font-size: 1.5em;
+}
+
+.bodyGroup {
+  margin-right: 30px;
+  border-radius: 6px;
+  margin-top: 30px;
+  min-height: 85vh;
+  height: auto;
+}
+
+.boxBtnNew {
+  display: flex;
+  justify-content: center;
+  padding: 15px;
+  margin-bottom: 35px;
+}
+
+.boxBtnNew > button {
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+  padding: 10px;
+  border: none;
+  font-size: 0.9em;
+  background-color: #f5b702;
+  cursor: pointer;
+  box-shadow: 0px 7px 4px -5px rgba(0, 0, 0, 0.4);
+}
+
+.filtersRecipe {
+  display: flex;
+  justify-content: space-between;
+  background-color: white;
+  margin-right: 30px;
+  margin-left: 30px;
+  padding: 5px;
+  border-radius: 6px;
+}
+
+.infoRecipe {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.gridFather {
+  margin: auto;
+  justify-content: center;
+  margin-top: 0px !important;
+  margin-left: 0px !important;
+  height: 100%;
+}
+
+.boxInfoRecipe {
+  height: 210px;
+  box-shadow: 0px 7px 4px -5px rgba(0, 0, 0, 0.4);
+  background-color: white;
+  padding-top: 0px !important;
+  padding-left: 0px !important;
+  border-radius: 6px;
+  margin: 20px !important;
+  border: 1px solid #dedede;
+  height: 30vh;
+  cursor: pointer;
+}
+
+.boxInfoRecipe:hover {
+  transform: scale(1.1);
+  transition: all 200ms ease-in-out;
+}
+
+.headerInfoRecipe {
+  padding: 5px;
+  background-color: #f5b702;
+  border-radius: 6px 6px 0px 0px;
+}
+
+.imageInfoRecipe {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 55%;
+  font-size: 40px;
+  background-color: white;
+}
+
+.imageInfoRecipe > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.infoRecipeDown {
+  padding: 5px;
+  background-color: white;
+  border-top: 1px solid silver;
+}
+
+.typeRecipe {
+  padding: 5px;
+  background-color: white;
+  border-top: 1px solid silver;
+}
+
+.searchBar {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  border: 1px solid silver;
+  border-radius: 6px;
+  padding: 5px;
+  width: 30%;
+}
+
+.searchBar > input {
+  width: 100%;
+  height: 100%;
+  padding: 6px;
+  border-radius: 6px;
+  outline: none;
+  border: none;
+}
+
+.filterRecipeBox > select {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid silver;
+  outline: none;
+  cursor: pointer;
+}
+
+.notFind {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: white;
+  margin-top: 20px;
+  padding: 10px;
+  border-radius: 6px;
+  box-shadow: 0px 7px 4px -5px rgba(0, 0, 0, 0.4);
+}
+
+.notFind > svg {
+  font-size: 8em;
+}
+
+.loadingRecipe {
+  margin-top: 150px;
+}
+
+/* modal de los platillos y preparaciones */
+
+.modalGlobalForm {
+  display: flex;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.modalFormContent {
+  display: flex;
+  background-color: white;
+  border-radius: 6px;
+  width: 60%;
+  overflow-y: auto;
+  height: 90%;
+}
+
+.headerForm {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row-reverse;
+  margin-left: -20px;
+  margin-top: -20px;
+  margin-right: -20px;
+}
+
+.boxCloseModal{
+  display: flex;
+  position: absolute;
+  top: 2%;
+  justify-content: flex-end;
+  align-items: center;
+  right: 19%;
+}
+
+.boxCloseModal > button {
+  outline: none;
+  border: none;
+  cursor: pointer;
+  background-color: #f5b702;
+  font-size: 3em;
+  display: flex;
+  align-items: center;
+  border-radius: 50%;
+}
+
+.boxCloseModal > button:hover{
+  transform: scale(1.1);
+  transition: all 200ms ease-in-out;
+  background-color: white;
+}
+
+.titleForm {
+  background-color: #f5b702;
+  width: 100%;
+  padding: 10px;
+}
+
+.infoForm{
+  width: 75%;
+  padding: 20px;
+}
+
+.boxInputsForm {
+  display: flex;
+}
+
+.boxInputsForm > div {
+  display: flex;
+  flex-direction: column;
+  margin-right: 15px;
+  width: 50%;
+}
+
+.boxInputsForm > div > input,
+.boxInputsForm > div > textarea,
+.boxInputsFormThree > div > input {
+  padding: 9px;
+  border-radius: 6px;
+  outline: none;
+  border: 1px solid #dedede;
+}
+
+.boxInputsForm > div > input:focus{
+  border: 1px solid #f5b702;
+}
+
+.boxInputsForm > div > textarea:focus{
+  border: 1px solid #f5b702;
+}
+
+.boxInputsFormThree > div > input:focus{
+  border: 1px solid #f5b702;
+}
+
+.boxInputsFormThree > div{
+  width: 33%;
+}
+
+.errorInputBox {
+  height: 12px;
+}
+
+.errorInputBox > p {
+  font-size: 0.9em;
+  color: red;
+}
+
+.boxInputsFormThree {
+  display: flex;
+}
+
+.boxInputsFormThree > div {
+  display: flex;
+  flex-direction: column;
+  margin-right: 15px;
+}
+
+.sectionIngredientsSelected {
+  margin-right: 13px;
+}
+
+.selectIngredients {
+  font-size: 0.9em;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.tableIngredients {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 0.9em;
+}
+
+.tableIngredients > thead {
+  background-color: #dededec1;
+  width: 100%;
+}
+
+.tableIngredients > thead > tr > th {
+  padding: 5px;
+  font-weight: 500;
+}
+
+.tableIngredients > tbody {
+  text-align: center;
+}
+
+.tableIngredients > tbody > tr {
+  border: 1px solid #dedede;
+}
+
+.tableIngredients > tbody > tr > td {
+  padding: 8px;
+  border: 1px solid #dedede;
+}
+
+.inputTableIngredients {
+  padding: 6px;
+  border-radius: 6px;
+  outline: none;
+  border: 1px solid #dedede;
+}
+
+.selectTableIngredients{
+  padding: 6px;
+  border-radius: 6px;
+  outline: none;
+  border: 1px solid #dedede;
+  cursor: pointer;
+}
+
+.selectPreparations{
+  font-size: 0.9em;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 13px;
+}
+
+.plusPreparation{
+  width: 100%;
+}
+
+.selectTypePlate{
+  margin-right: 13px;
+}
+
+.boxBtnSave{
+  display: flex;
+  justify-content: center;
+}
+
+.boxBtnSave > button{
+  padding: 9px;
+  border-radius: 6px;
+  outline: none;
+  background-color: #f5b702;
+  border: none;
+  width: 30%;
+  cursor: pointer;
+  box-shadow: 0px 7px 4px -5px rgba(0, 0, 0, 0.4);
+  margin-bottom: 40px;
+  font-size: 1em;
+}
+
+.infoDataValues{
+ display: flex;
+ flex-direction: column;
+ justify-content: flex-start;
+ width: 25%;
+ padding: 10px;
+ background-color: #dedede61;
+}
+
+.tdName{
+  text-align: center;
+  padding: 5px;
+  border: 1px solid #dedede61;
+  background-color: white;
+  border-radius: 6px;
+}
+
+.imgPreparations{
+  height: 100%;
+  width: 100%;
+}
+
+.valueTd{
+  text-align: center;
+  padding: 10px;
+}
+
+.switched{
+  width: 2%;
+}
