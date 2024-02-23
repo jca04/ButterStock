@@ -22,7 +22,6 @@ export default function Comandas({id_restaurant }) {
 
   id_restaurant = verifyUrl(id_restaurant)
  
-  console.log(id_restaurant)
   document.title = "ButterStock | Compras";
 
   const [ingredients, setIngredients] = useState([]);
