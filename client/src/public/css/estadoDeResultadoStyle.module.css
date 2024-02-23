@@ -1,15 +1,36 @@
-.edr-container {
-    display: grid;
-    grid-template-areas: "aside main main";
-    grid-template-columns: 650px 1fr;
-    grid-template-rows: 1fr auto;
-    margin: auto;
-    position: relative;
-    width: 90%;
-    margin-top: 20px;
+.globalEdr {
+    display: flex;
+    background-color: white;
 }
 
-.aside-content {
+
+.edr_wrapper {
+  width: 80%;
+  background-color: #dedede61;
+  padding-left: 45px;
+  padding-top: 30px;
+  height: 100vh;
+  overflow: auto;
+}
+  
+
+.edr_container {
+    display: grid;
+    grid-template-areas:
+      "aside main main main"
+      "grafica grafica grafica grafica";
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto;
+    margin: auto;
+    margin-top: 30px;
+    background: white;
+    border-radius: 6px;
+    padding: 10px;
+    margin-right: 35px;
+    min-height: 90vh;
+  }
+
+  .aside_content {
     grid-area: aside;
     display: flex;
     justify-content: center;
@@ -18,26 +39,39 @@
     padding: 10px;
 }
 
-.btns-edr {
+.btns_edr {
     display: flex;
     justify-content: space-evenly;
     align-items: center;
-    background-color: #fff;
-    box-shadow: 0px 0px 5px 0px rgba(82, 81, 81, 0.75);
-    border-radius: 10px;
+    /* background-color: #fff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px; */
     padding: 10px;
-    height: 200px;
+    height: 150px;
 }
 
-.btns-edr > button {
+.btn {
     width: 150px;
     height: 60px;
-    border-radius: 5px;
+    border-radius: 8px;
     border: none;
-    background-color: rgba(255, 234, 150, 1);
-    color: black;
+    background-color: #ffb400;
+    color: #333;
     font-weight: bold;
     cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.btn:hover {
+    background-color: #ffcc00;
+    transform: scale(1.05);
+}
+
+.edr_description {
+    text-align: center;
+    color: #555;
+    font-size: 14px;
+    margin-bottom: 10px;
 }
 
 .calendar{
@@ -48,7 +82,7 @@
     margin-top: 40px;
 }
 
-.calendar-content {
+.calendar_content {
     display: flex;
     align-items: center;
     justify-content: space-evenly;
@@ -62,7 +96,7 @@
     color: #000;
 }
 
-.date-picker {
+.date_picker {
     width: 200px;
     height: 50px;
     border-radius: 5px;
@@ -72,7 +106,7 @@
     cursor: pointer;
 }
 
-.historico-container {
+.historico_container {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -84,7 +118,7 @@
     box-shadow: 0px 0px 5px 0px rgba(82, 81, 81, 0.75);
 }
 
-.historico-content {
+.historico_content {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -96,7 +130,7 @@
 
 }
 
-.otros-gastos {
+.otros_gastos {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -110,7 +144,7 @@
     border: 1px solid red;
 }
 
-.no-data {
+.no_data {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -118,16 +152,26 @@
     margin-top: 50px;
 }
 
-.no-data h1 {
+.no_data h1 {
     font-size: 1.5rem;
     font-weight: 400;
     color: #000;
 }
 
-.main-content {
+.main_content {
     grid-area: main;
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.graph {
+    grid-area: grafica;
+    display: flex;
     justify-content: center;
     align-items: center;
     background-color: white;

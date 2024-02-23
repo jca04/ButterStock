@@ -17,6 +17,7 @@
     "@reduxjs/toolkit": "^1.9.5",
     "animate.css": "^4.1.1",
     "axios": "^1.4.0",
+    "chart.js": "^4.4.1",
     "cloudinary": "^1.40.0",
     "dayjs": "^1.11.10",
     "formik": "^2.2.9",
