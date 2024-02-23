@@ -99,7 +99,6 @@ export default function EstadoDeResultado() {
     }, [id_restaurant])
 
 
-
   return (
     <div className={style.stateOfContainer}>
         <Navbar restaurant = {id_restaurant}/>
