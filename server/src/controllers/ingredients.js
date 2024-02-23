@@ -124,6 +124,7 @@ const createIngredient = async (req, res) => {
 const getIngredientsWithRecipe = (req, res) => {
   try {
     const id_restaurant = req.body.data.id;
+    console.log(id_restaurant)
     conn.query(
       "SELECT i.nombre_ingrediente, i.id_ingrediente, i.unidad_medida, " +
         "i.costo_unitario, i.costo_total, " +
