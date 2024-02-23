@@ -290,6 +290,19 @@ const getPieChartEdr = async (req, res) => {
   }
 };
 
+const getAllEdr = async (req, res) => {
+  try {
+    const { id_restaurant } = req.params;
+    const edrs = await queryAsync(
+      "SELECT * FROM tbl_estado_resultado WHERE id_restaurante = ?",
+      [id_restaurant]
+    );
+    res.status(200).json({ message: "ok", edrs });
+  } catch (error) {
+    res.statur(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   edrAutomatico,
   pruebaFecha,
@@ -297,4 +310,5 @@ module.exports = {
   getEdrByDate,
   getEdrData,
   getPieChartEdr,
+  getAllEdr,
 };
