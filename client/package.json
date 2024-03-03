@@ -25,6 +25,7 @@
     "plotly.js": "^2.25.2",
     "react": "^18.2.0",
     "react-awesome-reveal": "^4.2.3",
+    "react-chartjs-2": "^5.2.0",
     "react-cookie": "^4.1.1",
     "react-data-table-component": "^7.5.3",
     "react-dom": "^18.2.0",
