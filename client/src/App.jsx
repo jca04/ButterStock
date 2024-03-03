@@ -34,7 +34,8 @@ function App() {
           <Route exact path="/login" element={!isAuthenticated() ? <LogginUser /> : <Navigate to="/homepage" />}/>
           <Route exact path="/homepage" element={isAuthenticated() ? <HomePage /> : <Navigate to="/login" />}/>
           <Route exact path="/createRestaurant" element={<FormRestaurant />} />
-          <Route exact path="/" element={<LandingPage />} />
+          {/* <Route exact path="/" element={<LandingPage />} /> */}
+          <Route exact path="/" element={!isAuthenticated() ? <LogginUser /> : <Navigate to="/homepage" />} />
           <Route exact path="/configurations/:id" element={isAuthenticated() ? <MyRestaurante /> : <Navigate to="/login" />}/>
           <Route exact path="/AllRestaurant" element={isAuthenticated() ? <AllRestaurant /> : <Navigate to="/login" />}/>
           <Route exact path="/users" element={isAuthenticated() ? <Users /> : <Navigate to="/login" />}/>

@@ -66,3 +66,14 @@ export const getPieChartEdr = async (id_restaurant) => {
     return error;
   }
 };
+
+export const getAllEdr = async (id_restaurant) => {
+  try {
+    const response = await axios.get(`/edr/get-all-edr/${id_restaurant}`, {
+      header: { Authorization: `Bearer ${token}` },
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
